@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales Report</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .navbar {
+      background-color: #6c757d;
+      color: #fff;
+    }
+    .sidebar {
+      background-color: #094077;
+      color: #fff;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 250px;
+      padding-top: 56px;
+    }
+    .heading {
+      text-align: center;
+    }
+    .nav-link {
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+    .active {
+      background-color: yellow;
+      color: black;
+    }
+    .nav-link:hover {
+      background-color: yellow;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .table thead {
+      color: #dee2e6;
+      background-color: #094077;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <a class="navbar-brand" href="#">Admin Panel</a>
+  </nav>
+
+  <!-- Sidebar -->
+  <div class="container-fluid">
+    <div class="row">
+      <nav class="col-md-2 d-none d-md-block sidebar">
+        <div class="sidebar-sticky">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/dashboard">Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/usermanagement">User Management</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/productmanagement">Product Management</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/categorymanagement">Category Management</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/couponmanagement">Coupon Management</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/ordermanagement">Order Management</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="/admin/salesreport">Sales Report</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/logout">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Page Content -->
+      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+        <div class="container mt-4">
+          <h1 class="heading">Sales Report</h1>
+          <form action="/admin/salesreport" method="get" class="mb-4">
+            <div class="form-group">
+              <label for="type">Report Type:</label>
+              <select name="type" id="type" class="form-control">
+                <option value="daily" <%= type === 'daily' ? 'selected' : '' %>>Daily</option>
+                <option value="weekly" <%= type === 'weekly' ? 'selected' : '' %>>Weekly</option>
+                <option value="monthly" <%= type === 'monthly' ? 'selected' : '' %>>Monthly</option>
+                <option value="custom" <%= type === 'custom' ? 'selected' : '' %>>Custom</option>
+              </select>
+            </div>
+            <div id="customDateRange" <% if (type === 'custom') { %>style="display: block;"<% } else { %>style="display: none;"<% } %>>
+              <div class="form-group">
+                <label for="startDate">Start Date:</label>
+                <input type="date" name="startDate" id="startDate" class="form-control" value="<%= startDate %>">
+              </div>
+              <div class="form-group">
+                <label for="endDate">End Date:</label>
+                <input type="date" name="endDate" id="endDate" class="form-control" value="<%= endDate %>">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Generate Report</button>
+          </form>
+          
+          <!-- Download Buttons -->
+          <div class="mb-4">
+            <a href="/admin/download-pdf?type=<%= type %>&startDate=<%= startDate %>&endDate=<%= endDate %>" class="btn btn-primary mr-2">
+              Download PDF
+            </a>
+            <a href="/admin/download-excel?type=<%= type %>&startDate=<%= startDate %>&endDate=<%= endDate %>" class="btn btn-success">
+              Download Excel
+            </a>
+          </div>
+
+          <h2>Report Summary</h2>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="card text-white bg-info mb-3">
+                <div class="card-header">Total Sales Count</div>
+                <div class="card-body">
+                  <h5 class="card-title"><%= totalSalesCount %></h5>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card text-white bg-success mb-3">
+                <div class="card-header">Total Order Amount</div>
+                <div class="card-body">
+                  <h5 class="card-title">Rs: <%= totalOrderAmount.toFixed(2) %></h5>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card text-white bg-warning mb-3">
+                <div class="card-header">Total Discount</div>
+                <div class="card-body">
+                  <h5 class="card-title">Rs: <%= totalDiscount.toFixed(2) %></h5>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h2>Order Details</h2>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Order Date</th>
+                <th>Total Amount</th>
+                <th>Discount</th>
+                <th>Coupon</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% orders.forEach(order => { %>
+                <tr>
+                  <td><%= order._id %></td>
+                  <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
+                  <td>Rs: <%= order.totalAmount.toFixed(2) %></td>
+                  <td>Rs: <%= order.coupon && order.coupon.discount ? order.coupon.discount.toFixed(2) : '0.00' %></td>
+                  <td><%= order.coupon ? order.coupon.couponCode : 'N/A' %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    document.getElementById('type').addEventListener('change', function() {
+      const customDateRange = document.getElementById('customDateRange');
+      if (this.value === 'custom') {
+        customDateRange.style.display = 'block';
+      } else {
+        customDateRange.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

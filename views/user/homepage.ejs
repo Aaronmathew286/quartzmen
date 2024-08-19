@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <!-- Bootstrap CSS -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link href="https://fonts.googleapis.com/css2?family=Almendra+SC&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Custom CSS -->
+    <style>
+        body {
+            /* background-color: #001131; */
+            background-color: #002547;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        #content {
+            flex: 1;
+            min-height: calc(100vh - 200px);
+        }
+
+        .navbar {
+            background-color: #1d1e1e;
+            position: relative;
+            z-index: 1020;
+        }
+
+        .navbar-brand {
+            font-family: 'Almendra SC', serif;
+            color: #FFDD00;
+        }
+
+        .navbar,
+        .navbar .nav-link,
+        .navbar .navbar-text {
+            color: white;
+        }
+
+        .navbar .nav-link:hover,
+        .navbar .nav-link:focus,
+        .navbar .dropdown-item {
+            color: #ffdd00;
+        }
+
+        .navbar .dropdown-menu {
+            background-color: #1d1e1e;
+            z-index: 1050;
+        }
+
+        .navbar .dropdown-item {
+            color: white;
+        }
+
+        .navbar .dropdown-item:hover {
+            background-color: #ffdd00;
+            color: #000000;
+        }
+
+        .navbar .navbar-toggler .navbar-toggler-icon {
+            color: #ffffff;
+        }
+
+        .form-inline .form-control {
+            border: none;
+            margin-left: 50px;
+        }
+
+        .input-group-append {
+            padding-left: 20px;
+        }
+
+        .rounded-pill {
+            border-radius: 50px !important;
+        }
+
+        .rounded-pill .input-group-append .btn {
+            border-top-right-radius: 50px !important;
+            border-bottom-right-radius: 50px !important;
+        }
+
+        .second-nav {
+            background-color: rgba(0, 0, 0, 0.822);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .second-nav .nav-link {
+            text-transform: capitalize;
+        }
+
+        .carousel-inner img {
+            width: 100%;
+            height: 700px;
+            object-fit: cover;
+        }
+
+        .nav-item .fa-solid:hover {
+            color: #FFDD00;
+        }
+
+        .custom-navbar.navbar-nav {
+            margin-top: 0;
+        }
+
+        .custom-navbar.nav-link {
+            color: #333;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .custom-navbar.nav-link:hover {
+            color: #007bff;
+        }
+
+        .material-symbols-outlined {
+            margin-bottom: 2px;
+            color: #FFDD00;
+        }
+
+        .carousel-control-prev,
+        .carousel-control-next {
+            width: 5%;
+        }
+
+        .carousel-control-prev:hover,
+        .carousel-control-next:hover {
+            background: none;
+        }
+
+        .footer {
+            background-color: #000;
+            color: #fff;
+            padding: 20px 0;
+        }
+
+        .footer a:hover {
+            color: yellow;
+        }
+
+        #priceDisplay {
+            margin-top: 10px;
+        }
+
+        .scrolling-container {
+            display: flex;
+            overflow-x: auto;
+            background-color: white;
+            /* Set the background color to white */
+            padding: 10px;
+            /* Optional: Add padding if you want space around the content */
+
+        }
+
+        .logo {
+            flex: 0 0 auto;
+            /* Prevent logos from shrinking */
+            margin-right: 20px;
+            /* Optional: Add spacing between logos */
+        }
+
+        .logo img {
+            height: 60px;
+            /* Set the desired height for all images */
+            width: auto;
+            /* Maintain aspect ratio */
+            display: block;
+            /* Ensure images display correctly */
+        }
+
+        /* Optional: Add styles to hide scrollbars */
+        .scrolling-container::-webkit-scrollbar {
+            display: none;
+            /* Hide scrollbar for WebKit browsers */
+        }
+
+
+
+        .card {
+            background-color: #F4FCFF;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            transition: 0.3s;
+            width: 100%;
+            border-radius: 5px;
+            color: #000;
+            height: 400px;
+            overflow: hidden;
+        }
+
+        .card-img-top {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-title-model,
+        .card-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .card-text {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .card:hover {
+            transform: scale(1.02);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .card-img-top i {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 20px;
+            color: rgb(0, 0, 0);
+        }
+
+        .fa-heart {
+            color: rgb(255, 255, 255); /* Default color */
+        }
+
+        .fa-heart.liked {
+            color: red; /* Color when liked */
+        }
+
+        .container {
+            margin-bottom: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-div">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg">
+            <div class="navbar-brand-container d-flex align-items-center">
+                <div class="navbar-brand" onclick="location.href='#'">Quartz
+                    <span class="material-symbols-outlined ms-2">watch_wake</span>
+                    Men
+                </div>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <form class="form-inline mx-auto" action="/search" method="GET">
+                    <div class="input-group">
+                        <input type="text" name="query" class="form-control border-0 rounded-pill bg-white text-black"
+                            placeholder="Search ..." aria-label="Search">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary rounded-pill" type="submit">
+                                <i class="fas fa-search text-white"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/wishlist" role="button" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa-solid fa-heart"></i>
+                        </a>
+                    </li>
+                    <% if (loggedIn) { %>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink2" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa-solid fa-user"></i>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
+                                <a class="dropdown-item" href="/profile">Profile</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/logout">Logout</a>
+                            </div>
+                        </li>
+                        <% } else { %>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/signup"><i class="fa-solid fa-user"></i>Sign Up</a>
+                            </li>
+                            <% } %>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/cart" role="button" aria-haspopup="true"
+                                        aria-expanded="false">
+                                        <i class="fa-solid fa-cart-shopping"></i>
+                                    </a>
+                                </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Carousel -->
+        <div id="carouselExampleFade" class="carousel slide carousel-fade" data-bs-ride="carousel"
+            data-bs-interval="7000">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="/uploads/pexels-bemistermister-380782.jpeg" class="d-block w-100" alt="...">
+                </div>
+                <div class="carousel-item">
+                    <img src="/uploads/dolce-gabbana-watches1.jpeg" class="d-block w-100" alt="...">
+                </div>
+                <div class="carousel-item">
+                    <img src="/uploads/casio-watches-end-of-season-sale-upto-30-off-ad-times-of-india-mumbai-29-12-2018.png"
+                        class="d-block w-100" alt="...">
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade"
+                data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade"
+                data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+
+
+            <nav class="navbar navbar-expand-lg second-nav second-nav- navbar-center">
+                <div class="collapse navbar-collapse justify-content-center" id="navbarCenterContent">
+                    <ul class="navbar-nav">
+                        <% categories.forEach((category, index)=> { %>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/watches">
+                                    <%= category.categoryName %>
+                                </a>
+                            </li>
+                            <% }); %>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+
+        <!-- scrolling brands -->
+        <div class="scrolling-container mt-3">
+            <div class="logo"><img src="/uploads/Bremont-Logo-tumb.png" alt="Bremont"></div>
+            <div class="logo"><img src="/uploads/Citizen-logo-tumb-140x88.jpg" alt="Citizen"></div>
+            <div class="logo"><img src="/uploads/Citizen-logo-tumb.jpg" alt="Citizen"></div>
+            <div class="logo"><img src="/uploads/Corum-logo-tumb.jpg" alt="Corum"></div>
+            <div class="logo"><img src="/uploads/Festina-logo-tumb.jpg" alt="Festina"></div>
+            <div class="logo"><img src="/uploads/Girard-Perregaux-Logo.jpg" alt="Girard Perregaux"></div>
+            <div class="logo"><img src="/uploads/Hublot-logo.jpg" alt="Hublot"></div>
+            <div class="logo"><img src="/uploads/IWC-Logo.jpg" alt="IWC"></div>
+            <div class="logo"><img src="/uploads/Jaeger-leCoultre-logo.jpg" alt="Jaeger leCoultre"></div>
+            <div class="logo"><img src="/uploads/Longines-Logo.jpg" alt="Longines"></div>
+            <div class="logo"><img src="/uploads/Orient-Logo.jpg" alt="Orient"></div>
+            <div class="logo"><img src="/uploads/Panerai-Logo.jpg" alt="Panerai"></div>
+        </div>
+
+        <!-- Banner-1 -->
+        <div class="mt-3">
+            <div class="banner"
+                style="background-image: url('/uploads/main-banner-new.avif'); width: 100%; height: 700px; background-size: cover; background-position: center;">
+            </div>
+            <div class="banner-content text-center text-white">
+                <h1 class="after-banner">Welcome to Our Store</h1>
+                <p>Discover the best deals on watches</p>
+            </div>
+        </div>
+
+        <!-- Sort & Filter -->
+        <div class="container mt-5">
+            <button id="filterButton" class="btn btn-light" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasFilters" aria-controls="offcanvasFilters">Sort & Filters</button>
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasFilters"
+                aria-labelledby="offcanvasFiltersLabel">
+                <div class="offcanvas-header">
+                    <h5 id="offcanvasFiltersLabel">Filters</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <form>
+                        <div class="form-group mb-3">
+                            <label for="sortBy">Sort by:</label>
+                            <select id="sortBy" class="form-control">
+                                <option value="-">-</option>
+                                <option value="highToLow">High to Low</option>
+                                <option value="lowToHigh">Low to High</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="availability">Availability:</label>
+                            <select id="availability" class="form-control">
+                                <option value="-">-</option>
+                                <option value="inStock">In Stock</option>
+                                <option value="outOfStock">Out of Stock</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="category">Category:</label>
+                            <select id="category" class="form-control">
+                                <option value="-">-</option>
+                                <option value="category1">Category 1</option>
+                                <option value="category2">Category 2</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="gender">Gender:</label>
+                            <select id="gender" class="form-control">
+                                <option value="-">-</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="strapMaterial">Strap Material:</label>
+                            <select id="strapMaterial" class="form-control">
+                                <option value="-">-</option>
+                                <option value="leather">Leather</option>
+                                <option value="metal">Metal</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="priceRange">Price:</label>
+                            <input type="range" id="priceRange" class="form-control-range" min="0" max="1000" step="1"
+                                value="0">
+                            <div id="priceDisplay">Selected Price: ₹0</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Apply Filters</button>
+                        <button type="reset" class="btn btn-secondary">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    <!-- Product Container -->
+    <div class="container mt-5">
+        <div class="row">
+            <% products.forEach((product) => { %>
+            <a href="/productdetail/<%= product._id %>" class="col-md-3" style="text-decoration: none; color: inherit;">
+                <div class="card">
+                    <div class="card-img-top position-relative">
+                        <i class="fa fa-heart <%= product.wishlist ? 'liked' : '' %>" data-product-id="<%= product._id %>" 
+                        style="cursor: pointer;" onclick="toggleWishlist(this, event)">
+                        </i>
+                        <img src="/uploads/<%= product.image[0] %>" alt="Product Image" class="card-img-top">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <%= product.brand %>
+                        </h5>
+                        <p class="card-text-model">Model: <%= product.name %></p>
+                        <p class="card-text-price">₹<%= product.price.toFixed(2) %></p>
+                    </div>
+                </div>
+            </a>
+            <% }) %>
+        </div>
+    </div>
+
+
+        <!-- Footer -->
+        <footer class="footer py-5 bg-black text-white">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5>About Us</h5>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero.
+                            Sed
+                            cursus ante dapibus diam.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Our Services</h5>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero.
+                            Sed
+                            cursus ante dapibus diam.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Contact Us</h5>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero.
+                            Sed
+                            cursus ante dapibus diam.</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- DOM -->
+        <script>
+            document.getElementById('priceRange').addEventListener('input', function () {
+                const priceDisplay = document.getElementById('priceDisplay');
+                priceDisplay.textContent = `Selected Price: ₹${this.value}`;
+            });
+
+            document.getElementById('filterButton').addEventListener('click', function (event) {
+                const sortBy = document.getElementById('sortBy').value;
+                const availability = document.getElementById('availability').value;
+                const category = document.getElementById('category').value;
+                const gender = document.getElementById('gender').value;
+                const strapMaterial = document.getElementById('strapMaterial').value;
+
+                if (sortBy === "-" && availability === "-" && category === "-" && gender === "-" && strapMaterial === "-") {
+                    event.preventDefault();
+                }
+            });
+
+
+            // /wishlist script
+// /wishlist script
+function toggleWishlist(icon, event) {
+    event.preventDefault(); // Prevents the default action, such as navigating to another page
+
+    const productId = icon.getAttribute('data-product-id');
+    const isLiked = icon.classList.contains('liked');
+    const url = isLiked ? `/wishlist/remove/${productId}` : `/wishlist/add/${productId}`;
+    const method = isLiked ? 'DELETE' : 'POST';
+
+    fetch(url, { method })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                icon.classList.toggle('liked');
+            } else {
+                console.error('Failed to update wishlist');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+
+        </script>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

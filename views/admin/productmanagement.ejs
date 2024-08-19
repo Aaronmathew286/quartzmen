@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Management</title>
+  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  
+  <style>
+    .navbar {
+      background-color: #6c757d; /* Grey color */
+      color: #fff;
+    }
+    .sidebar {
+      background-color: #094077;
+      color: #fff;
+      height: 100vh;
+      position: fixed; 
+      top: 0;
+      left: 0;
+      width: 250px; 
+      padding-top: 56px; 
+    }
+    .heading {
+      text-align: center;
+    }
+    .nav-link {
+      color: white;
+      transition: background-color 0.3s ease; /* Adding transition for smooth effect */
+    }
+    .active {
+      background-color: yellow;
+      color: black;
+    }
+    .nav-link:hover {
+      background-color: yellow; 
+    }
+    .action-buttons {
+      display: flex; /* Align items horizontally */
+      justify-content: flex-end; /* Align items to the right */
+      gap: 5px; /* Adds space between buttons */
+    }
+    .thead{
+      color: #dee2e6;
+      background-color: #094077;
+    }
+    .table-bordered tbody tr {
+      border: 1px solid #dee2e6;
+    }
+
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <a class="navbar-brand" href="#">Admin Panel</a>
+  </nav>
+
+  <!-- Sidebar -->
+  <div class="container-fluid">
+    <div class="row">
+      <nav class="col-md-2 d-none d-md-block sidebar">
+        <div class="sidebar-sticky">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/dashboard">Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/usermanagement">User Management</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="/admin/productmanagement">Product Management</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/categorymanagement">Category Management</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/couponmanagement">Coupon Management</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/ordermanagement">Order Management</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/salesreport">Sales Report</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/logout">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Page Content -->
+      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+        <div class="container mt-4">
+          <h1 class="heading">Product Management</h1>
+          <div class="text-right">
+            <!-- Button trigger modal for adding new product -->
+            <div class="add-product">
+              <a href="/admin/addproduct">
+                <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addProductModal">
+                  Add New Product
+                </button>
+              </a>
+            </div>
+          </div>
+          
+          <table class="table table-bordered">
+            <thead class="thead">
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Brand</th>
+                <th>Image</th>
+                <th>Description</th>
+                <th>Stock</th>
+                <th>Price</th>
+                
+                <th class="text-right">Action</th> <!-- Ensure the Action header is aligned to the right -->
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Sample data (replace with dynamic data from backend) -->
+              <% products.forEach(function(product, index) { %>
+                <tr>
+                  <td><%= index + 1 %></td>
+                  <td><%= product.name %></td>
+                  <td><%= product.brand %></td>
+                  <td><img src="/uploads/<%= product.image[0] %>" alt="Product Image" style="max-width: 50px;"></td>
+                  <td><%= product.description %></td>
+                  <td><%= product.stock %></td>
+                  <td>Rs:<%=  (product.originalPrice - (product.originalPrice * (product.offerPercentage / 100))).toFixed(2) %></td>
+                  <td>
+                    <div class="action-buttons">
+                      <a href="/admin/editproduct/<%= product._id %>">
+                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editProductModal">
+                          Edit
+                        </button>
+                      </a>
+                      
+                      <% if (product.isBlocked === false) { %>
+                        <form action="/admin/blockproduct/<%= product._id %>" method="POST" class="block-form">
+                            <button type="submit" class="btn btn-warning btn-sm" id="blockBtn">Block</button>
+                        </form>
+                      <% } else { %>
+                          <form action="/admin/unblockproduct/<%= product._id %>" method="POST" class="block-form">
+                              <button type="submit" class="btn btn-danger btn-sm" id="blockBtn">Unblock</button>
+                          </form>
+                      <% } %>
+                    </div>
+                  </td>
+                </tr>
+              <% }); %>
+              
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS and dependencies -->
+  <script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const forms = document.querySelectorAll('.block-form');
+        forms.forEach(form => {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent form submission
+                const action = this.querySelector('button').innerText.toLowerCase();
+                const confirmation = confirm(`Are you sure you want to ${action} this product?`);
+                if (confirmation) {
+                    this.submit(); // Submit the form if confirmed
+                }
+            });
+        });
+    });
+  </script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

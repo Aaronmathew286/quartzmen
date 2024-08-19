@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            background-color: #094077;
+            color: #fff;
+            height: 100vh;
+            position: fixed; 
+            top: 0;
+            left: 0;
+            width: 250px; 
+            padding-top: 56px; 
+        }
+        .navbar {
+            background-color: #6c757d; 
+            color: #fff;
+        }
+        .nav-link {
+            color: white;
+            transition: background-color 0.3s ease; 
+        }
+        .nav-link:hover {
+            background-color: yellow; 
+        }
+        .active {
+            background-color: yellow; 
+            color: black;
+        }
+        .heading {
+            text-align: center;
+        }
+        .action-buttons {
+            display: flex; 
+            justify-content: flex-end; 
+            gap: 5px; 
+        }
+        .delivered {
+            color: green;
+        }
+        .pending {
+            color: rgb(179, 179, 0);
+        }
+        .cancelled {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#">Admin Panel</a>
+    </nav>
+
+    <!-- Sidebar and Main Content -->
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 d-none d-md-block sidebar">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/usermanagement">User Management</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/productmanagement">Product Management</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/categorymanagement">Category Management</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/couponmanagement">Coupon Management</a>
+                          </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/admin/ordermanagement">Order Management</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/salesreport">Sales Report</a>
+                          </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/logout">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Page Content -->
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                <div class="container mt-4">
+                    <h1 class="heading">Order Management</h1>
+                    <div class="text-right">
+                        <!-- Example action button, you can add relevant content here -->
+
+                    </div>
+                    <% if (typeof errMessage!== 'undefined') { %>
+                        <div class="alert alert-danger Errormsg">
+                            <h3><%= errMessage %></h3>
+                        </div>
+                    <% } %>
+
+                    <!-- Order Management Table -->
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Order Date</th>
+                                <th>Total Items</th>
+                                <th>Total Amount</th>
+                                <th>Payment Method</th>
+                                <th>Order Status</th>
+                                <th class="text-right">View Orders</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% ordersWithDataSorted.forEach(order => { %>
+                                <tr>
+                                    <td><%= order._id %></td>
+                                    <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
+                                    <td><%= order.products.length %></td>
+                                    <td>$<%= order.totalAmount.toFixed(2) %></td>
+                                    <td><%= order.paymentInfo.method %></td>
+                                    <td>
+                                        <form action="/admin/order/<%= order._id %>/<%= order.products[0]._id %>" method="POST" class="form-inline">
+                                            <select class="form-control order-status" name="status" onchange="this.form.submit()">
+                                                <option value="Delivered" <% if (order.products[0].status === 'Delivered') { %> selected <% } %> class="delivered">Delivered</option>
+                                                <option value="Pending" <% if (order.products[0].status === 'Pending') { %> selected <% } %> class="pending">Pending</option>
+                                                <option value="Cancelled" <% if (order.products[0].status === 'Cancelled') { %> selected <% } %> class="cancelled">Cancelled</option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                    <td class="text-right">
+                                        <a href="/admin/order/<%= order._id %>" class="btn btn-sm btn-primary">View</a>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var selects = document.querySelectorAll(".order-status");
+            selects.forEach(function(select) {
+                select.addEventListener("change", function() {
+                    updateSelectColor(select);
+                });
+                updateSelectColor(select);
+            });
+        });
+
+        function updateSelectColor(select) {
+            select.className = "form-control order-status"; // Reset class names
+            select.classList.add(select.options[select.selectedIndex].className);
+        }
+    </script>
+</body>
+</html>

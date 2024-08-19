@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Results</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .product-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .product-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            width: 200px;
+            text-align: center;
+        }
+        .product-card img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Search Results for "<%= query %>"</h1>
+
+    <% if (products.length > 0) { %>
+        <div class="product-list">
+            <% products.forEach(product => { %>
+                <div class="product-card">
+                    <img src="<%= product.image[0] %>" alt="<%= product.name %>">
+                    <h2><%= product.name %></h2>
+                    <p>Brand: <%= product.brand %></p>
+                    <p>Category: <%= product.category %></p>
+                    <p>Price: $<%= product.price %></p>
+                    <p><%= product.description %></p>
+                </div>
+            <% }) %>
+        </div>
+    <% } else { %>
+        <p>No products found matching your query.</p>
+    <% } %>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            background-color: #094077;
+            color: #fff;
+            height: 100vh; 
+            position: fixed; 
+            top: 0;
+            left: 0;
+            width: 250px; 
+            padding-top: 56px; 
+        }
+        .navbar {
+            background-color: #6c757d; 
+            color: #fff;
+        }
+        .nav-link {
+            color: white;
+        }
+        .nav-link:hover {
+            background-color: yellow;
+        }
+        .active {
+            background-color: yellow;
+            color: black;
+        }
+        .heading {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar Starts -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#">Admin Panel</a>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar Starts -->
+            <nav class="col-md-2 d-none d-md-block sidebar">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="nav-item active user-management"> 
+                            <a class="nav-link active" href="/admin/usermanagement">User Management</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/productmanagement">Product Management</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/categorymanagement">Category Management</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/couponmanagement">Coupon Management</a>
+                          </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/ordermanagement">Order Management</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/salesreport">Sales Report</a>
+                          </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/logout">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <!-- Sidebar ends -->
+
+            <!-- Main Content -->
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                <div class="container">
+                    <h1 class="heading">User Management</h1>
+                    <!-- User List -->
+                    <div class="card">
+                        <div class="card-header">
+                            Users
+                        </div>
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% users.forEach((user, index) => { %>
+                                    <!-- User Row -->
+                                    <tr>
+                                        <td><%= index + 1 %></td>
+                                        <td><%= user.name %></td>
+                                        <td><%= user.email %></td>
+                                        <td>
+                                            <% if (user.isBlocked === false) { %>
+                                                <form action="/admin/unblockuser/<%= user._id %>" method="POST" class="block-form">
+                                                    <button type="submit" class="btn btn-warning btn-sm" id="blockBtn">Block</button>
+                                                </form>
+                                            <% } else { %>
+                                                <form action="/admin/blockuser/<%= user._id %>" method="POST" class="block-form">
+                                                    <button type="submit" class="btn btn-warning btn-sm" id="blockBtn">Unblock</button>
+                                                </form>
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                    <!-- End User Row -->
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const forms = document.querySelectorAll('.block-form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(event) {
+                    event.preventDefault(); // Prevent form submission
+                    const action = this.querySelector('button').innerText.toLowerCase();
+                    const confirmation = confirm(`Are you sure you want to ${action} this user?`);
+                    if (confirmation) {
+                        this.submit(); // Submit the form if confirmed
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
