@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <style>
         .navbar {
@@ -309,8 +310,9 @@
     </div>
 
 
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    
 
     document.getElementById('increaseQuantity').addEventListener('click', function() {
         const quantityInput = document.getElementById('quantityInput');
@@ -327,32 +329,60 @@
     });
 
     document.getElementById('addToCartForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        
-        const productId = '<%= products._id %>';
-        const quantity = parseInt(document.getElementById('quantityInput').value);
+    event.preventDefault();
+    
+    const productId = '<%= products._id %>';
+    const quantity = parseInt(document.getElementById('quantityInput').value);
 
-        fetch(`/cart/${productId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ quantity: quantity })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message === "Added to cart") {
-                // Redirect to cart page
-                window.location.href = '/cart';
-            } else {
-                // Handle error
-                console.error('Error adding to cart:', data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
+    fetch(`/cart/${productId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ quantity: quantity })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                title: 'Added to Cart!',
+                text: "Would you like to go to your cart or continue shopping?",
+                icon: 'success',
+                showCancelButton: true,
+                confirmButtonText: 'Go to Cart',
+                cancelButtonText: 'Continue Shopping'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/cart'; // Redirect to the cart page
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    // Stay on the current page to continue shopping
+                }
+            });
+        } else {
+            Swal.fire({
+                title: 'Error!',
+                text: 'There was an issue adding the product to your cart.',
+                icon: 'error',
+                confirmButtonText: 'Okay'
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire({
+            title: 'Error!',
+            text: 'Something went wrong. Please try again later.',
+            icon: 'error',
+            confirmButtonText: 'Okay'
         });
     });
+});
+
 
 </script>
 

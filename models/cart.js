@@ -33,23 +33,5 @@ const cartSchema = new mongoose.Schema({
   },
 });
 
-// Calculate and update the total price for each item
-// cartSchema.pre('save', function (next) {
-//   this.items.forEach(item => {
-//     item.totalprice = item.quantity * item.product.price; // Assuming `product.price` is available
-//   });
-//   next();
-// });
-
-// // Calculate and update the grand total
-// cartSchema.virtual('totalPrice').get(function () {
-//   return this.items.reduce((total, item) => total + item.totalprice, 0);
-// });
-
-// cartSchema.pre('save', function (next) {
-//   this.grandTotal = this.totalPrice;
-//   next();
-// });
-
 const Cart = mongoose.model("Cart", cartSchema);
 module.exports = Cart;

@@ -15,3 +15,25 @@ ClientSecret = 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
 
 RAZORPAY_KEY_ID = rzp_test_KOCURsj88Mu4Sj
 RAZORPAY_KEY_SECRET = 64CY4QIGucP0t33gP8JodsqI
+
+
+
+# Ignore node_modules directory
+node_modules/
+
+# Ignore all log files
+*.log
+
+# Ignore specific file
+config/database.yml
+
+# Ignore all .env files
+.env
+
+# Ignore compiled files
+*.o
+*.out
+
+# Ignore IDE config files
+.vscode/
+.idea/

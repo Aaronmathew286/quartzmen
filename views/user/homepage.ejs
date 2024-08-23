@@ -518,7 +518,6 @@
             });
 
 
-            // /wishlist script
 // /wishlist script
 function toggleWishlist(icon, event) {
     event.preventDefault(); // Prevents the default action, such as navigating to another page
@@ -526,7 +525,7 @@ function toggleWishlist(icon, event) {
     const productId = icon.getAttribute('data-product-id');
     const isLiked = icon.classList.contains('liked');
     const url = isLiked ? `/wishlist/remove/${productId}` : `/wishlist/add/${productId}`;
-    const method = isLiked ? 'DELETE' : 'POST';
+    const method =  'POST';
 
     fetch(url, { method })
         .then(response => response.json())

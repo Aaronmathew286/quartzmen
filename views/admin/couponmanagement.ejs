@@ -129,6 +129,8 @@
                                 <th>ID</th>
                                 <th>Code</th>
                                 <th>Discount</th>
+                                <th>Min Amount</th>
+                                <th>Max Amount</th>
                                 <th>Expiration Date</th>
                                 <th class="text-right">Action</th>
                                 <!-- Ensure the Action header is aligned to the right -->
@@ -147,6 +149,12 @@
                                     <td>
                                         <%= coupon.discount %> %
                                     </td>
+                                    <td>
+                                        <%= coupon.minAmount %>
+                                    </td>
+                                    <td>
+                                        <%= coupon.maxAmount %>
+                                    </td> 
                                     <td>
                                         <%= coupon.expirationDate.toDateString() %>
                                     </td>
@@ -217,49 +225,57 @@
         </div>
     </div>
 
-    <!-- Edit Coupon Modal -->
-    <div class="modal fade" id="editCouponModal" tabindex="-1" aria-labelledby="editCouponModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editCouponModalLabel">Edit Coupon</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="/admin/editcoupon/<%= coupons._id %>" method="POST">
-                        <input type="hidden" name="id" id="editCouponId">
-                        <div class="mb-3">
-                            <label for="editCode" class="form-label">Coupon Code</label>
-                            <input type="text" name="code" id="editCode" class="form-control"
-                                value="<%= coupons.code %>" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editDiscount" class="form-label">Discount</label>
-                            <input type="number" name="discount" id="editDiscount" class="form-control" placeholder=""
-                                required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editMinAmount" class="form-label">Minimum Amount</label>
-                            <input type="number" name="minAmount" id="editMinAmount" class="form-control"
-                                placeholder="Enter minimum amount" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editMaxAmount" class="form-label">Maximum Amount</label>
-                            <input type="number" name="maxAmount" id="editMaxAmount" class="form-control"
-                                placeholder="Enter maximum amount" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editExpirationDate" class="form-label">Expiration Date</label>
-                            <input type="text" name="expirationDate" id="editExpirationDate"
-                                class="form-control flatpickr" placeholder="" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </form>
-                </div>
+<!-- Edit Coupon Modal -->
+<div class="modal fade" id="editCouponModal" tabindex="-1" aria-labelledby="editCouponModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCouponModalLabel">Edit Coupon</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Form for editing the coupon -->
+                <form id="editCouponForm">
+                    <!-- Hidden input to hold the coupon ID -->
+                    <input type="hidden" name="id" id="editCouponId" value="<%= coupon._id %>">
+                    
+                    <!-- Coupon Code Field -->
+                    <div class="mb-3">
+                        <label for="editCode" class="form-label">Coupon Code</label>
+                        <input type="text" name="code" id="editCode" class="form-control" value="<%= coupon.code %>" required>
+                    </div>
+
+                    <!-- Discount Field -->
+                    <div class="mb-3">
+                        <label for="editDiscount" class="form-label">Discount</label>
+                        <input type="number" name="discount" id="editDiscount" class="form-control" value="<%= coupon.discount %>" required>
+                    </div>
+
+                    <!-- Minimum Amount Field -->
+                    <div class="mb-3">
+                        <label for="editMinAmount" class="form-label">Minimum Amount</label>
+                        <input type="number" name="minAmount" id="editMinAmount" class="form-control" value="<%= coupon.minAmount %>" required>
+                    </div>
+
+                    <!-- Maximum Amount Field -->
+                    <div class="mb-3">
+                        <label for="editMaxAmount" class="form-label">Maximum Amount</label>
+                        <input type="number" name="maxAmount" id="editMaxAmount" class="form-control" value="<%= coupon.maxAmount %>" required>
+                    </div>
+
+                    <!-- Expiration Date Field -->
+                    <div class="mb-3">
+                        <label for="editExpirationDate" class="form-label">Expiration Date</label>
+                        <input type="text" name="expirationDate" id="editExpirationDate" class="form-control flatpickr" value="<%= coupon.expirationDate %>" required>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
             </div>
         </div>
     </div>
+</div>
 
 
 
@@ -275,7 +291,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         minDate: "today"
     });
 
-    // Handle delete form confirmation with SweetAlert2
+    // SweetAlert2
     const forms = document.querySelectorAll('.delete-form');
     forms.forEach(form => {
         form.addEventListener('submit', function (event) {
@@ -298,21 +314,48 @@ document.addEventListener('DOMContentLoaded', (event) => {
         });
     });
 
-    // Open the edit modal and populate fields
-    $('button[data-target="#editCouponModal"]').click(function () {
-        var couponId = $(this).data('id');
-        var couponCode = $(this).data('code');
-        var couponDiscount = $(this).data('discount');
-        var couponExpirationDate = $(this).data('expirationdate');
-        var couponMinAmount = $(this).data('minamount'); // New
-        var couponMaxAmount = $(this).data('maxamount'); // New
+    // the edit modal 
+    document.addEventListener('DOMContentLoaded', () => {
+        const editCouponForm = document.getElementById('editCouponForm'); // Assuming the form has an ID
 
-        $('#editCouponId').val(couponId);
-        $('#editCode').val(couponCode);
-        $('#editDiscount').val(couponDiscount);
-        $('#editExpirationDate').flatpickr().setDate(couponExpirationDate);
-        $('#editMinAmount').val(couponMinAmount); // New
-        $('#editMaxAmount').val(couponMaxAmount); // New
+        editCouponForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent the default form submission
+
+            const couponId = document.getElementById('editCouponId').value; // Capture the coupon ID
+            const code = document.getElementById('editCode').value;
+            const discount = document.getElementById('editDiscount').value;
+            const minAmount = document.getElementById('editMinAmount').value;
+            const maxAmount = document.getElementById('editMaxAmount').value;
+            const expirationDate = document.getElementById('editExpirationDate').value;
+
+            try {
+                const response = await fetch(`/admin/editcoupon/${couponId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        code,
+                        discount,
+                        minAmount,
+                        maxAmount,
+                        expirationDate
+                    })
+                });
+
+                if (response.ok) {
+                    // If the update is successful, you can redirect or show a success message
+                    window.location.href = '/admin/couponmanagement'; // Redirecting to coupon management page
+                } else {
+                    const errorData = await response.json();
+                    alert(`Error: ${errorData.error}`); // Display the error message
+                }
+            } catch (err) {
+                console.error('Error while updating coupon:', err);
+                alert('An error occurred while updating the coupon. Please try again later.');
+            }
+        });
     });
 });
 

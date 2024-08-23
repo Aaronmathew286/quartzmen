@@ -6,8 +6,6 @@ const Cart = require("../../models/cart")
 
 
 
-
-
 const userCart = async (req, res) => {
   try {
     const loggedIn = req.session.user;
@@ -55,7 +53,7 @@ const addToCart = async (req, res) => {
     if (!userData) {
       throw new Error("User not found");
     }
-    console.log("the useris active:",userData)
+    console.log("The user is active:", userData);
 
     const productId = req.params._id;
     const { quantity = 1 } = req.body; // Default quantity to 1 if not provided
@@ -68,7 +66,7 @@ const addToCart = async (req, res) => {
 
     let cartData = await Cart.findOne({ user: userData._id });
     if (!cartData) {
-      cartData = new Cart({ user: userData._id, items: [] ,grandTotal:0 });
+      cartData = new Cart({ user: userData._id, items: [], grandTotal: 0 });
     }
 
     const itemsIndex = cartData.items.findIndex(item => item.product.toString() === productId);
@@ -86,21 +84,19 @@ const addToCart = async (req, res) => {
       });
     }
 
-    cartData.grandTotal = cartData.items.reduce((total,item) => total+item.totalprice,0)
+    // Update the grand total of the cart
+    cartData.grandTotal = cartData.items.reduce((total, item) => total + item.totalprice, 0);
 
     // Save cart data to the database
     await cartData.save();
 
     // Redirect to the cart page
-    // res.redirect("/cart");
-    res.render("/cart").json({ message: "Added to cart" });
+    res.redirect("/cart");
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Internal Server Error" });
   }
-}
-
-
+};
 
 
 const updateCartQuantity = async (req, res) => {

@@ -169,13 +169,13 @@
                     <div class="card mb-3">
                         <div class="card-body">
                             <div id="wishlist-container">
-                                <% if (!wishlist || wishlist.length === 0) { %>
+                                <% if (!wishlist || wishlist.products.length === 0) { %>
                                     <p class="text-center" id="empty-wishlist">Your wishlist is empty. Add some items!</p>
                                 <% } else { %>
-                                    <% wishlist.forEach(item => { %>
+                                    <% wishlist.products.forEach(item => { %>
                                         <div class="row mb-3 wishlist-item" data-id="<%= item._id %>">
                                             <div class="col-md-2">
-                                                <img src="<%= item.image %>" alt="Product Image" class="img-fluid">
+                                                <img src="<%= item.image[0] %>" alt="Product Image" class="img-fluid">
                                             </div>
                                             <div class="col-md-7">
                                                 <h5><%= item.name %></h5>
@@ -188,7 +188,6 @@
                                         <hr>
                                     <% }); %>
                                 <% } %>
-                                
                             </div>
                         </div>
                     </div>
@@ -210,7 +209,7 @@
 
                     try {
                         const response = await fetch(`/wishlist/remove/${itemId}`, {
-                            method: 'DELETE'
+                            method: 'POST'
                         });
 
                         if (response.ok) {

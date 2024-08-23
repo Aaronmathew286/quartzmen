@@ -11,12 +11,13 @@ const { addCoupons } = require("../admincontroller/couponcontroller");
 
 const userCheckout = async (req, res) => {
     try {
-        const loggedIn = req.session.user ? true : false; // Set loggedIn variable
+
         const userData = req.session.user ? await User.findById(req.session.user) : null;
         const cartData = userData ? await Cart.findOne({ user: userData._id }).populate({
             path: "items.product",
             model: Product
         }) : null;
+
 
         if (!cartData || !Array.isArray(cartData.items)) {
             return res.status(500).render('user/checkout', {
@@ -32,16 +33,19 @@ const userCheckout = async (req, res) => {
         let discountAmount = 0;
 
         cartData.items.forEach(item => {
-            const offerPrice = item.product.price - (item.product.price * (item.product.offerPercentage / 100));
-            totalAmount += offerPrice * item.quantity;
-            discountAmount += (item.product.price - offerPrice) * item.quantity;
+            const offerPrice = cartData.grandTotal
+            console.log("This is the offerprice: ",offerPrice)
+            totalAmount += offerPrice
         });
+
+        console.log("The amount in the totalamount is :",totalAmount);
+        console.log("This is the discount amount: ",discountAmount);
 
         cartData.grandTotal = totalAmount;
         await cartData.save();
 
         res.render("user/checkout", {
-            loggedIn, // Pass loggedIn to EJS template
+            loggedIn:userData, // Pass loggedIn to EJS template
             totalAmount,
             userData,
             cartData,
@@ -101,44 +105,68 @@ const razorpay = new Razorpay({
 
 const userCheckoutPost = async (req, res) => {
     try {
-        console.log(req.body.paymentMethod);
-        const userId = req.session.user;
-        const { paymentMethod, cartId } = req.body;
-        const address = req.body;
+        const user = req.session.user;
 
-        const userData = await User.findById(userId);
-        if (!userData) return res.status(404).send("User not found");
+        // Initialize userData before logging or using it
+        const userData = await User.findById(user);
+        console.log("This is the user details: ", userData);
+
+        if (!userData) {
+            return res.status(404).send("User not Found");
+        }
+
+        const {paymentMethod, cartId, address} = req.body;
 
         const cartData = await Cart.findById(cartId).populate({
             path: "items.product",
             model: Product
         });
 
-        if (!cartData || !cartData.items || cartData.items.length === 0) return res.status(404).send("Cart not found or empty");
+        console.log("This is the cart's details included:", cartData);
+        if (!cartData || !cartData.items || cartData.items.length < 1) {
+            return res.status(404).send("Cart details are not found");
+        }
 
         let overallTotalMoney = 0;
         const products = cartData.items.map((item) => {
-            const offerPrice = item.product.originalPrice - (item.product.originalPrice * (item.product.offerPercentage / 100));
-            const totalPrice = offerPrice * item.quantity;
+            const totalPrice = item.product.price * item.quantity;
+            console.log("This is the total price in the checkout page:", totalPrice);
             overallTotalMoney += totalPrice;
             return {
                 product: item.product._id,
                 quantity: item.quantity,
-                price: offerPrice,
+                price: item.product.price,
                 totalPrice: totalPrice
             };
         });
 
-        // Razorpay integration:
-        if (paymentMethod === 'razorpay') {
+        if (paymentMethod === 'cash_on_delivery') {
+            if (overallTotalMoney < 500 || overallTotalMoney > 8000) {
+                return res.status(400).send("Cash on Delivery is only available for orders between ₹500 and ₹8000. Please choose Razorpay for this order.");
+            }
+
+            // Create the order with COD
+            const order = new Order({
+                user: userData._id,
+                products: products,
+                address: address,
+                paymentInfo: paymentMethod,
+                totalAmount: overallTotalMoney,
+                status: 'Pending'
+            });
+
+            await order.save();
+            await Cart.findByIdAndDelete(cartId);
+            return res.redirect("/order");
+        } else if (paymentMethod === 'razorpay') {
             const options = {
-                amount: Math.round(overallTotalMoney * 100), // Convert to paise and ensure integer
+                amount: Math.round(overallTotalMoney * 100),
                 currency: 'INR',
-                receipt: `receipt_${userId}_${Date.now()}`
+                receipt: `receipt_${userData._id}_${Date.now()}`
             };
             const razorpayOrder = await razorpay.orders.create(options);
 
-            res.json({
+            return res.json({
                 success: true,
                 razorpayOrderId: razorpayOrder.id,
                 amount: overallTotalMoney,
@@ -155,19 +183,6 @@ const userCheckoutPost = async (req, res) => {
                     address: 'Your Company Address'
                 }
             });
-        } else {
-            const order = new Order({
-                user: userId,
-                products: products,
-                address: address,
-                paymentInfo: paymentMethod,
-                totalAmount: overallTotalMoney,
-                status: 'Completed'
-            });
-
-            await order.save();
-            await Cart.findByIdAndDelete(cartId);
-            res.redirect("/order");
         }
     } catch (error) {
         console.error("Checkout error:", error);

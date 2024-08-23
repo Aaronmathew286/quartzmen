@@ -26,8 +26,11 @@ const addCoupons = async(req, res) => {
     try {
         const { code, discount, expirationDate, minAmount, maxAmount } = req.body;
 
-        // Ensure minAmount is less than maxAmount
-        if (minAmount >= maxAmount) {
+        const parseMinAmount = parseInt(minAmount);
+        const parseMaxAmount = parseInt(maxAmount);
+        console.log(`the min is ${parseMinAmount} and the max is : ${parseMaxAmount}`);
+
+        if (parseMinAmount > parseMaxAmount) {
             return res.status(400).json({ error: "Minimum amount should be less than maximum amount" });
         }
 
@@ -35,12 +38,12 @@ const addCoupons = async(req, res) => {
             code,
             discount,
             expirationDate,
-            minAmount,
-            maxAmount
+            minAmount:parseMinAmount,
+            maxAmount:parseMaxAmount
         });
 
         await coupon.save();
-        res.redirect("admin/couponmanagement");
+        res.redirect("/admin/couponmanagement");
     } catch (error) {
         console.error("An error occurred in Add coupons", error);
         res.status(500).send("Internal Error occurred in Add coupons");
@@ -49,8 +52,16 @@ const addCoupons = async(req, res) => {
 
 const editCoupons = async (req, res) => {
     try {
-        const id = req.params._id;
+        const id = req.params._id; // Use 'id' to match the route
+        console.log("This is the edit option:",id)
         const { code, discount, minAmount, maxAmount, expirationDate } = req.body;
+        const parseMinAmount = parseInt(minAmount);
+        const parseMaxAmount = parseInt(maxAmount);
+        console.log(`the min is ${parseMinAmount} and the max is : ${parseMaxAmount}`);
+        
+        if (parseMinAmount > parseMaxAmount) {
+            return res.status(400).json({ error: "Minimum amount should be less than maximum amount" });
+        }
 
         const coupon = await Coupon.findById(id);
         if (!coupon) {
@@ -59,8 +70,8 @@ const editCoupons = async (req, res) => {
 
         coupon.code = code;
         coupon.discount = discount;
-        coupon.minAmount = minAmount;
-        coupon.maxAmount = maxAmount;
+        coupon.minAmount = parseMinAmount;
+        coupon.maxAmount = parseMaxAmount;
         coupon.expirationDate = expirationDate;
 
         await coupon.save();
@@ -70,6 +81,7 @@ const editCoupons = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
+
 
 const deleteCoupons = async (req, res) => {
     try {

@@ -1,6 +1,6 @@
-const Wishlist = require('../../models/wishlist');
-
-
+const Wishlist = require("../../models/wishlist")
+const Product = require("../../models/product");
+const wishlist = require("../../models/wishlist");
 
 
 
@@ -28,8 +28,8 @@ const addToWishlist = async (req, res) => {
         }
 
         await isWishlist.save();
-        console.log("The wishlist is saved.")
-        return res.status(200).json({ success: true });
+        console.log("The wishlist is saved.") 
+        res.json({ success: true, message: "Added to cart" });
     } catch (err) {
         console.error("Error in adding to wishlist:", err);
         return res.status(500).send('Server Error');
@@ -38,17 +38,36 @@ const addToWishlist = async (req, res) => {
 
 const removeFromWishlist = async (req, res) => {
     try {
-        const wishlist = await Wishlist.findOne({ user: req.user._id });
+        const userId = req.session.user ? req.session.user._id : null;
+        if (!userId) {
+            return res.status(401).json({ success: false, message: "User not authenticated" });
+        }
+        console.log("This is the user id:", userId);
+
+        const productId = req.params.productId;
+        console.log("This is the product id:", productId);
+
+        const objectIdProductId = mongoose.Types.ObjectId(productId);
+        console.log("This is the object id:", objectIdProductId);
+
+        const wishlist = await Wishlist.findOne({ user: userId });
+        console.log("The user's wishlist:", wishlist);
 
         if (wishlist) {
-            wishlist.products = wishlist.products.filter(product => product.toString() !== req.params.productId);
-            await wishlist.save();
+            if (wishlist.products.includes(objectIdProductId)) {
+                wishlist.products.pull(objectIdProductId);
+                await wishlist.save();
+                console.log("Product removed from wishlist");
+                return res.status(200).json({ success: true });
+            } else {
+                return res.status(404).json({ success: false, message: "Product not found in wishlist" });
+            }
+        } else {
+            return res.status(404).json({ success: false, message: "Wishlist not found" });
         }
-
-        res.status(200).json({ success: true });
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        console.error("Error in removeFromWishlist:", err);
+        return res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
 

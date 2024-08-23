@@ -13,7 +13,7 @@ const storage = multer.diskStorage({
   },
 });
 
-console.log("multer");
+
 
 const fileFilter = (req, file, cb) => {
   if (allowedFileTypes.includes(file.mimetype)) {
