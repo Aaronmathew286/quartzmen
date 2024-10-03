@@ -1,23 +1,20 @@
 const multer = require("multer");
 
-//multer for the products images upload
 const allowedFileTypes = ["image/jpeg", "image/png", "image/webp"];
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads"); // Destination folder for uploaded images
+    cb(null, "uploads"); 
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + "-" + file.originalname); // Unique filename for each uploaded image
+    cb(null, uniqueSuffix + "-" + file.originalname); 
   },
 });
 
-
-
 const fileFilter = (req, file, cb) => {
   if (allowedFileTypes.includes(file.mimetype)) {
-    cb(null, true); // Accept the file
+    cb(null, true); 
   } else {
     cb(new Error(" Only JPG and PNG images are allowed."), false);
   }

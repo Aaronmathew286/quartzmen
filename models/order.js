@@ -24,6 +24,24 @@ const orderSchema = new mongoose.Schema({
           totalPrice: {
             type: Number,
             required: true
+          },
+          reason: {
+            type: String,
+            default: ""
+          },
+          productStatus:{
+            type: String,
+            required: true,
+            enum: ['Pending', 'Shipped', 'Failed', 'Delivered', 'Return','Cancel', 'Completed', 'Confirmed', 'Rejected' , 'Requested', 'Accepted'],
+            default: 'Pending'
+          },
+          orderCancelRequest: {
+            type: Boolean,
+            default: false,
+          },
+          orderReturnRequest: {
+            type: Boolean,
+            default: false,
           }
         }
       ],
@@ -50,20 +68,19 @@ const orderSchema = new mongoose.Schema({
         }
       },
       paymentInfo: {
-        
         type: String,
         required: true,
-        enum: ['cash_on_delivery','razorpay']
+        enum: ['cash_on_delivery','razorpay' ,'wallet']
         
       },
       totalAmount: {
         type: Number,
         required: true
       },
-      status: {
+      paymentStatus: {
         type: String,
         required: true,
-        enum: ['Pending', 'Completed', 'Failed'],
+        enum: ['Pending', 'Shipped', 'Failed', 'Delivered', 'Return','Cancel', 'Completed', 'Confirmed', 'Rejected'],
         default: 'Pending'
       },
       coupon: {
@@ -74,6 +91,7 @@ const orderSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
       }
+
 })
 
 const order= mongoose.model("order", orderSchema);

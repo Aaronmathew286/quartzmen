@@ -1,16 +1,13 @@
-const User = require("../../models/user");
-const Product = require("../../models/product");
-const Category = require("../../models/category");
 const Order = require("../../models/order");
-
 const PDFDocument = require('pdfkit');
 const ExcelJS = require('exceljs');
 
-// Existing salesReport function remains the same
+
 const salesReport = async (req, res) => {
     try {
-        const { type, startDate, endDate } = req.query;
+        const { type, startDate, endDate, page = 1, limit = 12 } = req.query;
         let query = {};
+        const skip = (page - 1) * limit;
 
         if (type === 'daily') {
             query.createdAt = { $gte: new Date().setHours(0, 0, 0, 0) };
@@ -26,11 +23,12 @@ const salesReport = async (req, res) => {
             query.createdAt = { $gte: new Date(startDate), $lte: new Date(endDate) };
         }
 
-        const orders = await Order.find(query);
-
+        const orders = await Order.find(query).skip(skip).limit(Number(limit));
+        const totalOrders = await Order.countDocuments(query);
         const totalSalesCount = orders.length;
         const totalOrderAmount = orders.reduce((sum, order) => sum + order.totalAmount, 0);
         const totalDiscount = orders.reduce((sum, order) => sum + (order.coupon ? order.coupon.discount : 0), 0);
+        const totalPages = Math.ceil(totalOrders / limit);
 
         res.render('admin/salesReport', {
             type,
@@ -39,7 +37,9 @@ const salesReport = async (req, res) => {
             totalSalesCount,
             totalOrderAmount,
             totalDiscount,
-            orders
+            orders,
+            currentPage: Number(page),
+            totalPages,
         });
     } catch (err) {
         console.error(err);
@@ -47,7 +47,6 @@ const salesReport = async (req, res) => {
     }
 };
 
-// Modified generatePDF function
 const generatePDF = async (req, res) => {
     try {
         const { type, startDate, endDate } = req.query;
@@ -99,7 +98,6 @@ const generatePDF = async (req, res) => {
     }
 };
 
-// New generateExcel function
 const generateExcel = async (req, res) => {
     try {
         const { type, startDate, endDate } = req.query;
@@ -121,7 +119,6 @@ const generateExcel = async (req, res) => {
         }
 
         const orders = await Order.find(query);
-
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('Sales Report');
 

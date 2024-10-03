@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Success</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<!-- Google Fonts -->
+<link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<link href="https://fonts.googleapis.com/css2?family=Almendra+SC&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        .message-box {
+            display: flex;
+            justify-content: center;
+            padding-top: 20vh;
+            padding-bottom: 20vh;
+        }
+        .success-container {
+            background: white;
+            height: 480px;
+            width: 90%;
+
+            text-align: center;
+        }
+        .confirm-green-box {
+            width: 100%;
+            height: 140px;
+            background: #d7f5da;
+        }
+        .monserrat-font {
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 2px;
+        }
+        .main {
+            width: 80vw;
+            margin: 0 10vw;
+            height: 50vh;
+            overflow: hidden;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #002547;
+        }
+        :root {
+            --background-1: #ffffff;
+            --background-2: #E3E3E3;
+            --background-3: #A3CCC8;
+            --text-1: #000000;
+            --text-2: #ffffff;
+            --text-size-reg: calc(20px + (20 - 18) * ((100vw - 300px) / (1600 - 300)));
+            --text-size-sml: calc(10px + (10 - 8) * ((100vw - 300px) / (1600 - 300)));
+        }
+        .navbar {
+            background-color: #1d1e1e;
+            position: relative;
+            z-index: 1020;
+        }
+
+        .navbar-brand {
+            font-family: 'Almendra SC', serif;
+            color: #FFDD00;
+        }
+
+        .navbar,
+        .navbar .nav-link,
+        .navbar .navbar-text {
+            color: white;
+        }
+
+        .navbar .nav-link:hover,
+        .navbar .nav-link:focus,
+        .navbar .dropdown-item {
+            color: #ffdd00;
+        }
+
+        .navbar .dropdown-menu {
+            background-color: #1d1e1e;
+            z-index: 1050;
+        }
+
+        .navbar .dropdown-item {
+            color: white;
+        }
+
+        .navbar .dropdown-item:hover {
+            background-color: #ffdd00;
+            color: #000000;
+        }
+
+        .navbar .navbar-toggler .navbar-toggler-icon {
+            color: #ffffff;
+        }
+
+        .form-inline .form-control {
+            border: none;
+            margin-left: 50px;
+        }
+
+        .input-group-append {
+            padding-left: 20px;
+        }
+
+        .rounded-pill {
+            border-radius: 50px !important;
+        }
+
+        .rounded-pill .input-group-append .btn {
+            border-top-right-radius: 50px !important;
+            border-bottom-right-radius: 50px !important;
+        }
+        .verticle-align {
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .no-style {
+            padding: 0;
+            margin: 0;
+        }
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        @media (min-width: 576px) { /* sm size */ }
+        @media (min-width: 768px) { /* md size */ }
+        @media (min-width: 992px) { /* lg size */ }
+        @media (min-width: 1200px) { /* xl size */ }
+    </style>
+</head>
+<body>
+
+    <!-- start of nav -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="navbar-brand-container d-flex align-items-center">
+            <div class="navbar-brand" onclick="location.href='#'">Quartz
+                <span class="material-symbols-outlined ms-2">watch_wake</span>
+                Men
+            </div>
+        </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <form class="form-inline mx-auto" action="/search" method="GET">
+                <div class="input-group">
+                    <input type="text" name="query" class="form-control border-0 rounded-pill bg-white text-black"
+                        placeholder="Search ..." aria-label="Search">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary rounded-pill" type="submit">
+                            <i class="fas fa-search text-white"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/wishlist" role="button" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa-solid fa-heart"></i>
+                    </a>
+                </li>
+                <% if (loggedIn) { %>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink2" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa-solid fa-user"></i>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
+                            <a class="dropdown-item" href="/profile">Profile</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/logout">Logout</a>
+                        </div>
+                    </li>
+                    <% } else { %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/signup"><i class="fa-solid fa-user"></i>Sign Up</a>
+                        </li>
+                        <% } %>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/cart" role="button" aria-haspopup="true"
+                                    aria-expanded="false">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                </a>
+                            </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- end of nav -->
+    
+    <!-- start of main -->
+
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <div class="message-box">
+              <div class="success-container">
+                <br>
+                <img src="https://scontent-lcy1-1.xx.fbcdn.net/v/t1.6435-9/31301640_2114242505489348_3921532491046846464_n.png?_nc_cat=104&ccb=1-3&_nc_sid=973b4a&_nc_ohc=pfOalMq8BzUAX-k-rhY&_nc_ht=scontent-lcy1-1.xx&oh=3af014dd12fa6e3d1816a3425a80e516&oe=609BE04A" alt="" style="height: 100px;">
+                <br>
+                <div style="padding-left: 5%; padding-right: 5%">
+                  <hr>
+                </div>
+                <br>
+                <h1 class="monserrat-font" style="color: Grey">Thank you for your order</h1>
+                <br>
+                <div class="confirm-green-box">
+                  <br>
+                  <h5>ORDER CONFIRMATION</h5>
+                  <p>Your order has been successful!</p>
+                  <p>Thank you for choosing QuartzMen. You will shortly receive a confirmation email.</p>
+                </div>
+                <br>
+                <div class="btn-group">
+                  <button id="back-to-shop-btn" class="btn btn-ouioui-secondary">Back to shop</button>
+                  <button id="show-orders-btn" class="btn btn-ouioui-secondary">Show Orders</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <!-- end of main -->
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('back-to-shop-btn').addEventListener('click', function() {
+            window.location.href = '/';
+        });
+        document.getElementById('show-orders-btn').addEventListener('click', function() {
+            window.location.href = '/order';
+        });
+    </script>
+</body>
+</html>

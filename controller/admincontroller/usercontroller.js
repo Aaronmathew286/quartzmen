@@ -1,49 +1,43 @@
 const User = require('../../models/user')
 
 
-
-const usermanagement = async(req,res) => {
+const userManagement = async(req,res) => {
         try{
             const users = await User.find()
             res.render("admin/usermanagement",{status:true,users:users})
         }catch(err){
             console.error(err)
+            res.render("Internal server error occured in user management")
         }
 }
 
-
-
-const blockuserpost = async (req, res) => {
+const blockUserPost = async (req, res) => {
     try{
         const userID = req.params._id;
-        console.log(userID);
         const user = await User.updateOne({_id : userID},{$set : {isBlocked:false}})
-        console.log(user)
+
         res.redirect("/admin/usermanagement")
     }catch(error){
-        console.log("error in block",error)
+        console.error("error in block",error)
+        res.render("Internal Server error")
     }
 };
 
-const unblockuserpost = async (req, res) => {
+const unblockUserPost = async (req, res) => {
     try{
         const userID = req.params._id;
-        console.log(userID);
         const user = await User.updateOne({_id : userID},{$set : {isBlocked:true}})
-        console.log(user)
+
         res.redirect("/admin/usermanagement")
     }catch(error){
         res.render("admin/usermanagement")
-        console.log("error in block",error)
+        console.error("error in block",error)
     }
 };
 
 
 module.exports = {
-
-    usermanagement,
-    blockuserpost,
-    unblockuserpost,
-    
-
+    userManagement,
+    blockUserPost,
+    unblockUserPost,
 }

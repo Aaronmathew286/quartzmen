@@ -1,50 +1,500 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link href="https://fonts.googleapis.com/css2?family=Almendra+SC&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <style>
+            body {
+                /* background-color: #001131; */
+                background-color: #002547;
+                color: white;
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+            }
+    
+            #content {
+                flex: 1;
+                min-height: calc(100vh - 200px);
+            }
+    
+            .navbar {
+                background-color: #1d1e1e;
+                position: relative;
+                z-index: 1020;
+            }
+    
+            .navbar-brand {
+                font-family: 'Almendra SC', serif;
+                color: #FFDD00;
+            }
+    
+            .navbar,
+            .navbar .nav-link,
+            .navbar .navbar-text {
+                color: white;
+            }
+    
+            .navbar .nav-link:hover,
+            .navbar .nav-link:focus,
+            .navbar .dropdown-item {
+                color: #ffdd00;
+            }
+    
+            .navbar .dropdown-menu {
+                background-color: #1d1e1e;
+                z-index: 1050;
+            }
+    
+            .navbar .dropdown-item {
+                color: white;
+            }
+    
+            .navbar .dropdown-item:hover {
+                background-color: #ffdd00;
+                color: #000000;
+            }
+    
+            .navbar .navbar-toggler .navbar-toggler-icon {
+                color: #ffffff;
+            }
+    
+            /* Modal styles */
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 1;
+                padding-top: 100px;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                overflow: auto;
+                background-color: rgba(0, 0, 0, 0.5);
+            }
+    
+            .modal-body {
+                padding: 20px;
+                /* Add padding to the modal body */
+                background-color: #f9f9f9;
+                /* Optional: Light background for contrast */
+            }
+    
+            .modal-body .col-md-3 {
+                padding: 10px;
+                /* Add padding between product cards */
+            }
+    
+            .modal-content {
+                background-color: #fff;
+                margin: auto;
+                padding: 20px;
+                border: 1px solid #888;
+                width: 80%;
+            }
+    
+            .modal-body .card {
+                border: 1px solid #e0e0e0;
+                /* Add a light border around each card */
+                border-radius: 8px;
+                /* Optional: Slight rounding of card corners */
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                /* Add a subtle shadow */
+                margin-bottom: 20px;
+                /* Add space between each card */
+            }
+    
+            .modal-body .card:hover {
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+                /* Enhance shadow on hover */
+                transition: box-shadow 0.3s ease;
+                /* Smooth hover effect */
+            }
+    
+            .modal-body img {
+                border-top-left-radius: 8px;
+                border-top-right-radius: 8px;
+                max-height: 200px;
+                /* Limit image height to prevent overflow */
+                object-fit: cover;
+                /* Make sure the image fits nicely inside */
+            }
+    
+            .close {
+                color: #aaa;
+                float: right;
+                font-size: 28px;
+                font-weight: bold;
+            }
+    
+            .close:hover,
+            .close:focus {
+                color: #000;
+                text-decoration: none;
+                cursor: pointer;
+            }
+            .product-contanier-heading {
+                 padding-left: 200px;
+            }
+    
+            /* Product card styles */
+            .product-card {
+                border: 1px solid #ddd;
+                padding: 15px;
+                margin-bottom: 10px;
+            }
+    
+            .product-card img {
+                width: 100px;
+                height: auto;
+            }
+    
+    
+            .form-inline .form-control {
+                border: none;
+                margin-left: 50px;
+            }
+    
+            .input-group-append {
+                padding-left: 20px;
+            }
+    
+            .rounded-pill {
+                border-radius: 50px !important;
+            }
+    
+            .rounded-pill .input-group-append .btn {
+                border-top-right-radius: 50px !important;
+                border-bottom-right-radius: 50px !important;
+            }
+    
+            .second-nav {
+                background-color: rgba(0, 0, 0, 0.822);
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                z-index: 1000;
+            }
+    
+            .second-nav .nav-link {
+                text-transform: capitalize;
+            }
+    
+            .carousel-inner img {
+                width: 100%;
+                height: 700px;
+                object-fit: cover;
+            }
+    
+            .nav-item .fa-solid:hover {
+                color: #FFDD00;
+            }
+    
+            .custom-navbar.navbar-nav {
+                margin-top: 0;
+            }
+    
+            .custom-navbar.nav-link {
+                color: #333;
+                transition: color 0.3s ease-in-out;
+            }
+    
+            .custom-navbar.nav-link:hover {
+                color: #007bff;
+            }
+    
+            .material-symbols-outlined {
+                margin-bottom: 2px;
+                color: #FFDD00;
+            }
+    
+            .carousel-control-prev,
+            .carousel-control-next {
+                width: 5%;
+            }
+    
+            .carousel-control-prev:hover,
+            .carousel-control-next:hover {
+                background: none;
+            }
+    
+            .footer {
+                background-color: #000;
+                color: #fff;
+                padding: 20px 0;
+            }
+    
+            .footer a:hover {
+                color: yellow;
+            }
+    
+            #priceDisplay {
+                margin-top: 10px;
+            }
+    
+            .scrolling-container {
+                display: flex;
+                overflow-x: auto;
+                background-color: white;
+                /* Set the background color to white */
+                padding: 10px;
+                /* Optional: Add padding if you want space around the content */
+    
+            }
+    
+            .logo {
+                flex: 0 0 auto;
+                /* Prevent logos from shrinking */
+                margin-right: 20px;
+                /* Optional: Add spacing between logos */
+            }
+    
+            .logo img {
+                height: 60px;
+                /* Set the desired height for all images */
+                width: auto;
+                /* Maintain aspect ratio */
+                display: block;
+                /* Ensure images display correctly */
+            }
+    
+            /* Optional: Add styles to hide scrollbars */
+            .scrolling-container::-webkit-scrollbar {
+                display: none;
+                /* Hide scrollbar for WebKit browsers */
+            }
+    
+    
+    
+            .card {
+                background-color: #F4FCFF;
+                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+                transition: 0.3s;
+                width: 100%;
+                border-radius: 5px;
+                color: #000;
+                height: auto;
+                /* Changed from fixed height to auto */
+                overflow: hidden;
+                margin-bottom: 20px;
+                /* Added bottom margin */
+            }
+    
+            .card-img-top {
+                width: 100%;
+                height: 250px;
+                object-fit: cover;
+            }
+    
+            .card-body {
+                padding: 20px;
+            }
+    
+            .card-title-model,
+            .card-title {
+                font-size: 24px;
+                margin-bottom: 10px;
+            }
+    
+            .card-text {
+                font-size: 16px;
+                line-height: 1.5;
+                margin-bottom: 10px;
+            }
+    
+            .card:hover {
+                transform: scale(1.05);
+                /* Increased scale slightly */
+                transition: transform 0.3s ease-in-out;
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+                /* Increased shadow on hover */
+            }
+    
+            .card-img-top i {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                font-size: 20px;
+                color: rgb(208, 208, 208);
+            }
+    
+            .fa-heart {
+                color: rgb(255, 255, 255);
+                /* Default color */
+            }
+    
+            .fa-heart.liked {
+                color: red;
+                /* Color when liked */
+            }
+    
+            .container {
+                margin-bottom: 50px;
+            }
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
+        .fa-heart {
+            color: rgb(255, 255, 255);
+            /* Default color */
         }
-        .product-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
+
+        .fa-heart.liked {
+            color: red;
+            /* Color when liked */
         }
-        .product-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 10px;
-            width: 200px;
-            text-align: center;
-        }
-        .product-card img {
-            max-width: 100%;
-            border-radius: 8px;
+
+        .container {
+            margin-bottom: 50px;
         }
     </style>
 </head>
-<body>
-    <h1>Search Results for "<%= query %>"</h1>
 
-    <% if (products.length > 0) { %>
-        <div class="product-list">
-            <% products.forEach(product => { %>
-                <div class="product-card">
-                    <img src="<%= product.image[0] %>" alt="<%= product.name %>">
-                    <h2><%= product.name %></h2>
-                    <p>Brand: <%= product.brand %></p>
-                    <p>Category: <%= product.category %></p>
-                    <p>Price: $<%= product.price %></p>
-                    <p><%= product.description %></p>
-                </div>
-            <% }) %>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="navbar-brand-container d-flex align-items-center">
+            <div class="navbar-brand" onclick="location.href='/'" type="button">Quartz
+                <span class="material-symbols-outlined ms-2">watch_wake</span>
+                Men
+            </div>
         </div>
-    <% } else { %>
-        <p>No products found matching your query.</p>
-    <% } %>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <form class="form-inline mx-auto" action="/search" method="GET">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control border-0 rounded-pill bg-white text-black"
+                        placeholder="Search" aria-label="Search">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary rounded-pill" type="submit">
+                            <i class="fas fa-search text-white"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+
+
+            <ul class="navbar-nav ml-auto">
+                <a class="nav-link" href="/shopwatches"><i class="fa-solid "></i>Shop</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/wishlist" role="button" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa-solid fa-heart"></i>
+                    </a>
+                </li>
+                <% if (loggedIn) { %>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" href="/profile" role="button" aria-haspopup="true"
+                        aria-expanded="false">
+                            <i class="fa-solid fa-user"></i>
+                        </a>
+                    </li>
+                    <% } else { %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/signup"><i class="fa-solid fa-user"></i>Sign Up</a>
+                        </li>
+                        <% } %>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/cart" role="button" aria-haspopup="true"
+                                    aria-expanded="false">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                </a>
+                            </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Search Results</li>
+            </ol>
+        </nav>
+
+        <h1 class="text-center">Search Results for "<%= searchTerm %>"</h1>
+        <div class="container mt-5 product-container">
+            <div class="row">
+                <% if (products.length === 0) { %>
+                    <div class="col-12 text-center">
+                        <h2>No such products available.</h2>
+
+                    </div>
+                <% } else { %>
+                <% products .sort((a, b)=> new Date(b.createdAt) - new Date(a.createdAt))
+                    .slice(0, 4)
+                    .forEach((product) => { %>
+                    <a href="/productdetail/<%= product._id %>" class="col-md-3"
+                        style="text-decoration: none; color: inherit;">
+                        <div class="card">
+                            <div class="card-img-top position-relative">
+                                <i class="<%= product.wishlist ? 'fas fa-heart liked' : 'far fa-heart' %>"
+                                    data-product-id="<%= product._id %>" style="cursor: pointer;"
+                                    onclick="toggleWishlist(this, event)">
+                                </i>
+                                <img src="/uploads/<%= product.image[0] %>" alt="Product Image" class="card-img-top">
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <%= product.brand %>
+                                </h5>
+                                <p class="card-text-model">Model: <%= product.name %>
+                                </p>
+                                <p class="card-text-price">₹<%= product.price.toFixed(2) %>
+                                </p>
+                                <% if(product.stock> 10) { %>
+                                    <p class="card-text-price">In-stock</p>
+                                    <% } else if(product.stock < 10) { %>
+                                        <p class="card-text-price">Limited-Stock</p>
+                                        <% } else if(product.stock===0) { %>
+                                            <p class="card-text-price text-danger">Out of Stock</p>
+                                            <% } %>
+                            </div>
+                        </div>
+                    </a>
+                    <% }) %>
+                    <% } %>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <% for (let i=1; i <=totalPages; i++) { %>
+                    <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                        <a class="page-link" href="?q=<%= searchTerm %>&page=<%= i %>">
+                            <%= i %>
+                        </a>
+                    </li>
+                    <% } %>
+            </ul>
+        </nav>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

@@ -1,46 +1,48 @@
-const User = require("../../models/user")
-const Product = require("../../models/product")
 const Category = require("../../models/category")
 
+const categoryManagement = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10; 
+        const skip = (page - 1) * limit;
 
+        const categoryData = await Category.find().skip(skip).limit(limit);
+        const count = await Category.countDocuments(); 
 
-const categorymanagement = async(req,res) =>{
-
-    try{
-        const categoryData =await Category.find()
-        res.render('admin/categorymanagement',{category:categoryData})
-    }
-    catch(error){
+        res.render('admin/categorymanagement', {
+            category: categoryData,
+            currentPage: page,
+            totalPages: Math.ceil(count / limit), 
+        });
+    } catch (error) {
         console.error("Error during category getting:", error);
         return res.status(500).json({ error: "Internal server error" });
     }
-}
+};
 
-const addcategory = (req,res) =>{
+const addCategory = (req, res) => {
     res.render("admin/addcategory")
 }
 
-const addcategorypost = async (req, res) => {
+const addCategoryPost = async (req, res) => {
     try {
-        const { name,description } = req.body;
+        const { name, description } = req.body;
         const lowercaseCategory = name.trim().toLowerCase();
-
         const existingCategory = await Category.findOne({ categoryName: lowercaseCategory });
 
-        if (!existingCategory) {
+        if (existingCategory) {
+            res.render("admin/addcategory", { errMessage: "The category already exists. Please give another category name." });
+        } else if (!existingCategory) {
             const newCategory = new Category({
                 categoryName: lowercaseCategory,
-                description: description, 
+                description: description,
                 isBlocked: false
             });
 
             await newCategory.save();
-
-            console.log("New category successfully added:", newCategory);
             res.redirect("/admin/categorymanagement")
-        } else {
-            console.log("Category already exists");
-            res.render("admin/category",{errMessage:"Category already exists"})
+        }else{
+            res.render("admin/addcategory")
         }
     } catch (error) {
         console.error("Error during adding:", error);
@@ -48,85 +50,75 @@ const addcategorypost = async (req, res) => {
     }
 };
 
-const editcategory = async (req, res) => {
-    console.log("edit category works");
+const editCategory = async (req, res) => {
     try {
         const id = req.params._id;
-        console.log(id);
-        const { categoryName, description } = req.body; 
         const categoryEdit = await Category.findById(id);
 
-        if (categoryEdit) {
- 
-            categoryEdit.categoryName = categoryName || categoryEdit.categoryName; 
-            categoryEdit.description = description || categoryEdit.description;
-            await categoryEdit.save();
+        if(!categoryEdit){
+            res.render("admin/categorymanagement",{errMessage: "The category is not found"})
         }
-        res.render("admin/editcategory", { categoryEdit: categoryEdit, errMessage: "error" });
+        res.render("admin/editcategory", { categoryEdit: categoryEdit, errMessage: undefined });
     } catch (error) {
-        console.log(error);
-        res.status(500).send("An error occurred while editing the category."); 
+        console.error("This is the error",error);
+        res.status(500).send("An error occurred while editing the category.");
     }
 };
 
-
-
-const editcategorypost = async (req, res) => {
+const editCategoryPost = async (req, res) => {
     try {
         const id = req.params._id;
-        console.log(id);
-        const newCategoryEdit = req.body.categoryName;
-        console.log(newCategoryEdit);
-
+        const { categoryName, description } = req.body; 
+        const lowercaseCategory = categoryName.trim().toLowerCase();
         const categoryToEdit = await Category.findById(id);
         if (!categoryToEdit) {
             return res.status(404).send("Category not found");
         }
 
-        categoryToEdit.name = newCategoryEdit; 
+        categoryToEdit.categoryName = lowercaseCategory 
+        categoryToEdit.description = description 
         await categoryToEdit.save();
 
         res.redirect("/admin/categorymanagement");
     } catch (error) {
-        console.log(error);
+        console.error("An error occured:", error);
         res.status(500).send("Internal Server Error");
     }
 };
 
-const blockcategorypost = async (req, res) => {
-    try{
+const blockCategoryPost = async (req, res) => {
+    try {
         const categoryID = req.params._id;
-        console.log(categoryID);
-        const product = await Category.updateOne({_id : categoryID},{$set : {isBlocked:true}})
-        console.log(product)
+        const product = await Category.updateOne({ _id: categoryID }, { $set: { isBlocked: true } })
         res.redirect("/admin/categorymanagement")
-    }catch(error){
-        console.log("error in block",error)
+    } catch (error) {
+        console.error("error in block", error)
+        res.status(500).send("Internal Server Error");
     }
-    
+
 };
 
-const unblockcategorypost = async (req, res) => {
-    try{
+const unblockCategoryPost = async (req, res) => {
+    try {
         const productID = req.params._id;
-        console.log(productID);
-        const product = await Category.updateOne({_id : productID},{$set : {isBlocked:false}})
-        console.log(product)
+        const product = await Category.updateOne({ _id: productID }, { $set: { isBlocked: false } })
+
         res.redirect("/admin/categorymanagement")
-    }catch(error){
-        console.log("error in block",error)
+    } catch (error) {
+        console.error("error in block", error)
+        res.status(500).send("Internal Server Error");
     }
-    
+
 };
 
 module.exports = {
 
-    categorymanagement,
-    addcategory,
-    editcategory,
-    addcategorypost,
-    editcategorypost,
-    blockcategorypost,
-    unblockcategorypost,
+    categoryManagement,
+    addCategory,
+    editCategory,
+    addCategoryPost,
+    editCategoryPost,
+    blockCategoryPost,
+    unblockCategoryPost,
 
 }

@@ -57,6 +57,28 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  wallet:{
+    type: Number,
+    default: 0
+  },
+  wallethistory: [
+    {
+      process: {
+        type: String, 
+      },
+      amount: {
+        type: Number,
+      },
+      date: {
+        type: Date,
+        default: Date.now,
+      },
+      status:{
+        type: String,
+        enum: ['Debited', 'Credited'],
+      }
+    },
+  ],
 });
 
 const User = mongoose.model('User', userSchema);

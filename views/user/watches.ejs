@@ -17,7 +17,8 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- Custom CSS -->
     <style>
-        html, body {
+        html,
+        body {
             height: 100%;
             margin: 0;
             display: flex;
@@ -36,6 +37,8 @@
 
         .navbar {
             background-color: #1d1e1e;
+            position: relative;
+            z-index: 1020;
         }
 
         .navbar-brand {
@@ -57,6 +60,7 @@
 
         .navbar .dropdown-menu {
             background-color: #1d1e1e;
+            z-index: 1050;
         }
 
         .navbar .dropdown-item {
@@ -72,8 +76,39 @@
             color: #ffffff;
         }
 
+        .watch-category {
+            text-align: center;
+        }
+
+        .form-inline .form-control {
+            border: none;
+            margin-left: 50px;
+        }
+
+        .input-group-append {
+            padding-left: 20px;
+        }
+
+        .rounded-pill {
+            border-radius: 50px !important;
+        }
+
+        .rounded-pill .input-group-append .btn {
+            border-top-right-radius: 50px !important;
+            border-bottom-right-radius: 50px !important;
+        }
+
         .second-nav {
-            background-color: #25a0a0;
+            background-color: rgba(0, 0, 0, 0.822);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .second-nav .nav-link {
+            text-transform: capitalize;
         }
 
         .carousel-inner img {
@@ -124,6 +159,44 @@
             color: yellow;
         }
 
+        #priceDisplay {
+            margin-top: 10px;
+        }
+
+        .scrolling-container {
+            display: flex;
+            overflow-x: auto;
+            background-color: white;
+            /* Set the background color to white */
+            padding: 10px;
+            /* Optional: Add padding if you want space around the content */
+
+        }
+
+        .logo {
+            flex: 0 0 auto;
+            /* Prevent logos from shrinking */
+            margin-right: 20px;
+            /* Optional: Add spacing between logos */
+        }
+
+        .logo img {
+            height: 60px;
+            /* Set the desired height for all images */
+            width: auto;
+            /* Maintain aspect ratio */
+            display: block;
+            /* Ensure images display correctly */
+        }
+
+        /* Optional: Add styles to hide scrollbars */
+        .scrolling-container::-webkit-scrollbar {
+            display: none;
+            /* Hide scrollbar for WebKit browsers */
+        }
+
+
+
         .card {
             background-color: #F4FCFF;
             box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
@@ -131,8 +204,11 @@
             width: 100%;
             border-radius: 5px;
             color: #000;
-            height: 400px;
+            height: auto;
+            /* Changed from fixed height to auto */
             overflow: hidden;
+            margin-bottom: 20px;
+            /* Added bottom margin */
         }
 
         .card-img-top {
@@ -158,8 +234,11 @@
         }
 
         .card:hover {
-            transform: scale(1.02);
+            transform: scale(1.05);
+            /* Increased scale slightly */
             transition: transform 0.3s ease-in-out;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+            /* Increased shadow on hover */
         }
 
         .card-img-top i {
@@ -168,6 +247,17 @@
             right: 5px;
             font-size: 20px;
             color: rgb(0, 0, 0);
+        }
+
+
+        .fa-heart {
+            color: rgb(255, 255, 255);
+            /* Default color */
+        }
+
+        .fa-heart.liked {
+            color: red;
+            /* Color when liked */
         }
 
         .container {
@@ -179,21 +269,25 @@
 
 <body>
     <nav class="navbar navbar-expand-lg">
-        <div class="navbar-brand-container d-flex align-items-center">
-            <div class="navbar-brand" onclick="location.href='#'">Quartz
-                <span class="material-symbols-outlined ms-2">watch_wake</span>
-                Men</div>
-        </div>
+        <a href="/" class="logo" style="text-decoration: none;">
+            <div class="navbar-brand-container d-flex align-items-center">
+                <div class="navbar-brand">Quartz
+                    <span class="material-symbols-outlined ms-2">watch_wake</span>
+                    Men
+                </div>
+            </div>
+        </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
             aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
-            <form class="form-inline mx-auto">
+            <form class="form-inline mx-auto" action="/search" method="GET">
                 <div class="input-group">
-                    <input type="text" class="form-control border-0 rounded-pill bg-white text-black" placeholder="Search" aria-label="Search">
+                    <input type="text" name="q" class="form-control border-0 rounded-pill bg-white text-black"
+                        placeholder="Search" aria-label="Search">
                     <div class="input-group-append">
-                        <button class="btn btn-outline-secondary rounded-pill" type="button">
+                        <button class="btn btn-outline-secondary rounded-pill" type="submit">
                             <i class="fas fa-search text-white"></i>
                         </button>
                     </div>
@@ -201,87 +295,96 @@
             </form>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link" href="/wishlist" role="button" aria-haspopup="true" aria-expanded="false">
                         <i class="fa-solid fa-heart"></i>
                     </a>
                 </li>
                 <% if (loggedIn) { %>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink2" role="button"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa-solid fa-user"></i>
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
-                        <a class="dropdown-item" href="#">Profile</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/logout">Logout</a>
-                    </div>
-                </li>
-                <% } else { %>
-                <li class="nav-item">
-                    <a class="nav-link" href="/signup"><i class="fa-solid fa-user"></i>Sign Up</a>
-                </li>
-                <% } %>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                    </a>
-                </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" href="/profile" role="button" aria-haspopup="true"
+                        aria-expanded="false">
+                            <i class="fa-solid fa-user"></i>
+                        </a>
+                    </li>
+                    <% } else { %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/signup"><i class="fa-solid fa-user"></i>Sign Up</a>
+                        </li>
+                        <% } %>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/cart" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                </a>
+                            </li>
             </ul>
         </div>
     </nav>
 
     <div id="content">
-        <!-- Your page content here -->
-        <div class="container mt-5">
+        <!-- Product Container -->
+
+        <div class="container mt-5 product-container">
+            <h2 class="watch-category">Watch Category</h2><br>
             <div class="row">
-                <!-- First Card -->
-                
-                <% products.forEach((product) => {  %>
-                <div class="col-md-3" onclick="location.href='/productdetail/<%= product._id %>';">
-                    <div class="card">
-                        <div class="card-img-top view-button" data-target=".view-text">
-                            <i class="fa-regular fa-heart" type=""></i>
-                            <img src="/uploads/<%= product.image[0] %>" alt="Product Image" class="card-img-top">
+                <% products.forEach((product)=> { %>
+                    <a href="/productdetail/<%= product._id %>" class="col-md-3"
+                        style="text-decoration: none; color: inherit;">
+                        <div class="card">
+                            <div class="card-img-top position-relative">
+                                <!-- Toggle heart icon based on wishlist status -->
+                                <i class="<%= product.wishlist ? 'fas fa-heart liked' : 'far fa-heart' %>"
+                                    data-product-id="<%= product._id %>" style="cursor: pointer;"
+                                    onclick="toggleWishlist(this, event)">
+                                </i>
+                                <img src="/uploads/<%= product.image[0] %>" alt="Product Image" class="card-img-top">
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <%= product.brand %>
+                                </h5>
+                                <p class="card-text-model">Model: <%= product.name %>
+                                </p>
+                                <p class="card-text-price">₹<%= product.price.toFixed(2) %>
+                                </p>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <h5 class="card-title"><%= product.brand %></h5>
-                            <p class="card-text-model">Model: <%= product.name %></p>
-                            <p class="card-text-price"><%= product.price %></p>
-                        </div>
-                        
-                    </div>
-                </div>
-                <% }) %>
+                    </a>
+                    <% }) %>
             </div>
         </div>
     </div>
 
-    <footer class="footer py-5 bg-black text-white">
-        <div class="container">
-            <div class="row">
-                <!-- Column 1 -->
-                <div class="col-md-4">
-                    <h5>About Us</h5>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed
-                        cursus ante dapibus diam.</p>
-                </div>
-                <!-- Column 2 -->
-                <div class="col-md-4">
-                    <h5>Our Services</h5>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed
-                        cursus ante dapibus diam.</p>
-                </div>
-                <!-- Column 3 -->
-                <div class="col-md-4">
-                    <h5>Contact Us</h5>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed
-                        cursus ante dapibus diam.</p>
-                </div>
-            </div>
-        </div>
-    </footer>
 
+
+    <script>
+
+document.getElementById('priceRange').addEventListener('input', function () {
+            const priceDisplay = document.getElementById('priceDisplay');
+            priceDisplay.textContent = `Selected Price: ₹${this.value}`;
+        });
+
+
+        // /wishlist script
+        function toggleWishlist(icon, event) {
+            event.preventDefault(); // Prevents the default action, such as navigating to another page
+
+            const productId = icon.getAttribute('data-product-id');
+            const isLiked = icon.classList.contains('liked');
+            const url = isLiked ? `/wishlist/remove/${productId}` : `/wishlist/add/${productId}`;
+            const method = 'POST';
+
+            fetch(url, { method })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        icon.classList.toggle('liked');
+                    } else {
+                        console.error('Failed to update wishlist');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
 </body>
 
 </html>

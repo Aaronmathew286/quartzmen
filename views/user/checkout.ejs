@@ -6,15 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Checkout</title>
   <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <!-- Google Fonts -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
   <link href="https://fonts.googleapis.com/css2?family=Almendra+SC&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <style>
     body {
-      background-color: #dee9ff;
+      background-color: #001131;
       color: rgb(0, 0, 0);
       display: flex;
       flex-direction: column;
@@ -77,222 +76,574 @@
       color: yellow;
     }
 
-    .gradient-custom {
-      background: #6a11cb;
-      background: -webkit-linear-gradient(to right, rgb(0, 30, 90), rgb(0, 52, 142));
-      background: linear-gradient(to right, rgb(0, 30, 90), rgb(0, 54, 147));
+    .quantity-input {
+      display: flex;
+      align-items: center;
+    }
+
+    .quantity-input button {
+      width: 35px;
+      height: 35px;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .quantity-input input {
+      width: 50px;
+      height: 35px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+
+    .payment-methods input[type="radio"] {
+      margin-right: 10px;
     }
   </style>
 </head>
 
 <body>
+
   <nav class="navbar navbar-expand-lg">
-    <div class="navbar-brand-container d-flex align-items-center">
-      <div class="navbar-brand" onclick="location.href='#'">Quartz
-        <span class="material-symbols-outlined ms-2">watch_wake</span>
-        Men
-      </div>
-    </div>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
-      aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
+    <a href="/" class="logo" style="text-decoration: none;">
+        <div class="navbar-brand-container d-flex align-items-center">
+            <div class="navbar-brand">Quartz
+                <span class="material-symbols-outlined ms-2">watch_wake</span>
+                Men
+            </div>
+        </div>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-            <i class="fa-solid fa-heart"></i>
-          </a>
-        </li>
-        <% if (loggedIn) { %>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink2" role="button"
-              data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <i class="fa-solid fa-user"></i>
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
-              <a class="dropdown-item" href="/profile">Profile</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="/logout">Logout</a>
+        <form class="form-inline mx-auto" action="/search" method="GET">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control border-0 rounded-pill bg-white text-black"
+                    placeholder="Search" aria-label="Search">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary rounded-pill" type="submit">
+                        <i class="fas fa-search text-white"></i>
+                    </button>
+                </div>
             </div>
-          </li>
-        <% } else { %>
-          <li class="nav-item">
-            <a class="nav-link" href="/signup"><i class="fa-solid fa-user"></i> Sign Up</a>
-          </li>
-        <% } %>
-        <li class="nav-item">
-          <a class="nav-link" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-            <i class="fa-solid fa-cart-shopping"></i>
-          </a>
-        </li>
-      </ul>
+        </form>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/wishlist" role="button" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa-solid fa-heart"></i>
+                </a>
+            </li>
+            <% if (loggedIn) { %>
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="/profile" role="button" aria-haspopup="true"
+                    aria-expanded="false">
+                        <i class="fa-solid fa-user"></i>
+                    </a>
+                </li>
+                <% } else { %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/signup"><i class="fa-solid fa-user"></i>Sign Up</a>
+                    </li>
+                    <% } %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/cart" role="button" aria-haspopup="true"
+                                aria-expanded="false">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                            </a>
+                        </li>
+        </ul>
     </div>
-  </nav>
-  <section class="h-100 gradient-custom">
-    <div class="container py-5">
-      <div class="row">
-        <div class="col-md-8">
-          <div class="card mb-4">
-            <div class="card-header py-3">
-              <h5 class="mb-0">Checkout</h5>
-            </div>
-            <div class="card-body">
-              <form action="/checkout" method="POST">
-                <h5 class="mb-4">Shipping Information</h5>
-                <div class="mb-3">
-                  <label for="addressSelect" class="form-label">Select Address</label>
-                  <select class="form-select" id="addressSelect" name="addressSelect">
-                    <option value="">-- Select an Address --</option>
-                    <% userData.profile.address.forEach((addr, index) => { %>
-                      <option value="<%= index %>"><%= addr.name %>, <%= addr.house %>, <%= addr.city %>, <%= addr.postalcode %>, <%= addr.phone %></option>
-                    <% }); %>
-                  </select>
+</nav>
+
+
+  <section class="bg-light py-5">
+    <div class="container">
+      <form id="checkoutForm" action="/checkout" method="post">
+        <div class="row">
+          <div class="col-xl-8 col-lg-8 mb-4">
+            <div class="card shadow-0 border mb-4">
+              <div class="p-4">
+                <h5 class="card-title mb-3">User checkout</h5>
+
+                <!-- Address Selection Dropdown -->
+                <div class="row mb-3">
+                  <div class="col-12 mb-3">
+                    <p class="mb-0">Select Saved Address</p>
+                    <select class="form-select" id="savedAddress" name="addressIndex">
+                      <option value="">Choose an address...</option>
+                      <% user.profile.address.forEach(function(address, index) { %>
+                        <option value="<%= index %>">
+                          <%= address.name %>, <%= address.house %>, <%= address.city %>, <%= address.postalcode %>
+                        </option>
+                        <% }) %>
+                    </select>
+                  </div>
                 </div>
-                <div class="mb-3">
-                  <label for="name" class="form-label">Full Name</label>
-                  <input type="text" class="form-control" id="name" name="name">
+
+                <!-- Personal Information -->
+                <div class="row">
+                  <div class="col-6 mb-3">
+                    <p class="mb-0">Name</p>
+                    <div class="form-outline">
+                      <input type="text" id="name" name="name" value="<%= user.name %>" class="form-control" required />
+                    </div>
+                  </div>
+                  <div class="col-6 mb-3">
+                    <p class="mb-0">Phone</p>
+                    <div class="form-outline">
+                      <input type="tel" id="phone" name="phone" value="<%= user.profile.address.phone %>"
+                        class="form-control" required />
+                    </div>
+                  </div>
+                  <div class="col-12 mb-3">
+                    <p class="mb-0">Email</p>
+                    <div class="form-outline">
+                      <input type="email" id="email" name="email" value="<%= user.email %>" class="form-control"
+                        required />
+                    </div>
+                  </div>
                 </div>
-                <div class="mb-3">
-                  <label for="address" class="form-label">Address</label>
-                  <input type="text" class="form-control" id="address" name="house">
+
+                <hr class="my-4" />
+
+                <!-- Shipping Information -->
+                <h5 class="card-title mb-3">Shipping info</h5>
+                <div class="row">
+                  <div class="col-sm-8 mb-3">
+                    <p class="mb-0">Address</p>
+                    <div class="form-outline">
+                      <input type="text" id="address" name="address" value="<%= user.profile.address.house %>"
+                        class="form-control" required />
+                    </div>
+                  </div>
+                  <div class="col-sm-4 mb-3">
+                    <p class="mb-0">City</p>
+                    <input type="text" id="city" name="city" value="<%= user.profile.address.city %>"
+                      class="form-control" required />
+                  </div>
+                  <div class="col-sm-4 mb-3">
+                    <p class="mb-0">Postal Code</p>
+                    <div class="form-outline">
+                      <input type="text" id="postalcode" name="postalcode"
+                        value="<%= user.profile.address.postalcode %>" class="form-control" required />
+                    </div>
+                  </div>
                 </div>
-                <div class="mb-3">
-                  <label for="city" class="form-label">City</label>
-                  <input type="text" class="form-control" id="city" name="city">
-                </div>
-                <div class="mb-3">
-                  <label for="phone" class="form-label">Phone</label>
-                  <input type="number" class="form-control" id="phone" name="phone">
-                </div>
-                <div class="mb-3">
-                  <label for="postalCode" class="form-label">Postal Code</label>
-                  <input type="number" class="form-control" id="postalCode" name="postalcode">
-                </div>
-                <h5 class="mb-4">Payment Information</h5>
-                <div class="mb-3">
-                  <label for="paymentMethod" class="form-label">Payment Method</label>
-                  <select class="form-select" id="paymentMethod" name="paymentMethod">
-                    <option value="cash_on_delivery">Cash on Delivery</option>
-                    <option value="credit_card">Credit Card</option>
-                    <option value="razorpay">Razorpay</option>
-                  </select>
-                </div>
-                <div id="razorpay-container" class="mb-3 d-none">
-                  <button id="razorpay-button" class="btn btn-primary">Pay with Razorpay</button>
-                </div>
-                <div id="paymentError" class="alert alert-danger d-none" role="alert"></div>
-                <div class="d-flex justify-content-between">
-                  <button type="submit" class="btn btn-success">Place Order</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card mb-4">
-            <div class="card-header py-3">
-              <h5 class="mb-0">Order Summary</h5>
-            </div>
-            <div class="card-body">
-              <div class="d-flex justify-content-between">
-                <p class="mb-0">Total Amount</p>
-                <p class="mb-0">$<%= totalAmount %></p>
               </div>
-              <!-- Add more summary details if needed -->
+            </div>
+
+            <!-- Cart Items Card -->
+            <div class="card shadow-0 border mb-4">
+              <div class="p-4">
+                <h5 class="card-title mb-3">Shopping Cart</h5>
+                <% cartItems.forEach(function(item) { %>
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+
+                      <h6 class="mb-0">
+                        <%= item.product.name %>
+                      </h6>
+                      <p class="mb-0 text-muted">₹<%= item.product.price %> x <%= item.quantity %>
+                      </p>
+                    </div>
+                    <p class="mb-0">₹<%= item.product.price * item.quantity %>
+                    </p>
+                  </div>
+                  <hr />
+                  <% }) %>
+                    <div class="d-flex justify-content-between mb-3">
+                      <h5 class="mb-0">Total</h5>
+                      <p class="mb-0" id="cartTotal">₹<%= cartTotal %>
+                      </p>
+                    </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment Methods Card -->
+          <div class="col-xl-4 col-lg-4 mb-4">
+            <div class="card shadow-0 border mb-4">
+              <div id="paymentError" style="color: red;"></div>
+              <div class="p-4">
+                <h5 class="card-title mb-3">Select Payment Method</h5>
+                <div class="payment-methods mb-3">
+                  <input type="radio" id="cashOnDelivery" name="paymentMethod" value="cash_on_delivery">
+                  <label for="cash_on_delivery">Cash on Delivery</label>
+                  <br>
+                  <input type="radio" id="razorpay" name="paymentMethod" value="razorpay">
+                  <label for="razorpay">Razorpay</label>
+                  <br>
+                  <input type="radio" id="wallet" name="paymentMethod" value="wallet">
+                  <label for="wallet">Wallet</label>
+                  <div id="walletBalance" data-wallet="<%= user.wallet %>"> Available Balance: ₹<%=
+                      Math.abs(user.wallet).toFixed(2) %>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <input type="hidden" id="paymentStatus" name="paymentStatus" value="">
+            <input type="hidden" id="razorpay_payment_id" name="razorpay_payment_id" value="">
+
+            <!-- Coupon Code Card -->
+            <div class="card shadow-0 border mb-4">
+              <div class="p-4">
+                <h5 class="card-title mb-3">Apply Coupon Code</h5>
+
+                <div class="form-outline mb-3">
+                  <input type="text" id="couponCode" name="couponCode" class="form-control"
+                    placeholder="Enter your coupon code" />
+                </div>
+
+                <button class="btn btn-primary btn-lg w-100" type="button" id="applyCoupon">Apply Coupon</button>
+
+                <button class="btn btn-danger btn-lg w-100" type="button" id="removeCoupon"
+                  style="display: none;">Remove Coupon</button>
+
+                <div id="couponDetails" class="mt-3" style="display: none;">
+                  <p class="mb-0">Coupon Applied: <span id="appliedCouponCode"></span></p>
+                  <p class="mb-0">Discount: ₹<span id="couponDiscount">
+                      <%= discount %>
+                    </span></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="card shadow-0 border mb-4">
+              <div class="p-4">
+                <h5 class="card-title mb-3">Order Summary</h5>
+                <div class="d-flex justify-content-between mb-3">
+                  <h5 class="mb-0">Subtotal</h5>
+                  <p class="mb-0">₹<%= cartTotal %>
+                  </p>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                  <h5 class="mb-0">Discount</h5>
+                  <p class="mb-0"><span id="orderDiscount" data-discount="<%= discount %>">
+                      <%= discount %>
+                    </span></p>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                  <h5 class="mb-0">Total</h5>
+                  <p class="mb-0">₹<span id="orderTotal" data-finalTotal="<%= finalTotal %>">
+                      <%= finalTotal %>
+                    </span></p>
+                </div>
+                <button class="btn btn-success btn-lg w-100" type="submit">Proceed to Payment</button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   </section>
-  <!-- Bootstrap JS and dependencies -->
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js" integrity="sha384-oB6V1Hz5O6rROA4+q62wZ60iA9ME1HLPdvs9vcxDZrRhw0xD1tFAHox3HLOcYkN/" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-mQ93yHbP5e9OPkMAZkZYf6S/1hrNYwW4LpFnllKh1EA0yHj1ewI6Wzrb8xC7/k" crossorigin="anonymous"></script>
-  <!-- Razorpay Script -->
+
+
+
+  <footer class="footer text-center">
+    <p>&copy; 2024 Quartz Men. All Rights Reserved.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const paymentMethodSelect = document.getElementById('paymentMethod');
-      const razorpayContainer = document.getElementById('razorpay-container');
-      const razorpayButton = document.getElementById('razorpay-button');
-      const paymentError = document.getElementById('paymentError');
+    let forTotal = 0
+    document.getElementById('checkoutForm').addEventListener('submit', function (event) {
+      let isValid = true;
 
-      paymentMethodSelect.addEventListener('change', function () {
-        if (this.value === 'razorpay') {
-          razorpayContainer.classList.remove('d-none');
-        } else {
-          razorpayContainer.classList.add('d-none');
+      // Validate Name
+      const name = document.getElementById('name').value.trim();
+      if (name === '') {
+        isValid = false;
+        document.getElementById('nameError').innerText = 'Name is required';
+      } else {
+        document.getElementById('nameError').innerText = '';
+      }
+
+      // Validate Phone
+      const phone = document.getElementById('phone').value.trim();
+      const phonePattern = /^\d{10}$/;
+      if (!phonePattern.test(phone)) {
+        isValid = false;
+        document.getElementById('phoneError').innerText = 'Please enter a valid 10-digit phone number';
+      } else {
+        document.getElementById('phoneError').innerText = '';
+      }
+
+      // Validate Email
+      const email = document.getElementById('email').value.trim();
+      const emailPattern = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+      if (!emailPattern.test(email)) {
+        isValid = false;
+        document.getElementById('emailError').innerText = 'Please enter a valid email address';
+      } else {
+        document.getElementById('emailError').innerText = '';
+      }
+
+      // Validate Address
+      const address = document.getElementById('address').value.trim();
+      if (address === '') {
+        isValid = false;
+        document.getElementById('addressError').innerText = 'Address is required';
+      } else {
+        document.getElementById('addressError').innerText = '';
+      }
+
+      // Validate City
+      const city = document.getElementById('city').value.trim();
+      if (city === '') {
+        isValid = false;
+        document.getElementById('cityError').innerText = 'City is required';
+      } else {
+        document.getElementById('cityError').innerText = '';
+      }
+
+      const postalcode = document.getElementById('postalcode').value.trim();
+      const postalcodePattern = /^\d{6}$/;
+      if (!postalcodePattern.test(postalcode)) {
+        isValid = false;
+        document.getElementById('postalcodeError').innerText = 'Please enter a valid 6-digit postal code';
+      } else {
+        document.getElementById('postalcodeError').innerText = '';
+      }
+
+      if (!isValid) {
+        event.preventDefault();
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      // Get the values from the data attributes
+      const finalTotal = parseFloat(document.getElementById('orderTotal').getAttribute('data-finalTotal')); // Final total amount
+      const walletBalance = parseFloat(document.getElementById('walletBalance').getAttribute('data-wallet')); // User's wallet balance
+      const paymentValidationMessage = document.getElementById('paymentError');
+      const cashOnDelivery = document.getElementById('cashOnDelivery');
+      const walletOption = document.getElementById('wallet');
+      const couponDiscountElement = document.getElementById('orderDiscount');
+      let couponDiscount = parseFloat(couponDiscountElement ? couponDiscountElement.textContent : 0);
+
+      // Update final total after applying discount
+      let discountedTotal = finalTotal - couponDiscount;
+
+      // Check if total exceeds ₹10,000 for Cash on Delivery
+      if (discountedTotal > 10000) {
+        cashOnDelivery.disabled = true;
+        const codWarning = document.createElement('div');
+        codWarning.className = 'text-danger';
+        codWarning.textContent = 'Cash on Delivery is not possible for amounts above ₹10,000.';
+        paymentValidationMessage.appendChild(codWarning);
+      }
+
+      // Check if wallet balance is less than the discounted total
+      if (walletBalance < discountedTotal) {
+        walletOption.disabled = true;
+        const walletWarning = document.createElement('div');
+        walletWarning.className = 'text-danger';
+        walletWarning.textContent = `Insufficient wallet balance. Wallet payment is only available for amounts up to ₹${walletBalance}.`;
+        document.getElementById('walletBalance').appendChild(walletWarning);
+      }
+
+      // Optionally, you could also add real-time validation for when the discount or wallet balance changes dynamically
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const addressData = document.getElementById('addressData').dataset.address;
+      const addresses = JSON.parse(addressData);
+
+      function populateAddress(select) {
+        const index = select.value;
+        if (index !== '') {
+          const address = addresses[index];
+          document.getElementById('name').value = address.name;
+          document.getElementById('phone').value = address.phone;
+          document.getElementById('address').value = address.house;
+          document.getElementById('postalcode').value = address.postalcode;
+          document.getElementById('city').value = address.city;
         }
+      }
+
+      document.getElementById('savedAddress').addEventListener('change', function () {
+        populateAddress(this);
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      let finalTotal = parseFloat(document.getElementById('cartTotal').textContent.replace('₹', '').replace(',', '')) || 0;
+
+
+      document.getElementById('applyCoupon').addEventListener('click', function () {
+        const couponCode = document.getElementById('couponCode').value;
+
+        fetch('/apply-coupon', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ couponCode: couponCode })
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              const subtotal = parseFloat(document.getElementById('cartTotal').textContent.replace('₹', '').replace(',', ''));
+              const discountPercentage = data.discount;
+              const discountAmount = (subtotal * discountPercentage) / 100;
+              finalTotal = subtotal - discountAmount;
+
+              document.getElementById('orderDiscount').textContent = `₹${discountAmount.toFixed(2)}`;
+              document.getElementById('orderTotal').textContent = `₹${finalTotal.toFixed(2)}`;
+              document.getElementById('appliedCouponCode').textContent = couponCode;
+              document.getElementById('couponDiscount').textContent = `${discountPercentage}%`;
+
+              document.getElementById('couponDetails').style.display = 'block';
+              document.getElementById('removeCoupon').style.display = 'block';
+              document.getElementById('applyCoupon').style.display = 'none';
+            } else {
+              alert(data.message);
+            }
+          });
       });
 
-      razorpayButton.addEventListener('click', function (e) {
-        e.preventDefault();
-        fetch('/create-razorpay-order', {
+      document.getElementById('removeCoupon').addEventListener('click', function () {
+        fetch('/remove-coupon', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            totalAmount: '<%= totalAmount %>' // Send total amount
-          })
+          headers: { 'Content-Type': 'application/json' },
         })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              document.getElementById('orderDiscount').textContent = '₹0';
+              document.getElementById('orderTotal').textContent = `₹${data.finalTotal}`;
+              document.getElementById('appliedCouponCode').textContent = 'No coupon applied';
+              finalTotal = parseFloat(data.finalTotal); // Ensure this is valid
+
+              document.getElementById('couponDetails').style.display = 'none';
+              document.getElementById('removeCoupon').style.display = 'none';
+              document.getElementById('applyCoupon').style.display = 'block';
+
+              document.getElementById('couponCode').value = '';
+            } else {
+              alert(data.message);
+            }
+          });
+      });
+
+      document.getElementById('checkoutForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+    if (paymentMethod === 'cash_on_delivery') {
+      // Set payment status to confirmed before submitting the form
+      document.getElementById('paymentStatus').value = 'Confirmed';
+      document.getElementById('checkoutForm').submit();
+    } else if (paymentMethod === 'razorpay') {
+      handleOnlinePayment();
+    } else if (paymentMethod === 'wallet') {
+      handleWalletPayment();
+    }
+  });
+
+  function handleOnlinePayment() {
+    const amountToPay = finalTotal * 100; // Ensure the amount is valid
+    if (isNaN(amountToPay) || amountToPay <= 0) {
+      alert('Invalid amount for payment');
+      return;
+    }
+
+    fetch('/create-order', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ amount: amountToPay, currency: 'INR' }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        const options = {
+          key: 'rzp_test_KOCURsj88Mu4Sj',
+          amount: amountToPay,
+          currency: 'INR',
+          name: 'QuartzMen',
+          description: 'Test Transaction',
+          image: 'https://example.com/your_logo',
+          order_id: data.orderId,
+          handler: function (response) {
+            document.getElementById('paymentStatus').value = 'Confirmed';
+            document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+            document.getElementById('checkoutForm').submit();
+          },
+          modal: {
+            ondismiss: function () {
+              alert('Payment was not completed. Order can still be proceeded.');
+              document.getElementById('paymentStatus').value = 'Failed';
+              document.getElementById('checkoutForm').submit();
+            }
+          },
+          prefill: {
+            name: 'Aaron',
+            email: 'aaron@example.com',
+            contact: '9000090000',
+          },
+          notes: {
+            address: 'Razorpay Corporate Office',
+          },
+          theme: {
+            color: '#3399cc',
+          },
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.open();
+      })
+      .catch(error => {
+        console.error('Error creating Razorpay order:', error);
+        alert('Error processing payment. Please try again.');
+      });
+  }
+
+  function handleWalletPayment() {
+    const totalAmount = parseFloat(document.getElementById('orderTotal').getAttribute('data-finalTotal'));
+    const walletBalance = parseFloat(document.getElementById('walletBalance').dataset.wallet);
+
+    if (walletBalance >= totalAmount) {
+      fetch('/process-wallet-payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ amount: totalAmount }),
+      })
         .then(response => response.json())
         .then(data => {
-          if (data.error) {
-            paymentError.textContent = data.error;
-            paymentError.classList.remove('d-none');
+          if (data.success) {
+            alert('Payment successful! Amount has been deducted from your wallet.');
+            document.getElementById('paymentStatus').value = 'Confirmed'; // Set payment status to confirmed
+            document.getElementById('checkoutForm').submit();
           } else {
-            var options = {
-              "key": "<%= razorpayKey %>",
-              "amount": data.amount,
-              "currency": data.currency,
-              "name": "Your Company",
-              "description": "Order Payment",
-              "order_id": data.order_id,
-              "handler": function (response) {
-                // Handle successful payment here
-                fetch('/verify-razorpay-payment', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({
-                    razorpay_payment_id: response.razorpay_payment_id,
-                    razorpay_order_id: response.razorpay_order_id,
-                    razorpay_signature: response.razorpay_signature
-                  })
-                })
-                .then(response => response.json())
-                .then(result => {
-                  if (result.success) {
-                    window.location.href = '/order-success'; // Redirect on success
-                  } else {
-                    paymentError.textContent = result.error;
-                    paymentError.classList.remove('d-none');
-                  }
-                });
-              },
-              "prefill": {
-                "name": document.getElementById('name').value,
-                "email": document.getElementById('email').value,
-                "contact": document.getElementById('phone').value
-              },
-              "theme": {
-                "color": "#3399cc"
-              }
-            };
-            var rzp1 = new Razorpay(options);
-            rzp1.open();
+            alert(data.message);
           }
         })
         .catch(error => {
-          paymentError.textContent = 'An error occurred. Please try again.';
-          paymentError.classList.remove('d-none');
+          console.error('Error:', error);
+          alert('Payment failed, please try again.');
         });
-      });
+    } else {
+      alert('Insufficient wallet balance.');
+    }
+  }
+
+  document.querySelectorAll('input[name="paymentMethod"]').forEach((element) => {
+    element.addEventListener('change', () => {
+      const paymentErrorDiv = document.getElementById('paymentError');
+      paymentErrorDiv.textContent = '';
     });
+  });
+});
   </script>
+
+  <div id="addressData" data-address='<%= JSON.stringify(user.profile.address) %>' style="display: none;"></div>
 </body>
 
 </html>

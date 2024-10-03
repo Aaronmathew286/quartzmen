@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <title>Order Page</title>
+    <style>
+        body {
+            margin-top: 20px;
+            background-color: #dee9ff;
+            color: #1a202c;
+            text-align: left;
+        }
+
+        .main-body {
+            padding: 15px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            list-style: none;
+            padding: 10px 16px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .breadcrumb-item {
+            margin-right: 8px;
+        }
+
+        .breadcrumb-item a {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        .breadcrumb-item a:hover {
+            text-decoration: none;
+            color: rgb(209, 209, 26);
+        }
+
+        .breadcrumb-item:last-child::after {
+            content: '';
+        }
+
+        .breadcrumb-item.active {
+            color: #6c757d;
+        }
+
+        .icon-large {
+            font-size: 6rem;
+            color: #767676;
+            border-radius: 50%;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-outline-secondary {
+            background-color: rgb(251, 216, 23);
+            border-color: rgb(94, 94, 0);
+            color: black;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: rgb(201, 201, 73);
+            border-color: rgb(94, 94, 0);
+            color: black;
+        }
+
+        .card {
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1),
+                0 1px 2px 0 rgba(0, 0, 0, .06);
+        }
+
+        .card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-color: #fff;
+            background-clip: border-box;
+            border: 0 solid rgba(0, 0, 0, .125);
+            border-radius: .25rem;
+        }
+
+        .card-body {
+            flex: 1 1 auto;
+            min-height: 1px;
+            padding: 1rem;
+        }
+
+        .gutters-sm {
+            margin-right: -8px;
+            margin-left: -8px;
+        }
+
+        .gutters-sm>.col,
+        .gutters-sm>[class*=col-] {
+            padding-right: 8px;
+            padding-left: 8px;
+        }
+
+        .mb-3,
+        .my-3 {
+            margin-bottom: 1rem !important;
+        }
+
+        .bg-gray-300 {
+            background-color: #e2e8f0;
+        }
+
+        .h-100 {
+            height: 100% !important;
+        }
+
+        .shadow-none {
+            box-shadow: none !important;
+        }
+
+        .user-details {
+            border-radius: .25rem;
+        }
+
+        .user-details:hover {
+            background-color: #c7c7c7;
+        }
+
+        .user-details .text-decoration-none .active {
+            background-color: #001131;
+        }
+
+        .logout {
+            background-color: yellow;
+        }
+
+        .list-group-item:hover {
+            background-color: #f1f1f1;
+            color: #000;
+        }
+
+        .order-card {
+            background-color: #fff;
+            border-radius: .25rem;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .order-header {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .order-body {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-footer {
+            text-align: right;
+        }
+
+        .order-footer .btn {
+            margin-left: 10px;
+        }
+
+        .icon-small {
+            font-size: 1.5rem;
+            color: #4a4a4a;
+        }
+
+        .text-secondary {
+            color: #6c757d !important;
+        }
+
+        .btn-outline-secondary {
+            background-color: rgb(251, 216, 23);
+            border-color: rgb(94, 94, 0);
+            color: black;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: rgb(201, 201, 73);
+        }
+
+        .pagination {
+            margin-top: 20px;
+        }
+
+        .page-link {
+            color: #007bff;
+        }
+
+        .page-item.active .page-link {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="main-body">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/profile">Profile</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Orders</li>
+                </ol>
+            </nav>
+            <!-- /Breadcrumb -->
+
+            <div class="row gutters-sm">
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex flex-column align-items-center text-center">
+                                <i class="fa-solid fa-truck icon-large"></i>
+                                <div class="mt-3">
+                                    <h4>
+                                        <%= userData.name %>
+                                    </h4>
+                                    <p class="text-secondary mb-1">
+                                        <%= userData.email %>
+                                    </p>
+                                    <p class="text-muted font-size-sm">
+                                        <%= userData.gender %>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Second Sidebar -->
+                    <div class="card mt-3">
+                        <ul class="list-group list-group-flush">
+                            <a href="/address" class="user-details text-decoration-none active">
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                    <h6 class="mb-0">
+                                        <i class="fa-solid fa-address-card"></i> Address
+                                    </h6>
+                                </li>
+                            </a>
+                            <a href="/cart" class="user-details text-decoration-none">
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                    <h6 class="mb-0">
+                                        <i class="fa-solid fa-cart-arrow-down"></i> My Cart
+                                    </h6>
+                                </li>
+                            </a>
+                            <a href="/wishlist" class="user-details text-decoration-none">
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                    <h6 class="mb-0">
+                                        <i class="fa-solid fa-heart"></i> Wishlist
+                                    </h6>
+                                </li>
+                            </a>
+                            <a href="/order" class="user-details text-decoration-none">
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                    <h6 class="mb-0">
+                                        <i class="fa-solid fa-book"></i> Order Details
+                                    </h6>
+                                </li>
+                            </a>
+                            <a href="/orderHistory" class="user-details text-decoration-none">
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                    <h6 class="mb-0">
+                                        <i class="fa-solid fa-book"></i> Order History
+                                    </h6>
+                                </li>
+                            </a>
+                            <a href="/wallet" class="user-details text-decoration-none">
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                    <h6 class="mb-0">
+                                        <i class="fa-solid fa-wallet"></i> Wallet
+                                    </h6>
+                                </li>
+                            </a>
+                        </ul>
+                    </div>
+
+                    <div class="card mt-3">
+                        <ul class="list-group list-group-flush">
+                            <a href="/logout" class="logout text-decoration-none">
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                    <h6 class="mb-0">
+                                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                                    </h6>
+                                </li>
+                            </a>
+                        </ul>
+                    </div>
+                </div>
+
+
+
+
+<!-- Order container -->
+<div class="col-md-8">
+                <!-- Separate container for Failed Orders -->
+                <% const failedOrders = orders.filter(order => order.paymentStatus === 'Failed'); %>
+
+                <% if (failedOrders.length > 0) { %>
+                  <h5 class="card-title">Failed Orders</h5>
+                  <table class="table table-danger">
+                    <thead>
+                      <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Total Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% failedOrders.forEach(order => { %>
+                        <tr>
+                          <td><%= order._id %></td>
+                          <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
+                          <td>₹<%= order.totalAmount.toFixed(2) %></td>
+                          <td><%= order.paymentStatus %></td>
+                          <td>
+                            <button class="btn btn-danger" onclick="retryPayment('<%= order._id %>', '<%= order.totalAmount %>')">
+                                <i class="fa-solid fa-exclamation-circle"></i> Retry
+                              </button>
+                          </td>
+                        </tr>
+                      <% }) %>
+                    </tbody>
+                  </table>
+                <% } %>
+                
+
+                <h5 class="card-title">My Orders</h5>
+
+                <% const confirmedOrders = orders.filter(order => order.paymentStatus === 'Confirmed'); %>
+                
+                <% if (confirmedOrders.length > 0) { %>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Date</th>
+                                <th>Total Amount</th>
+                                <th>Status</th>
+                                <th>Invoice</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% confirmedOrders.forEach(order => { %>
+                                <tr>
+                                    <td><%= order._id %></td>
+                                    <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
+                                    <td>₹<%= order.totalAmount.toFixed(2) %></td>
+                                    <td><%= order.paymentStatus %></td>
+                                    <td>
+                                        <a href="/invoice?_id=<%= order._id %>">
+                                            <button class="btn btn-primary"><i class="fa-solid fa-download"></i></button>
+                                        </a>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                
+                    <!-- Pagination Controls -->
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <% if (currentPage > 1) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                                </li>
+                            <% } %>
+                
+                            <% for (let i = 1; i <= totalPages; i++) { %>
+                                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                    <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                </li>
+                            <% } %>
+                
+                            <% if (currentPage < totalPages) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                                </li>
+                            <% } %>
+                        </ul>
+                    </nav>
+                <% } else { %>
+                    <p>No confirmed orders found.</p>
+                <% } %>
+                </div>
+                
+
+            </div>
+        </div>
+    </div>
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        function showModal(type, orderId, productId) {
+            if (type === 'cancel') {
+                document.getElementById('cancelOrderId').value = orderId;
+                document.getElementById('cancelProductId').value = productId;
+            } else if (type === 'return') {
+                document.getElementById('returnOrderId').value = orderId;
+                document.getElementById('returnProductId').value = productId;
+            }
+        }
+        document.getElementById('cancelForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/order/cancel', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.text();
+                if (response.ok) {
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Cancelled',
+                        text: 'Your order has been cancelled successfully.',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: `Error: ${result}`
+                    });
+                }
+            } catch (error) {
+                console.error('Error during order cancellation:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred while processing your request.'
+                });
+            }
+        });
+        document.getElementById('returnForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const orderId = document.getElementById('returnOrderId').value;
+            const productId = document.getElementById('returnProductId').value;
+            const returnReason = document.getElementById('returnReasonSelect').value;
+
+            if (!orderId || !productId) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Missing Information',
+                    text: 'Order ID or Product ID is missing.'
+                });
+                return;
+            }
+
+            try {
+                const response = await fetch('/order/return-request', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ orderId, productId, returnReason })
+                });
+
+                const result = await response.text();
+                if (response.ok) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Return Requested',
+                        text: 'Your return request has been submitted successfully.',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: `Error: ${result}`
+                    });
+                }
+            } catch (error) {
+                console.error('Error during return request:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred while processing your request.'
+                });
+            }
+        });
+        function retryPayment(orderId, totalAmount) {
+  const amount = parseFloat(totalAmount);
+  const amountToPay = amount * 100; 
+  if (isNaN(amountToPay) || amountToPay <= 0) {
+    alert('Invalid amount for payment');
+    return;
+  }
+
+  fetch('/create-order', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ amount: amountToPay, currency: 'INR', orderId: orderId }),
+  })
+    .then(response => response.json())
+    .then(data => {
+      const options = {
+        key: 'rzp_test_KOCURsj88Mu4Sj',
+        amount: amountToPay,
+        currency: 'INR',
+        name: 'QuartzMen',
+        description: 'Retry Payment',
+        image: 'https://example.com/your_logo',
+        order_id: data.orderId, 
+        handler: function (response) {
+
+          fetch(`/handle-failed-payment/${orderId}`, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+        paymentId: response.razorpay_payment_id,
+        status: 'Confirmed'
+    })
+})
+
+            .then(() => {
+              Swal.fire({
+                icon: 'success',
+                title: 'Payment Successful!',
+                text: 'Your payment has been successfully processed.',
+                confirmButtonText: 'OK'
+              }).then(() => {
+                location.reload(); 
+              });
+            })
+            .catch(error => console.error('Error confirming payment:', error));
+        },
+        modal: {
+          ondismiss: function () {
+            Swal.fire('Payment Cancelled', 'You have cancelled the payment.', 'error');
+          },
+        },
+        prefill: {
+          name: 'Aaron',
+          email: 'aaron@example.com',
+          contact: '9000090000',
+        },
+        notes: {
+          address: 'Razorpay Corporate Office',
+        },
+        theme: {
+          color: '#3399cc',
+        },
+      };
+
+      const rzp = new Razorpay(options);
+      rzp.open();
+    })
+    .catch(error => {
+      console.error('Error creating Razorpay order:', error);
+      Swal.fire('Error', 'Error processing payment. Please try again.', 'error');
+    });
+}
+    </script>
+
+
+</body>
+
+</html>

@@ -6,71 +6,63 @@ const userCart = require("../controller/usercontroller/userCart")
 const userCheckout = require("../controller/usercontroller/userCheckout")
 const userOrder = require("../controller/usercontroller/userOrder")
 const userWishlist = require("../controller/usercontroller/userWishlist")
-const passport = require("passport");
 const isAuth = require('../middleware/userBlock').isUser
-const crypto = require('crypto');
 
 
-
-router.get("/",usercontroller.homepage)
-router.get("/signup",usercontroller.signup)
-router.post("/signup",usercontroller.signuppost)
-
-router.get("/otp",usercontroller.otp)
-router.post("/otp",usercontroller.otppost)
+router.get("/",usercontroller.homePage)
+router.get("/signup",usercontroller.getSignup)
+router.post("/signup",usercontroller.signupPost)
+router.get("/otp",usercontroller.getOtp)
+router.post("/otp",usercontroller.otpPost)
 router.get("/login",usercontroller.login)
-router.post("/login",usercontroller.loginpost)
-router.get("/watches",usercontroller.watches)
-router.get("/productdetail/:_id",usercontroller.productdetail)
-
+router.post("/login",usercontroller.loginPost)
+router.get("/watches/:category",usercontroller.categoryWatches)
+router.get('/shopwatches', usercontroller.shopWatches);
+router.get("/productdetail/:_id",usercontroller.productDetail)
+router.get('/search',usercontroller.searchProduct)
 // Forget password:
-router.get("/forgetpassword",usercontroller.forgetpassword);
-router.post("/forgetpassword",usercontroller.forgetpasswordpost);
-router.get("/forgetpassword/otp",usercontroller.verifyresetotp)
-router.post("/forgetpassword/otp",usercontroller.verifyresetotppost)
-
-router.post("/resendotp",usercontroller.resendotp)
-router.get("/newpassword",usercontroller.newpassword)
-router.post("/newpassword",usercontroller.newpasswordpost)
-
-
+router.get("/forgetpassword",usercontroller.forgetPassword);
+router.post("/forgetpassword",usercontroller.forgetPasswordPost);
+router.get("/forgetpassword/otp",usercontroller.verifyResetOtp)
+router.post("/forgetpassword/otp",usercontroller.verifyResetOtpPost)
+router.post("/resendotp",usercontroller.resendOtp)
+router.get("/newpassword",usercontroller.newPassword)
+router.post("/newpassword",usercontroller.newPasswordPost)
 // User Profile:
 router.get("/profile",isAuth,userdetails.profile)
 router.post("/editprofile",isAuth,userdetails.editProfile)
-
 router.get("/address",isAuth,userdetails.address)
 router.post("/addaddress",isAuth,userdetails.addAddress)
 router.post("/editaddress/:_id",isAuth,userdetails.editAddress)
-
-
 // Wishlist
 router.get("/wishlist",isAuth,userWishlist.getWishlist)
 router.post('/wishlist/add/:productId',isAuth, userWishlist.addToWishlist);
 router.post('/wishlist/remove/:productId',isAuth,userWishlist.removeFromWishlist);
-
-
 // Cart:
 router.get("/cart",isAuth,userCart.userCart)
-router.post("/cart/:_id",isAuth,userCart.addToCart)
-router.post("/cartUpdate/:_id",isAuth,userCart.updateCartQuantity)
+router.post('/cart/:_id',isAuth,userCart.addToCart)
+router.post("/cartUpdate",isAuth,userCart.updateCartQuantity)
 router.post("/cartRemove/:_id",isAuth,userCart.removeItemFromCart)
-
-
 // Checkout:
+router.post("/create-order",isAuth,userCheckout.razorPaymentPost)
 router.get("/checkout",isAuth,userCheckout.userCheckout)
 router.post("/checkout",isAuth,userCheckout.userCheckoutPost)
 router.post('/apply-coupon', isAuth,userCheckout.applyCoupon);
 router.post('/remove-coupon', isAuth,userCheckout.removeCoupon);
-
-
-router.get("/wallet",isAuth,userdetails.wallet)
-router.get("/wallet/update",isAuth,userdetails.updateWallet)
-
+router.post('/process-wallet-payment',isAuth,userCheckout.processWalletPayment)
+router.post('/handle-failed-payment/:orderId', isAuth, userCheckout.handleFailedPayment);
 // Order:
+router.get('/orderSuccess',isAuth,userOrder.orderSuccess);
+router.get('/orderFailed',isAuth,userOrder.orderFailed);
 router.get("/order",isAuth,userOrder.orderPage);
-router.post("/cancelorder/:_id",isAuth,userOrder.cancelOrder);
-
-
+router.post("/order/cancel",isAuth,userOrder.cancelOrder);
+router.post('/order/return-request',isAuth,userOrder.returnRequestOrder)
+router.get('/orderHistory',isAuth,userOrder.orderHistory)
+router.get('/invoice',isAuth,userOrder.orderInvoice)
+// Wallet:
+router.get("/wallet",isAuth,userdetails.wallet)
+router.get("/create-wallet-order",isAuth,userdetails.createWalletOrder)
+router.post("/wallet-transaction-success", isAuth, userdetails.walletTransactionSuccess)
 // User Logout
 router.get("/logout",usercontroller.logout);
 

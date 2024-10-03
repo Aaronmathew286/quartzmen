@@ -1,87 +1,94 @@
-const Order = require('../../models/order')
-const User = require('../../models/user');
-const Product = require('../../models/product');
 const Coupon  = require('../../models/coupon')
 
 
-const coupons = async(req,res) => {
-    try{
-        const couponList = await Coupon.find();
+const couponsPage = async (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 10; 
+        const page = parseInt(req.query.page) || 1; 
+        const couponList = await Coupon.find()
+            .skip((page - 1) * limit)
+            .limit(limit); 
+        
+        const totalCoupons = await Coupon.countDocuments();
+        const totalPages = Math.ceil(totalCoupons / limit);
+
         const currentDate = new Date();
-    
-        for(let coupon of couponList){
-            if(new Date(coupon.expirationDate) < currentDate && coupon.isActive){
+        for (let coupon of couponList) {
+            if (new Date(coupon.expirationDate) < currentDate && coupon.isActive) {
                 coupon.isActive = false;
-                await coupon.save()
+                await coupon.save();
             }
         }
-    
-        res.render("admin/couponmanagement",{coupons:couponList})
-    } catch(error){
-        res.status(500).send("Internal error occured in coupon")
-    }
-}
 
-const addCoupons = async(req, res) => {
+        res.render("admin/couponmanagement", {
+            coupons: couponList,
+            currentPage: page,
+            totalPages: totalPages,
+            limit,
+            errMessage:''
+        });
+    } catch (error) {
+        res.status(500).send("Internal error occurred in coupon");
+    }
+};
+
+const addCoupons = async (req, res) => {
     try {
         const { code, discount, expirationDate, minAmount, maxAmount } = req.body;
+        const existingCoupon = await Coupon.findOne({ code: code });
+        if (existingCoupon) {
+            return res.status(400).json({ message: 'Coupon code already exists, please use a different one.' });
+        }
 
         const parseMinAmount = parseInt(minAmount);
         const parseMaxAmount = parseInt(maxAmount);
-        console.log(`the min is ${parseMinAmount} and the max is : ${parseMaxAmount}`);
 
         if (parseMinAmount > parseMaxAmount) {
-            return res.status(400).json({ error: "Minimum amount should be less than maximum amount" });
+            return res.status(400).json({ message: 'The minimum amount cannot be greater than the maximum amount.' });
         }
 
-        const coupon = new Coupon({
+        const newCoupon = new Coupon({
             code,
             discount,
             expirationDate,
-            minAmount:parseMinAmount,
-            maxAmount:parseMaxAmount
+            minAmount: parseMinAmount,
+            maxAmount: parseMaxAmount,
+            isActive: true
         });
 
-        await coupon.save();
-        res.redirect("/admin/couponmanagement");
+        await newCoupon.save();
+
+        return res.status(200).json({ message: 'Coupon added successfully' });
     } catch (error) {
-        console.error("An error occurred in Add coupons", error);
-        res.status(500).send("Internal Error occurred in Add coupons");
+        console.error("An error occurred while adding the coupon:", error);
+        res.status(500).json({ message: 'Internal server error' });
     }
-}
+};
 
 const editCoupons = async (req, res) => {
     try {
-        const id = req.params._id; // Use 'id' to match the route
-        console.log("This is the edit option:",id)
+        const id = req.params._id;
         const { code, discount, minAmount, maxAmount, expirationDate } = req.body;
-        const parseMinAmount = parseInt(minAmount);
-        const parseMaxAmount = parseInt(maxAmount);
-        console.log(`the min is ${parseMinAmount} and the max is : ${parseMaxAmount}`);
-        
-        if (parseMinAmount > parseMaxAmount) {
-            return res.status(400).json({ error: "Minimum amount should be less than maximum amount" });
-        }
 
         const coupon = await Coupon.findById(id);
         if (!coupon) {
-            return res.status(404).send('Coupon not found');
+            return res.status(404).json({ message: 'Coupon not found' });
         }
 
         coupon.code = code;
         coupon.discount = discount;
-        coupon.minAmount = parseMinAmount;
-        coupon.maxAmount = parseMaxAmount;
-        coupon.expirationDate = expirationDate;
+        coupon.minAmount = parseInt(minAmount, 10);
+        coupon.maxAmount = parseInt(maxAmount, 10);
+        coupon.expirationDate = new Date(expirationDate);
+        coupon.isActive = true
 
         await coupon.save();
-        res.redirect('/admin/couponmanagement');
+        res.status(200).json({ message: 'Coupon updated successfully' });
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        console.error("An error occurred in Add coupons", err);
+        res.status(500).json({ message: 'Server Error' });
     }
 };
-
 
 const deleteCoupons = async (req, res) => {
     try {
@@ -97,7 +104,7 @@ const deleteCoupons = async (req, res) => {
 
 
 module.exports = {
-    coupons,
+    couponsPage,
     addCoupons,
     editCoupons,
     deleteCoupons,

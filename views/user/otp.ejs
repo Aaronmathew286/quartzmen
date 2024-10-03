@@ -11,6 +11,9 @@
         body {
             background-color: #110031;
         }
+        .container {
+            justify-content: center;
+        }
     </style>
 </head>
 
@@ -34,18 +37,18 @@
                         <% } %>
                                 <h1 class="h4 mb-3">Enter OTP</h1>
                                 <div class="mb-3 userInput d-flex justify-content-between">
-                                    <input type="number" class="form-control text-center" name="otp[]" maxlength="1"
-                                        oninput="jumpToNext(this, 'otp2')">
-                                    <input type="number" class="form-control text-center" name="otp[]" id="otp2" maxlength="1"
-                                        oninput="jumpToNext(this, 'otp3')">
-                                    <input type="number" class="form-control text-center" name="otp[]" id="otp3" maxlength="1"
-                                        oninput="jumpToNext(this, 'otp4')">
-                                    <input type="number" class="form-control text-center" name="otp[]" id="otp4" maxlength="1"
-                                        oninput="jumpToNext(this, 'otp5')">
-                                    <input type="number" class="form-control text-center" name="otp[]" id="otp5" maxlength="1"
-                                        oninput="jumpToNext(this, 'otp6')">
-                                    <input type="number" class="form-control text-center" name="otp[]" id="otp6" maxlength="1"
-                                        oninput="jumpToNext(this, null)">
+                                    <input type="text" class="form-control text-center" name="otp[]" maxlength="1"
+                                        oninput="validateAndJump(this, 'otp2')">
+                                    <input type="text" class="form-control text-center" name="otp[]" id="otp2" maxlength="1"
+                                        oninput="validateAndJump(this, 'otp3')">
+                                    <input type="text" class="form-control text-center" name="otp[]" id="otp3" maxlength="1"
+                                        oninput="validateAndJump(this, 'otp4')">
+                                    <input type="text" class="form-control text-center" name="otp[]" id="otp4" maxlength="1"
+                                        oninput="validateAndJump(this, 'otp5')">
+                                    <input type="text" class="form-control text-center" name="otp[]" id="otp5" maxlength="1"
+                                        oninput="validateAndJump(this, 'otp6')">
+                                    <input type="text" class="form-control text-center" name="otp[]" id="otp6" maxlength="1"
+                                        oninput="validateAndJump(this, null)">
                                 </div>
                                 <div id="timerPlaceholder" class="mb-3">
                                     <input type="hidden" id="timeLeftInput" name="timeLeft" value="<%= timeLeft %>">
@@ -83,7 +86,10 @@
             }
         }, 1000);
 
-        function jumpToNext(input, nextInputId) {
+        function validateAndJump(input, nextInputId) {
+            // Allow only numbers
+            input.value = input.value.replace(/[^0-9]/g, '');
+            
             if (input.value.length === 1 && nextInputId) {
                 document.getElementById(nextInputId).focus();
             }
@@ -111,5 +117,3 @@
         }
     </script>
 </body>
-
-</html>

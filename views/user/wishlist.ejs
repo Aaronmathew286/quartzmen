@@ -161,7 +161,7 @@
             </nav>
             <!-- /Breadcrumb -->
 
-            <h1>Your</h1>
+            <h1>Your Wishlist</h1>
 
             <div class="row gutters-sm">
                 <!-- Wishlist Container -->
@@ -175,14 +175,21 @@
                                     <% wishlist.products.forEach(item => { %>
                                         <div class="row mb-3 wishlist-item" data-id="<%= item._id %>">
                                             <div class="col-md-2">
-                                                <img src="<%= item.image[0] %>" alt="Product Image" class="img-fluid">
+                                                <a href="/productdetail/<%= item._id %>">
+                                                    <img src="/uploads/<%= item.image[0] %>" alt="Product Image" class="img-fluid">
+                                                </a>
                                             </div>
                                             <div class="col-md-7">
-                                                <h5><%= item.name %></h5>
-                                                <p class="text-secondary">Price: $<%= item.price %></p>
+                                                <h5>
+                                                    <%= item.name %>
+                                                </h5>
+                                                <p class="text-secondary">Brand: <%= item.brand %></p>
+                                                <p class="text-secondary">Strap Material: <%= item.strapMaterial %></p>
+                                                <p class="text-secondary">Description: <%= item.description %></p>
+                                                <p class="text-secondary">Price: ₹<%= item.price %></p>
                                             </div>
-                                            <div class="col-md-3 text-end">
-                                                <button class="btn btn-danger remove-wishlist-btn" data-id="<%= item._id %>">Remove</button>
+                                            <div class="col-md-3 d-flex align-items-center">
+                                                <button class="btn btn-danger remove-wishlist-btn btn-sm" data-id="<%= item._id %>">Remove</button>
                                             </div>
                                         </div>
                                         <hr>
@@ -200,33 +207,37 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const removeButtons = document.querySelectorAll('.remove-wishlist-btn');
+    document.addEventListener('DOMContentLoaded', () => {
+        const removeButtons = document.querySelectorAll('.remove-wishlist-btn');
 
-            removeButtons.forEach(button => {
-                button.addEventListener('click', async (event) => {
-                    const itemId = event.target.getAttribute('data-id');
+        removeButtons.forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const itemId = event.target.getAttribute('data-id');
+                console.log(`Removing item with ID: ${itemId}`);
 
-                    try {
-                        const response = await fetch(`/wishlist/remove/${itemId}`, {
-                            method: 'POST'
-                        });
-
-                        if (response.ok) {
-                            document.querySelector(`.wishlist-item[data-id="${itemId}"]`).remove();
-
-                            if (document.querySelectorAll('.wishlist-item').length === 0) {
-                                document.getElementById('wishlist-container').innerHTML = '<p class="text-center" id="empty-wishlist">Your wishlist is empty. Add some items!</p>';
-                            }
-                        } else {
-                            console.error('Failed to remove item from wishlist');
+                try {
+                    const response = await fetch(`/wishlist/remove/${itemId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
                         }
-                    } catch (error) {
-                        console.error('Error:', error);
+                    });
+
+                    if (response.ok) {
+                        document.querySelector(`.wishlist-item[data-id="${itemId}"]`).remove();
+
+                        if (document.querySelectorAll('.wishlist-item').length === 0) {
+                            document.getElementById('wishlist-container').innerHTML = '<p class="text-center" id="empty-wishlist">Your wishlist is empty. Add some items!</p>';
+                        }
+                    } else {
+                        console.error('Failed to remove item from wishlist');
                     }
-                });
+                } catch (error) {
+                    console.error('Error:', error);
+                }
             });
         });
+    });
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

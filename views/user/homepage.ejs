@@ -75,6 +75,98 @@
             color: #ffffff;
         }
 
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-body {
+            padding: 20px;
+            /* Add padding to the modal body */
+            background-color: #f9f9f9;
+            /* Optional: Light background for contrast */
+        }
+
+        .modal-body .col-md-3 {
+            padding: 10px;
+            /* Add padding between product cards */
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .modal-body .card {
+            border: 1px solid #e0e0e0;
+            /* Add a light border around each card */
+            border-radius: 8px;
+            /* Optional: Slight rounding of card corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Add a subtle shadow */
+            margin-bottom: 20px;
+            /* Add space between each card */
+        }
+
+        .modal-body .card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            /* Enhance shadow on hover */
+            transition: box-shadow 0.3s ease;
+            /* Smooth hover effect */
+        }
+
+        .modal-body img {
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            max-height: 200px;
+            /* Limit image height to prevent overflow */
+            object-fit: cover;
+            /* Make sure the image fits nicely inside */
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .product-contanier-heading {
+            padding-left: 200px;
+        }
+
+        /* Product card styles */
+        .product-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .product-card img {
+            width: 100px;
+            height: auto;
+        }
+
+
         .form-inline .form-control {
             border: none;
             margin-left: 50px;
@@ -199,8 +291,11 @@
             width: 100%;
             border-radius: 5px;
             color: #000;
-            height: 400px;
+            height: auto;
+            /* Changed from fixed height to auto */
             overflow: hidden;
+            margin-bottom: 20px;
+            /* Added bottom margin */
         }
 
         .card-img-top {
@@ -226,8 +321,11 @@
         }
 
         .card:hover {
-            transform: scale(1.02);
+            transform: scale(1.05);
+            /* Increased scale slightly */
             transition: transform 0.3s ease-in-out;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+            /* Increased shadow on hover */
         }
 
         .card-img-top i {
@@ -235,15 +333,17 @@
             top: 5px;
             right: 5px;
             font-size: 20px;
-            color: rgb(0, 0, 0);
+            color: rgb(208, 208, 208);
         }
 
         .fa-heart {
-            color: rgb(255, 255, 255); /* Default color */
+            color: rgb(255, 255, 255);
+            /* Default color */
         }
 
         .fa-heart.liked {
-            color: red; /* Color when liked */
+            color: red;
+            /* Color when liked */
         }
 
         .container {
@@ -257,11 +357,12 @@
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg">
             <div class="navbar-brand-container d-flex align-items-center">
-                <div class="navbar-brand" onclick="location.href='#'">Quartz
+                <div class="navbar-brand" onclick="location.href='/'" type="button">Quartz
                     <span class="material-symbols-outlined ms-2">watch_wake</span>
                     Men
                 </div>
             </div>
+
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
                 aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -269,8 +370,8 @@
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <form class="form-inline mx-auto" action="/search" method="GET">
                     <div class="input-group">
-                        <input type="text" name="query" class="form-control border-0 rounded-pill bg-white text-black"
-                            placeholder="Search ..." aria-label="Search">
+                        <input type="text" name="q" class="form-control border-0 rounded-pill bg-white text-black"
+                            placeholder="Search" aria-label="Search">
                         <div class="input-group-append">
                             <button class="btn btn-outline-secondary rounded-pill" type="submit">
                                 <i class="fas fa-search text-white"></i>
@@ -279,6 +380,8 @@
                     </div>
                 </form>
                 <ul class="navbar-nav ml-auto">
+                    <a class="nav-link" href="/shopwatches"><i class="fa-solid "></i>Shop</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/wishlist" role="button" aria-haspopup="true" aria-expanded="false">
                             <i class="fa-solid fa-heart"></i>
@@ -343,7 +446,7 @@
                     <ul class="navbar-nav">
                         <% categories.forEach((category, index)=> { %>
                             <li class="nav-item">
-                                <a class="nav-link" href="/watches">
+                                <a class="nav-link" href="/watches/<%= category.categoryName %>">
                                     <%= category.categoryName %>
                                 </a>
                             </li>
@@ -381,95 +484,46 @@
             </div>
         </div>
 
-        <!-- Sort & Filter -->
-        <div class="container mt-5">
-            <button id="filterButton" class="btn btn-light" data-bs-toggle="offcanvas"
-                data-bs-target="#offcanvasFilters" aria-controls="offcanvasFilters">Sort & Filters</button>
-            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasFilters"
-                aria-labelledby="offcanvasFiltersLabel">
-                <div class="offcanvas-header">
-                    <h5 id="offcanvasFiltersLabel">Filters</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <form>
-                        <div class="form-group mb-3">
-                            <label for="sortBy">Sort by:</label>
-                            <select id="sortBy" class="form-control">
-                                <option value="-">-</option>
-                                <option value="highToLow">High to Low</option>
-                                <option value="lowToHigh">Low to High</option>
-                            </select>
+
+        <!-- Product Container -->
+        <h2 class="product-contanier-heading">This is our newly launched models</h2>
+        <div class="container mt-5 product-container">
+            <div class="row">
+                <% products .sort((a, b)=> new Date(b.createdAt) - new Date(a.createdAt))
+                    .slice(0, 4)
+                    .forEach((product) => { %>
+                    <a href="/productdetail/<%= product._id %>" class="col-md-3"
+                        style="text-decoration: none; color: inherit;">
+                        <div class="card">
+                            <div class="card-img-top position-relative">
+                                <i class="<%= product.wishlist ? 'fas fa-heart liked' : 'far fa-heart' %>"
+                                    data-product-id="<%= product._id %>" style="cursor: pointer;"
+                                    onclick="toggleWishlist(this, event)">
+                                </i>
+                                <img src="/uploads/<%= product.image[0] %>" alt="Product Image" class="card-img-top">
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <%= product.brand %>
+                                </h5>
+                                <p class="card-text-model">Model: <%= product.name %>
+                                </p>
+                                <p class="card-text-price">₹<%= product.price.toFixed(2) %>
+                                </p>
+                                <% if(product.stock> 10) { %>
+                                    <p class="card-text-price">In-stock</p>
+                                    <% } else if(product.stock < 10) { %>
+                                        <p class="card-text-price">Limited-Stock</p>
+                                        <% } else if(product.stock===0) { %>
+                                            <p class="card-text-price text-danger">Out of Stock</p>
+                                            <% } %>
+                            </div>
                         </div>
-                        <div class="form-group mb-3">
-                            <label for="availability">Availability:</label>
-                            <select id="availability" class="form-control">
-                                <option value="-">-</option>
-                                <option value="inStock">In Stock</option>
-                                <option value="outOfStock">Out of Stock</option>
-                            </select>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="category">Category:</label>
-                            <select id="category" class="form-control">
-                                <option value="-">-</option>
-                                <option value="category1">Category 1</option>
-                                <option value="category2">Category 2</option>
-                            </select>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="gender">Gender:</label>
-                            <select id="gender" class="form-control">
-                                <option value="-">-</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                            </select>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="strapMaterial">Strap Material:</label>
-                            <select id="strapMaterial" class="form-control">
-                                <option value="-">-</option>
-                                <option value="leather">Leather</option>
-                                <option value="metal">Metal</option>
-                            </select>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="priceRange">Price:</label>
-                            <input type="range" id="priceRange" class="form-control-range" min="0" max="1000" step="1"
-                                value="0">
-                            <div id="priceDisplay">Selected Price: ₹0</div>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Apply Filters</button>
-                        <button type="reset" class="btn btn-secondary">Cancel</button>
-                    </form>
-                </div>
+                    </a>
+                    <% }) %>
             </div>
         </div>
 
-    <!-- Product Container -->
-    <div class="container mt-5">
-        <div class="row">
-            <% products.forEach((product) => { %>
-            <a href="/productdetail/<%= product._id %>" class="col-md-3" style="text-decoration: none; color: inherit;">
-                <div class="card">
-                    <div class="card-img-top position-relative">
-                        <i class="fa fa-heart <%= product.wishlist ? 'liked' : '' %>" data-product-id="<%= product._id %>" 
-                        style="cursor: pointer;" onclick="toggleWishlist(this, event)">
-                        </i>
-                        <img src="/uploads/<%= product.image[0] %>" alt="Product Image" class="card-img-top">
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <%= product.brand %>
-                        </h5>
-                        <p class="card-text-model">Model: <%= product.name %></p>
-                        <p class="card-text-price">₹<%= product.price.toFixed(2) %></p>
-                    </div>
-                </div>
-            </a>
-            <% }) %>
-        </div>
-    </div>
 
 
         <!-- Footer -->
@@ -497,8 +551,8 @@
                 </div>
             </div>
         </footer>
-
-        <!-- DOM -->
+    </div>
+        <!-- Scripts -->
         <script>
             document.getElementById('priceRange').addEventListener('input', function () {
                 const priceDisplay = document.getElementById('priceDisplay');
@@ -518,27 +572,75 @@
             });
 
 
-// /wishlist script
-function toggleWishlist(icon, event) {
-    event.preventDefault(); // Prevents the default action, such as navigating to another page
+            // /wishlist script
+            function toggleWishlist(icon, event) {
+                event.preventDefault(); // Prevents the default action, such as navigating to another page
 
-    const productId = icon.getAttribute('data-product-id');
-    const isLiked = icon.classList.contains('liked');
-    const url = isLiked ? `/wishlist/remove/${productId}` : `/wishlist/add/${productId}`;
-    const method =  'POST';
+                const productId = icon.getAttribute('data-product-id');
+                const isLiked = icon.classList.contains('liked');
+                const url = isLiked ? `/wishlist/remove/${productId}` : `/wishlist/add/${productId}`;
+                const method = 'POST';
 
-    fetch(url, { method })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                icon.classList.toggle('liked');
-            } else {
-                console.error('Failed to update wishlist');
+                fetch(url, { method })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            icon.classList.toggle('liked');
+                        } else {
+                            console.error('Failed to update wishlist');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
             }
-        })
-        .catch(error => console.error('Error:', error));
-}
+            document.getElementById('searchForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const query = this.query.value;  // Get the search query
 
+                fetch(`/search?query=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            displaySearchResults(data.products);
+                        } else {
+                            alert('No products found');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+
+            // Function to display search results
+            function displaySearchResults(products) {
+                const modalBody = document.querySelector('.modal-body');
+                modalBody.innerHTML = ''; // Clear previous results
+
+                products.forEach(product => {
+                    const productCard = `
+                <div class="col-md-3">
+                    <a href="/productdetail/${product._id}" style="text-decoration: none; color: inherit;">
+                        <div class="card">
+                            <div class="card-img-top position-relative">
+                                <!-- Toggle heart icon based on wishlist status -->
+                                <i class="${product.wishlist ? 'fas fa-heart liked' : 'far fa-heart'}"
+                                    data-product-id="${product._id}" style="cursor: pointer;"
+                                    onclick="toggleWishlist(this, event)">
+                                </i>
+                                <img src="/uploads/${product.image[0]}" alt="Product Image" class="card-img-top">
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">${product.brand}</h5>
+                                <p class="card-text-model">Model: ${product.name}</p>
+                                <p class="card-text-price">₹${product.price.toFixed(2)}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            `;
+
+                    modalBody.innerHTML += productCard;
+                });
+
+                $('#searchModal').modal('show'); // Show the modal with search results
+            }
 
         </script>
 

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Failed</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<!-- Google Fonts -->
+<link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<link href="https://fonts.googleapis.com/css2?family=Almendra+SC&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        .message-box {
+            display: flex;
+            justify-content: center;
+            padding-top: 20vh;
+            padding-bottom: 20vh;
+        }
+        .fail-container {
+            background: white;
+            height: 480px;
+            width: 90%;
+
+            text-align: center;
+        }
+        .fail-red-box {
+            width: 100%;
+            height: 140px;
+            background: #f8d7da;
+        }
+        .monserrat-font {
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 2px;
+        }
+        .main {
+            width: 80vw;
+            margin: 0 10vw;
+            height: 50vh;
+            overflow: hidden;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #002547;
+        }
+        .navbar {
+            background-color: #1d1e1e;
+            position: relative;
+            z-index: 1020;
+        }
+
+        .navbar-brand {
+            font-family: 'Almendra SC', serif;
+            color: #FFDD00;
+        }
+
+        .navbar,
+        .navbar .nav-link,
+        .navbar .navbar-text {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg">
+        <div class="navbar-brand-container d-flex align-items-center">
+            <div class="navbar-brand" onclick="location.href='#'">Quartz
+                <span class="material-symbols-outlined ms-2">watch_wake</span>
+                Men
+            </div>
+        </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <form class="form-inline mx-auto" action="/search" method="GET">
+                <div class="input-group">
+                    <input type="text" name="query" class="form-control border-0 rounded-pill bg-white text-black"
+                        placeholder="Search ..." aria-label="Search">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary rounded-pill" type="submit">
+                            <i class="fas fa-search text-white"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/wishlist" role="button" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa-solid fa-heart"></i>
+                    </a>
+                </li>
+                <% if (loggedIn) { %>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink2" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa-solid fa-user"></i>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
+                            <a class="dropdown-item" href="/profile">Profile</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/logout">Logout</a>
+                        </div>
+                    </li>
+                    <% } else { %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/signup"><i class="fa-solid fa-user"></i>Sign Up</a>
+                        </li>
+                        <% } %>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/cart" role="button" aria-haspopup="true"
+                                    aria-expanded="false">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                </a>
+                            </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- end of nav -->
+    
+    <!-- start of main -->
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="message-box">
+                    <div class="fail-container">
+                        <br>
+                        <img src="https://cdn.iconscout.com/icon/free/png-512/free-fail-1431750-1207476.png?f=avif&w=256" alt="" style="height: 100px;">
+                        <br>
+                        <div style="padding-left: 5%; padding-right: 5%">
+                            <hr>
+                        </div>
+                        <br>
+                        <h1 class="monserrat-font" style="color: Red">Order Failed</h1>
+                        <br>
+                        <div class="fail-red-box">
+                            <br>
+                            <h5>ORDER FAILURE</h5>
+                            <p>Unfortunately, your order was not successful.</p>
+                            <p>We apologize for the inconvenience. Please try again or contact support.</p>
+                        </div>
+                        <br>
+                        <div class="btn-group">
+                            <button id="retry-order-btn" class="btn btn-ouioui-secondary">Retry Order</button>
+                            <button id="back-to-home-btn" class="btn btn-ouioui-secondary">Back to Home</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- end of main -->
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('retry-order-btn').addEventListener('click', function() {
+            window.location.href = '/orderHistory';
+        });
+        document.getElementById('back-to-home-btn').addEventListener('click', function() {
+            window.location.href = '/';
+        });
+    </script>
+</body>
+</html>

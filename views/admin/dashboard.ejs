@@ -1,78 +1,509 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
+        body {
+            background-color: #f7ffff;
+        }
         .sidebar {
             background-color: #094077;
-            color: #fff;
+            color: #ffffff;
             height: 100vh;
-            position: fixed; 
+            position: fixed;
             top: 0;
             left: 0;
-            width: 250px; 
-            padding-top: 56px; 
+            width: 250px;
+            padding-top: 56px;
         }
+
         .navbar {
-            background-color: #6c757d; 
+            background-color: #6c757d;
             color: #fff;
         }
+
         .nav-link {
             color: white;
-            transition: background-color 0.3s ease; 
+            transition: background-color 0.3s ease;
         }
+
         .nav-link:hover {
-            background-color: yellow; 
+            background-color: yellow;
         }
+
+        .container-box {
+            background-color: #ffffff;
+            margin: 20px;
+            border-radius: 15px;
+            /* Curved corners */
+            padding: 15px;
+            /* Padding inside the box */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            /* Shadow effect */
+            color: white;
+            /* Default text color for the boxes */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            height: 150px;
+            /* Adjusted height for the boxes */
+            width: 350px;
+            /* Fixed width for square shape */
+        }
+
+        /* Individual colors for each container */
+        .orders {
+            color: #007bff;
+            /* Blue */
+        }
+
+        .users {
+            color: #28a745;
+            /* Green */
+        }
+
+        .products {
+            color: #dc3545;
+            /* Red */
+        }
+
+        .income {
+            color: #ffc107;
+            /* Yellow */
+        }
+
+        .graph-container {
+            margin: 20px;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            background-color: white;
+
+        }
+
+        canvas {
+            height: 200px;
+            /* Adjusted height for the chart */
+        }
+
+        .filter-labels {
+            display: flex;
+            justify-content: center;
+            /* Center the labels */
+            gap: 20px;
+            /* Space between labels */
+        }
+
+        .filter-label {
+            cursor: pointer;
+            /* Change cursor to pointer */
+            padding: 10px 15px;
+            /* Padding for the labels */
+            background-color: #6c757d;
+            /* Background color */
+            color: white;
+            /* Text color */
+            border-radius: 5px;
+            /* Rounded corners */
+            transition: background-color 0.3s;
+            /* Smooth transition */
+        }
+
+        .filter-label:hover {
+            background-color: #5a6268;
+            /* Darker shade on hover */
+        }
+
+        .container-dounut .card-body {
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .card-text {
+            text-shadow: 1px 1px rgba(0, 0, 0, 0.1);
+        }
+        .filter-label {
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+    color: white; /* Text color */
+    transition: background-color 0.3s;
+}
+
+.daily {
+    background-color: #007bff; /* Blue */
+}
+
+.weekly {
+    background-color: #28a745; /* Green */
+}
+
+.monthly {
+    background-color: #ffc107; /* Yellow */
+}
+
+.yearly {
+    background-color: #dc3545; /* Red */
+}
+
+/* Optional: Hover effect */
+.filter-label:hover {
+    opacity: 0.8;
+}
+
     </style>
 </head>
+
 <body>
 
-        <nav class="navbar navbar-expand-lg navbar-dark">
-            <a class="navbar-brand" href="#">Admin Panel</a>
-        </nav>
-    
-        <div class="container-fluid">
-            <div class="row">
-                <nav class="col-md-2 d-none d-md-block sidebar">
-                    <div class="sidebar-sticky">
-                        <ul class="nav flex-column">
-                            <li class="nav-item">
-                                <a class="nav-link active" href="/admin/dashboard">Dashboard</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/admin/usermanagement">User Management</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/admin/productmanagement">Product Management</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/admin/categorymanagement">Category Management</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/admin/couponmanagement">Coupon Management</a>
-                              </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/admin/ordermanagement">Order Management</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link active" href="/admin/salesreport">Sales Report</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/admin/logout">Logout</a>
-                            </li>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#">Admin Panel</a>
+    </nav>
 
-                        </ul>
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 d-none d-md-block sidebar">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/usermanagement">User Management</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/productmanagement">Product Management</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/categorymanagement">Category Management</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/couponmanagement">Coupon Management</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/ordermanagement">Order Management</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/admin/salesreport">Sales Report</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/logout">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Dashboard -->
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                <h2 style="text-align: center;">The Dashboard</h2>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6 d-flex justify-content-center">
+                            <div class="container-box orders">
+                                <h2><i class="fa-solid fa-truck-front"></i></h2>
+                                <h5 class="card-title">Total Number of Orders</h5>
+                                <h3 class="card-text" id="totalOrders">
+                                    <%= totalOrders %>
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col-md-6 d-flex justify-content-center">
+                            <div class="container-box users">
+                                <h2><i class="fa-solid fa-user-tie"></i></h2>
+                                <h5 class="card-title">Total Number of Users</h5>
+                                <h3 class="card-text"  id="totalUsers">
+                                    <%= totalUsers %>
+                                </h3>
+                            </div>
+                        </div>
                     </div>
-                </nav>
-    
+                    <div class="row">
+                        <div class="col-md-6 d-flex justify-content-center">
+                            <div class="container-box products">
+                                <h2><i class="fa-solid fa-box-open"></i></h2>
+                                <h5 class="card-title">Total Number of Products</h5>
+                                <h3 class="card-text" id="totalProducts">
+                                    <%= totalProducts %>
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col-md-6 d-flex justify-content-center">
+                            <div class="container-box income">
+                                <h2><i class="fa-solid fa-indian-rupee-sign"></i>+</h2>
+                                <h5 class="card-title">Total Income</h5>
+                                <h3 class="card-text" id="totalIncome">Rs: <%= totalIncome.toFixed(2) %>
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            </div>
+
+                <!-- Graph Container -->
+                <div class="graph-container" style="margin: 20px 0;">
+                    <h4>Order Trend</h4>
+                    <div class="text-center mb-3">
+                        <div class="filter-labels mb-3">
+
+                            <label class="filter-label" style="background-color: #c60000;" onclick="updateChart('daily')">Daily</label>
+                            <label class="filter-label" style="background-color: #007bff;" onclick="updateChart('weekly')">Weekly</label>
+                            <label class="filter-label" style="background-color: #16971d;" onclick="updateChart('monthly')">Monthly</label>
+                            <label class="filter-label" style="background-color: #e7d700;" onclick="updateChart('yearly')">Yearly</label>
+                        </div>
+                    </div>
+                    <canvas id="ordersChart"></canvas>
+                </div>
+                <div class="container-dounut">
+                    <h2 style="text-align: center;">Top Entities</h2>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card mb-4 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title text-center">Best Selling Products</h5>
+                                    <canvas id="bestSellingProductsChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card mb-4 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title text-center">Best Selling Brands</h5>
+                                    <canvas id="bestSellingBrandsChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card mb-4 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title text-center">Best Selling Categories</h5>
+                                    <canvas id="bestSellingCategoriesChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
         </div>
-    
+    </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+
+const ctx = document.getElementById('ordersChart').getContext('2d');
+const ordersChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'], // Sample labels for monthly data
+        datasets: [{
+            label: 'Total Orders',
+            data: [0, 0, 0, 0, 0, 0, 0], // Initial data, will be updated
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 2,
+            fill: true,
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: true,
+            }
+        },
+        scales: {
+            x: {
+                title: {
+                    display: true,
+                    text: 'Time Period'
+                }
+            },
+            y: {
+                title: {
+                    display: true,
+                    text: 'Number of Orders'
+                }
+            }
+        }
+    }
+});
+
+// Define a color map for each filter type
+const colorMap = {
+    daily: {
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+    },
+    weekly: {
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+    },
+    monthly: {
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+    },
+    yearly: {
+        backgroundColor: 'rgba(255, 206, 86, 0.2)',
+        borderColor: 'rgba(255, 206, 86, 1)',
+    }
+};
+
+// Update the chart based on the selected filter
+function updateChart(filter) {
+    fetch(`/admin/dashboard-order-stats?filter=${filter}`)
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(data => {
+            console.log("Fetched data:", data); 
+            let labels, dataValues;
+
+            switch (filter) {
+                case 'daily':
+                    labels = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7']; 
+                    dataValues = data.orderCount; 
+                    break;
+                case 'weekly':
+                    labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+                    dataValues = data.orderCount; 
+                    break;
+                case 'monthly':
+                    labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    dataValues = data.orderCount; 
+                    break;
+                case 'yearly':
+                    labels = ['2021', '2022', '2023', '2024']; 
+                    dataValues = data.orderCount;
+                    break;
+                default:
+                    return;
+            }
+
+            console.log("Updating chart with labels:", labels, "and data:", dataValues);
+
+            // Set the labels and data
+            ordersChart.data.labels = labels;
+            ordersChart.data.datasets[0].data = dataValues;
+
+            // Update the dataset colors based on the filter
+            ordersChart.data.datasets[0].backgroundColor = colorMap[filter].backgroundColor;
+            ordersChart.data.datasets[0].borderColor = colorMap[filter].borderColor;
+
+            ordersChart.update();
+        })
+        .catch(error => console.error('Error fetching order stats:', error));
+}
+
+// Initialize the chart with yearly data
+updateChart('yearly');
+
+
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const selectedFilter = this.getAttribute('data-filter');
+                console.log("Selected filter:", selectedFilter);
+            });
+        });
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+  fetch('/admin/dashboard-top')
+    .then(response => response.json())
+    .then(data => {
+      const { topProducts, topBrands, topCategories } = data;
+
+      const productLabels = topProducts.map(item => item.productDetails.name);
+      const productData = topProducts.map(item => item.totalQuantity);
+
+      const ctx1 = document.getElementById('bestSellingProductsChart').getContext('2d');
+      new Chart(ctx1, {
+        type: 'doughnut',
+        data: {
+          labels: productLabels,
+          datasets: [{
+            label: 'Best Selling Products',
+            data: productData,
+            backgroundColor:['rgba(255, 105, 180, 1)', 'rgba(0, 123, 255, 1)', 'rgba(255, 235, 59, 1)', 'rgba(255, 69, 0, 1)', 'rgba(60, 179, 113, 1)', 'rgba(138, 43, 226, 1)', 'rgba(255, 165, 0, 1)', 'rgba(75, 0, 130, 1)']
+            ,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'top' }
+          }
+        }
+      });
+
+      // Prepare chart data for Brands
+      const brandLabels = topBrands.map(item => item._id);
+      const brandData = topBrands.map(item => item.totalQuantity);
+
+      const ctx2 = document.getElementById('bestSellingBrandsChart').getContext('2d');
+      new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+          labels: brandLabels,
+          datasets: [{
+            label: 'Best Selling Brands',
+            data: brandData,
+            backgroundColor: ['rgba(255, 140, 0, 1)', 'rgba(0, 128, 128, 1)', 'rgba(128, 0, 128, 1)', 'rgba(220, 20, 60, 1)', 'rgba(255, 215, 0, 1)', 'rgba(70, 130, 180, 1)', 'rgba(34, 139, 34, 1)', 'rgba(255, 69, 0, 1)']
+            ,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'top' }
+          }
+        }
+      });
+
+      // Prepare chart data for Categories
+      const categoryLabels = topCategories.map(item => item._id);
+      const categoryData = topCategories.map(item => item.totalQuantity);
+
+      const ctx3 = document.getElementById('bestSellingCategoriesChart').getContext('2d');
+      new Chart(ctx3, {
+        type: 'doughnut',
+        data: {
+          labels: categoryLabels,
+          datasets: [{
+            label: 'Best Selling Categories',
+            data: categoryData,
+            backgroundColor: ['rgba(255, 223, 0, 0.6)', 'rgba(135, 206, 235, 0.6)', 'rgba(34, 139, 34, 0.6)', 'rgba(255, 0, 255, 0.6)', 'rgba(255, 127, 80, 0.6)', 'rgba(75, 0, 130, 0.6)', 'rgba(255, 165, 0, 0.6)', 'rgba(70, 130, 180, 0.6)']
+            ,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'top' }
+          }
+        }
+      });
+    })
+    .catch(error => console.error('Error fetching dashboard data:', error));
+});
+    </script>
 </body>
+
 </html>
