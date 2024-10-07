@@ -33,52 +33,53 @@ const loginpost = async(req,res) =>{
 }
 
 const dashboard = async (req, res) => {
-    try {
+  try {
+    const totalOrders = await Order.countDocuments();
+    const totalUsers = await User.countDocuments();
+    const totalProducts = await Product.countDocuments();
 
-      const totalOrders = await Order.countDocuments();
-      const totalUsers = await User.countDocuments();
-      const totalProducts = await Product.countDocuments();
-      const totalIncomeData = await Order.aggregate([
-        {
-          $match: {
-            paymentStatus: { $ne: 'Failed' },
-            'products.productStatus': { $nin: ['Cancel', 'Return', 'Accepted'] }
-          }
-        },
-        {
-          $project: {
-            effectiveAmount: {
-              $sum: {
-                $map: {
-                  input: "$products",
-                  as: "product",
-                  in: {
-                    $cond: [
-                      { $in: ["$$product.productStatus", ["Cancel", "Return", "Accepted"]] },
-                      0,
-                      "$$product.totalPrice"
-                    ]
-                  }
+    const totalIncomeData = await Order.aggregate([
+      {
+        $match: {
+          paymentStatus: { $in: ['Confirmed', 'Completed'] }
+        }
+      },
+      {
+        $project: {
+          netIncome: {
+            $sum: {
+              $map: {
+                input: "$products",
+                as: "product",
+                in: {
+                  $cond: [
+                    { $in: ["$$product.productStatus", ["Cancel", "Accepted"]] },
+                    { $multiply: ["$$product.totalPrice", -1] }, 
+                    "$$product.totalPrice" 
+                  ]
                 }
               }
             }
-          }
-        },
-        {
-          $group: {
-            _id: null,
-            totalIncome: { $sum: "$effectiveAmount" }
-          }
+          },
+          totalAmount: "$totalAmount" 
         }
-      ]);
-  
-      const totalIncome = totalIncomeData[0] ? totalIncomeData[0].totalIncome : 0;
-      res.render('admin/dashboard', { totalIncome, totalOrders, totalProducts, totalUsers });
-    } catch (error) {
-      console.error("Error fetching dashboard stats: ", error);
-      res.status(500).send("Internal error happened in the dashboard");
-    }
+      },
+      {
+        $group: {
+          _id: null,
+          totalIncome: { $sum: "$netIncome" }
+        }
+      }
+    ]);
+
+    const totalIncome = totalIncomeData[0] ? totalIncomeData[0].totalIncome : 0;
+    res.render('admin/dashboard', { totalIncome, totalOrders, totalProducts, totalUsers });
+  } catch (error) {
+    console.error("Error fetching dashboard stats: ", error);
+    res.status(500).send("Internal error happened in the dashboard");
+  }
 };
+
   
 const orderTrend = async (req, res) => {
         const { filter } = req.query;

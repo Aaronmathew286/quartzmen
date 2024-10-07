@@ -48,14 +48,17 @@ const userCheckout = async (req, res) => {
         if (!cart) {
             return res.status(404).send('Cart not found');
         }
-
+        const availableCoupons = await Coupon.find({ isActive: true });
         const cartItems = cart.items;
         const cartTotal = cart.grandTotal;
         let discount = 0;
+        let selectedCouponCode = null;
+
         if (req.session.couponCode) {
             const coupon = await Coupon.findOne({ code: req.session.couponCode, isActive: true });
             if (coupon && cartTotal >= coupon.minAmount) {
                 discount = coupon.discount > coupon.maxAmount ? coupon.maxAmount : coupon.discount;
+                selectedCouponCode = coupon.code;
             }
         }
         const finalTotal = cartTotal - discount;
@@ -66,7 +69,9 @@ const userCheckout = async (req, res) => {
             cartTotal,
             discount,
             finalTotal,
-            loggedIn: userData
+            loggedIn: userData,
+            availableCoupons,
+            selectedCouponCode
         });
     } catch (error) {
         console.error('Error in userCheckout:', error);
@@ -148,10 +153,6 @@ const userCheckoutPost = async (req, res) => {
             await Promise.all(stockUpdates);
         }
         await Cart.findByIdAndDelete(cart._id);
-
-        if (couponCode && paymentStatus === 'Confirmed') {
-            await Coupon.findOneAndDelete({ code: couponCode });
-        }
         return res.redirect(paymentStatus === 'Confirmed' ? '/orderSuccess' : '/orderFailed');
     } catch (error) {
         console.error('Checkout failed:', error);

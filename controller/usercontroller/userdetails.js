@@ -2,6 +2,7 @@ const User = require("../../models/user")
 const Product = require("../../models/product")
 const Category = require("../../models/category")
 const Razorpay = require('razorpay');
+const bcrypt  = require('bcryptjs')
 
 
 
@@ -63,6 +64,36 @@ const editProfile = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
+
+const resetPassword = async(req,res) => {
+    const { oldPassword, newPassword, confirmNewPassword } = req.body;
+    const errors = [];
+    if (newPassword !== confirmNewPassword) {
+        errors.push({ field: 'confirmNewPassword', message: 'New passwords do not match.' });
+    }
+    try {
+        const userId = req.session.user; 
+        const user = await User.findById(userId);
+
+        const isMatch = await bcrypt.compare(oldPassword, user.password);
+        if (!isMatch) {
+            errors.push({ field: 'oldPassword', message: 'Old password is incorrect.' });
+        }
+
+        if (errors.length > 0) {
+            return res.status(400).json({ errors });
+        }
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+        await user.save();
+
+        res.json({ message: 'Password has been successfully changed.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+}
+
 
 const address = async (req, res) => {
     try {
@@ -223,7 +254,7 @@ const walletTransactionSuccess = async (req, res) => {
         if (user) {
             user.wallet += amount / 100;
             user.wallethistory.push({
-                process: `Razorpay Payment ID: ${razorpayPaymentId}`,
+                process: `Amount added to wallet.`,
                 amount: amount / 100,
                 status: 'Credited'
             })
@@ -263,5 +294,6 @@ module.exports = {
     editAddress,
     createWalletOrder,
     walletTransactionSuccess,
+    resetPassword
 
 }

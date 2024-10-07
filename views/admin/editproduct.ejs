@@ -354,7 +354,7 @@
 
     function validateOfferPercentage(input, errorElement, message) {
         const value = parseFloat(input.value);
-        if (isNaN(value) || value < 1 || value > 90) {
+        if (isNaN(value) || value < 0 || value > 90) {
             errorElement.innerText = message;
             return false;
         }
@@ -379,7 +379,7 @@
                     }
                     break;
                 case 'offerPercentage':
-                    if (input.value < 0 || input.value > 90) {
+                    if (input.value <= 0 || input.value > 90) {
                         errorMessage = 'Offer percentage must be between 0 and 90.';
                         isValid = false;
                     }
@@ -422,7 +422,7 @@
         calculatePrice(); 
     });
     offerPercentageInput.addEventListener('input', () => {
-        validateOfferPercentage(offerPercentageInput, errorMessages.offerPercentage, 'Offer percentage must be between 1 and 90.');
+        validateOfferPercentage(offerPercentageInput, errorMessages.offerPercentage, 'Offer percentage must be between 0 and 90.');
         calculatePrice(); 
     });
     imageUploader.addEventListener('change', () => validateInput(imageUploader, errorMessages.image, 'At least one image is required.'));

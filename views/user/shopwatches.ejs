@@ -332,6 +332,7 @@
         <div class="container mt-5">
             <button id="filterButton" class="btn btn-light" data-bs-toggle="offcanvas"
                 data-bs-target="#offcanvasFilters" aria-controls="offcanvasFilters">Sort & Filters</button>
+                <button class="btn btn-light" id="cancelFilters" onclick="clearFilters()">Undo</button>
             <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasFilters"
                 aria-labelledby="offcanvasFiltersLabel">
                 <div class="offcanvas-header">
@@ -396,17 +397,25 @@
             </div>
         </div>
 
+
+
         <!-- Product Container -->
         <div class="container product-container">
             <div class="row">
+                <% if (noProductsMessage) { %>
+                    <h2 style="justify-content: center; text-align: center;"><%= noProductsMessage %></h2>
+                <% } else { %>
                 <% products.forEach((product)=> { %>
                     <a href="/productdetail/<%= product._id %>" class="col-md-3"
                         style="text-decoration: none; color: inherit;">
                         <div class="card">
                             <div class="card-img-top position-relative">
-                                <i class="<%= product.wishlist ? 'fas fa-heart liked' : 'far fa-heart' %>"
-                                    data-product-id="<%= product._id %>" style="cursor: pointer;"
-                                    onclick="toggleWishlist(this, event)"></i>
+                        <!-- Wishlist Heart Icon -->
+                        <i class="<%= product.wishlist ? 'fas fa-heart liked' : 'far fa-heart' %>"
+                            data-product-id="<%= product._id %>"
+                            style="cursor: pointer;"
+                            onclick="toggleWishlist(this, event)">
+                         </i>
                                 <img src="/uploads/<%= product.image[0] %>" alt="Product Image" class="card-img-top">
                             </div>
                             <div class="card-body">
@@ -421,8 +430,10 @@
                         </div>
                     </a>
                     <% }); %>
+                    <% } %>
             </div>
         </div>
+        
 
         <!-- Pagination -->
         <div class="container text-center my-4" style="padding-left: 650px;">
@@ -446,6 +457,8 @@
 
 
 
+
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -455,27 +468,36 @@
             priceDisplay.textContent = `Selected Price: ₹${this.value}`;
         });
 
+        function clearFilters() {
+        window.location.href = '/shopWatches';
+    }
+    function toggleWishlist(icon, event) {
+    event.preventDefault(); 
 
-        // /wishlist script
-        function toggleWishlist(icon, event) {
-            event.preventDefault(); // Prevents the default action, such as navigating to another page
+    const productId = icon.getAttribute('data-product-id');
+    const isLiked = icon.classList.contains('liked');
+    const url = isLiked ? `/wishlist/remove/${productId}` : `/wishlist/add/${productId}`;
+    const method = 'POST';
 
-            const productId = icon.getAttribute('data-product-id');
-            const isLiked = icon.classList.contains('liked');
-            const url = isLiked ? `/wishlist/remove/${productId}` : `/wishlist/add/${productId}`;
-            const method = 'POST';
-
-            fetch(url, { method })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        icon.classList.toggle('liked');
-                    } else {
-                        console.error('Failed to update wishlist');
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
+    fetch(url, { method })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                icon.classList.toggle('liked');
+               
+                if (icon.classList.contains('liked')) {
+                    icon.classList.add('fas');
+                    icon.classList.remove('far');
+                } else {
+                    icon.classList.add('far');
+                    icon.classList.remove('fas');
+                }
+            } else {
+                console.error('Failed to update wishlist');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
     </script>
 </body>
 

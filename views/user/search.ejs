@@ -446,9 +446,10 @@
                         <div class="card">
                             <div class="card-img-top position-relative">
                                 <i class="<%= product.wishlist ? 'fas fa-heart liked' : 'far fa-heart' %>"
-                                    data-product-id="<%= product._id %>" style="cursor: pointer;"
+                                    data-product-id="<%= product._id %>"
+                                    style="cursor: pointer;"
                                     onclick="toggleWishlist(this, event)">
-                                </i>
+                                 </i>
                                 <img src="/uploads/<%= product.image[0] %>" alt="Product Image" class="card-img-top">
                             </div>
                             <div class="card-body">
@@ -495,6 +496,35 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+                    function toggleWishlist(icon, event) {
+    event.preventDefault(); 
+
+    const productId = icon.getAttribute('data-product-id');
+    const isLiked = icon.classList.contains('liked');
+    const url = isLiked ? `/wishlist/remove/${productId}` : `/wishlist/add/${productId}`;
+    const method = 'POST';
+
+    fetch(url, { method })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                icon.classList.toggle('liked');
+              
+                if (icon.classList.contains('liked')) {
+                    icon.classList.add('fas');
+                    icon.classList.remove('far');
+                } else {
+                    icon.classList.add('far');
+                    icon.classList.remove('fas');
+                }
+            } else {
+                console.error('Failed to update wishlist');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+    </script>
 </body>
 
 </html>

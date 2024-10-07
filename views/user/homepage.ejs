@@ -60,6 +60,7 @@
         .navbar .dropdown-menu {
             background-color: #1d1e1e;
             z-index: 1050;
+            left: -65px;
         }
 
         .navbar .dropdown-item {
@@ -485,72 +486,150 @@
         </div>
 
 
-        <!-- Product Container -->
-        <h2 class="product-contanier-heading">This is our newly launched models</h2>
-        <div class="container mt-5 product-container">
-            <div class="row">
-                <% products .sort((a, b)=> new Date(b.createdAt) - new Date(a.createdAt))
-                    .slice(0, 4)
-                    .forEach((product) => { %>
-                    <a href="/productdetail/<%= product._id %>" class="col-md-3"
-                        style="text-decoration: none; color: inherit;">
-                        <div class="card">
-                            <div class="card-img-top position-relative">
-                                <i class="<%= product.wishlist ? 'fas fa-heart liked' : 'far fa-heart' %>"
-                                    data-product-id="<%= product._id %>" style="cursor: pointer;"
-                                    onclick="toggleWishlist(this, event)">
-                                </i>
-                                <img src="/uploads/<%= product.image[0] %>" alt="Product Image" class="card-img-top">
-                            </div>
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                    <%= product.brand %>
-                                </h5>
-                                <p class="card-text-model">Model: <%= product.name %>
-                                </p>
-                                <p class="card-text-price">₹<%= product.price.toFixed(2) %>
-                                </p>
-                                <% if(product.stock> 10) { %>
-                                    <p class="card-text-price">In-stock</p>
-                                    <% } else if(product.stock < 10) { %>
-                                        <p class="card-text-price">Limited-Stock</p>
-                                        <% } else if(product.stock===0) { %>
-                                            <p class="card-text-price text-danger">Out of Stock</p>
-                                            <% } %>
-                            </div>
-                        </div>
-                    </a>
-                    <% }) %>
-            </div>
-        </div>
+<!-- Product Container -->
+
+<div class="container mt-5 product-container">
+    <h2 class="product-container-heading">This is our newly launched models</h2>
+    <div class="row">
+        <% products
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // Sort products by creation date (newest first)
+            .slice(0, 4) // Show only the latest 4 products
+            .forEach((product) => { %>
+            <a href="/productdetail/<%= product._id %>" class="col-md-3" style="text-decoration: none; color: inherit;">
+                <div class="card">
+                    <div class="card-img-top position-relative">
+                        <!-- Wishlist Heart Icon -->
+                        <i class="<%= product.wishlist ? 'fas fa-heart liked' : 'far fa-heart' %>"
+                           data-product-id="<%= product._id %>"
+                           style="cursor: pointer;"
+                           onclick="toggleWishlist(this, event)">
+                        </i>
+                        <!-- Product Image -->
+                        <img src="/uploads/<%= product.image[0] %>" alt="Product Image" class="card-img-top">
+                    </div>
+                    <div class="card-body">
+                        <!-- Product Details -->
+                        <h5 class="card-title"><%= product.brand %></h5>
+                        <p class="card-text-model">Model: <%= product.name %></p>
+                        <p class="card-text-price">₹<%= product.price.toFixed(2) %></p>
+                        
+                        <!-- Stock Status -->
+                        <% if (product.stock > 10) { %>
+                            <p class="card-text-price">In-stock</p>
+                        <% } else if (product.stock > 0) { %>
+                            <p class="card-text-price">Limited-Stock</p>
+                        <% } else { %>
+                            <p class="card-text-price text-danger">Out of Stock</p>
+                        <% } %>
+                    </div>
+                </div>
+            </a>
+        <% }) %>
+    </div>
+</div>
+
 
 
 
         <!-- Footer -->
-        <footer class="footer py-5 bg-black text-white">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-4">
-                        <h5>About Us</h5>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero.
-                            Sed
-                            cursus ante dapibus diam.</p>
-                    </div>
-                    <div class="col-md-4">
-                        <h5>Our Services</h5>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero.
-                            Sed
-                            cursus ante dapibus diam.</p>
-                    </div>
-                    <div class="col-md-4">
-                        <h5>Contact Us</h5>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero.
-                            Sed
-                            cursus ante dapibus diam.</p>
-                    </div>
+        <footer class="footer text-center text-lg-start mt-auto">
+            <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom" style="border-color: rgba(255, 255, 255, 0.15);">
+              <div class="me-5 d-none d-lg-block">
+                <span>Get connected with us on social networks:</span>
+              </div>
+        
+              <div>
+                <a href="" class="me-4 text-reset text-white">
+                  <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="" class="me-4 text-reset text-white">
+                  <i class="fab fa-twitter"></i>
+                </a>
+                <a href="" class="me-4 text-reset text-white">
+                  <i class="fab fa-google"></i>
+                </a>
+                <a href="" class="me-4 text-reset text-white">
+                  <i class="fab fa-instagram"></i>
+                </a>
+                <a href="" class="me-4 text-reset text-white">
+                  <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="" class="me-4 text-reset text-white">
+                  <i class="fab fa-github"></i>
+                </a>
+              </div>
+            </section>
+        
+            <section class="container text-center text-md-start mt-5">
+              <div class="row mt-3">
+                <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+                  <h6 class="text-uppercase fw-bold mb-4">
+                    QuartzMen
+                  </h6>
+                  <p>
+                    Here you can use rows and columns to organize your footer content. Lorem ipsum dolor sit amet,
+                    consectetur adipisicing elit.
+                  </p>
                 </div>
+        
+                <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+        
+                  <h6 class="text-uppercase fw-bold mb-4">
+                    Categories
+                  </h6>
+                  <p>
+                    <a href="#!" class="text-reset text-white">Automatic</a>
+                  </p>
+                  <p>
+                    <a href="#!" class="text-reset text-white">Digital</a>
+                  </p>
+                  <p>
+                    <a href="#!" class="text-reset text-white">Quartz</a>
+                  </p>
+                  <p>
+                    <a href="#!" class="text-reset text-white">Analog</a>
+                  </p>
+                </div>
+        
+                <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+        
+                  <h6 class="text-uppercase fw-bold mb-4">
+                    Useful links
+                  </h6>
+                  <p>
+                    <a href="#!" class="text-reset text-white">Pricing</a>
+                  </p>
+                  <p>
+                    <a href="#!" class="text-reset text-white">Settings</a>
+                  </p>
+                  <p>
+                    <a href="#!" class="text-reset text-white">Orders</a>
+                  </p>
+                  <p>
+                    <a href="#!" class="text-reset text-white">Help</a>
+                  </p>
+                </div>
+        
+                <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+                  <h6 class="text-uppercase fw-bold mb-4">Contact</h6>
+                  <p><i class="fas fa-home me-3"></i> Dot Space, NY 10012, Trivandrum</p>
+                  <p>
+                    <i class="fas fa-envelope me-3"></i>
+                    info@example.com
+                  </p>
+                  <p><i class="fas fa-phone me-3"></i> + 01 234 567 88</p>
+                  <p><i class="fas fa-print me-3"></i> + 01 234 567 89</p>
+                </div>
+        
+              </div>
+            </section>
+        
+            <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.2);">
+              © 2021 Copyright:
+              <a class="text-reset fw-bold" href="https://mdbootstrap.com/" style="color: #ffffff;">MDBootstrap.com</a>
             </div>
-        </footer>
+        
+          </footer>
     </div>
         <!-- Scripts -->
         <script>
@@ -572,29 +651,36 @@
             });
 
 
-            // /wishlist script
             function toggleWishlist(icon, event) {
-                event.preventDefault(); // Prevents the default action, such as navigating to another page
+    event.preventDefault(); 
 
-                const productId = icon.getAttribute('data-product-id');
-                const isLiked = icon.classList.contains('liked');
-                const url = isLiked ? `/wishlist/remove/${productId}` : `/wishlist/add/${productId}`;
-                const method = 'POST';
+    const productId = icon.getAttribute('data-product-id');
+    const isLiked = icon.classList.contains('liked');
+    const url = isLiked ? `/wishlist/remove/${productId}` : `/wishlist/add/${productId}`;
+    const method = 'POST';
 
-                fetch(url, { method })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            icon.classList.toggle('liked');
-                        } else {
-                            console.error('Failed to update wishlist');
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
+    fetch(url, { method })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                icon.classList.toggle('liked');
+                if (icon.classList.contains('liked')) {
+                    icon.classList.add('fas');
+                    icon.classList.remove('far');
+                } else {
+                    icon.classList.add('far');
+                    icon.classList.remove('fas');
+                }
+            } else {
+                console.error('Failed to update wishlist');
             }
+        })
+        .catch(error => console.error('Error:', error));
+}
+
             document.getElementById('searchForm').addEventListener('submit', function (e) {
                 e.preventDefault();
-                const query = this.query.value;  // Get the search query
+                const query = this.query.value;  
 
                 fetch(`/search?query=${encodeURIComponent(query)}`)
                     .then(response => response.json())
@@ -608,10 +694,10 @@
                     .catch(error => console.error('Error:', error));
             });
 
-            // Function to display search results
+
             function displaySearchResults(products) {
                 const modalBody = document.querySelector('.modal-body');
-                modalBody.innerHTML = ''; // Clear previous results
+                modalBody.innerHTML = ''; 
 
                 products.forEach(product => {
                     const productCard = `

@@ -286,8 +286,6 @@
                                 </tbody>
                             </table>
 
-                            <!-- Pagination -->
-                            <!-- Pagination -->
                             <nav aria-label="Wallet history pagination">
                                 <ul class="pagination justify-content-center">
                                     <!-- Previous page button -->
@@ -334,88 +332,99 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
-        // Initially hide the input field and submit button
-        const walletInputDiv = document.getElementById('walletInputDiv');
-        const addMoneyBtn = document.getElementById('addMoneyBtn');
-        const submitAmountBtn = document.getElementById('submitAmountBtn');
+      
+      const walletInputDiv = document.getElementById('walletInputDiv');
+const addMoneyBtn = document.getElementById('addMoneyBtn');
+const submitAmountBtn = document.getElementById('submitAmountBtn');
 
-        // Show the input field and submit button when the "Add Money" button is clicked
-        addMoneyBtn.addEventListener('click', function () {
-            walletInputDiv.style.display = walletInputDiv.style.display === 'none' ? 'block' : 'none';
+addMoneyBtn.addEventListener('click', function () {
+    walletInputDiv.style.display = walletInputDiv.style.display === 'none' ? 'block' : 'none';
+});
+
+submitAmountBtn.addEventListener('click', function () {
+    const amountInput = document.getElementById('walletAmount');
+    const amountToAdd = parseInt(amountInput.value) * 100; // Convert to smallest currency unit
+
+    // Set a maximum limit of 100,000
+    if (isNaN(amountToAdd) || amountToAdd <= 0 || amountToAdd > 10000000) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Invalid Amount',
+            text: 'Please enter a valid amount between 1 and 100,000.',
         });
+        return;
+    }
 
-        // Razorpay logic after submitting the entered amount
-        submitAmountBtn.addEventListener('click', function () {
-            const amountInput = document.getElementById('walletAmount');
-            const amountToAdd = parseInt(amountInput.value) * 100; // Convert to paise (₹1 = 100 paise)
-            console.log(amountToAdd, "This is the amount to add");
-
-            if (isNaN(amountToAdd) || amountToAdd <= 0) {
-                alert('Please enter a valid amount.');
+    fetch(`/create-wallet-order?amount=${amountToAdd}&currency=INR`, {
+        method: 'GET',
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (!data || !data.amount) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error creating order. Please try again.',
+                });
                 return;
             }
-
-            fetch(`/create-wallet-order?amount=${amountToAdd}&currency=INR`, {
-                method: 'GET',
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data.amount, "this is the amount returned from backend");
-
-                    if (!data || !data.amount) {
-                        alert('Error creating order. Please try again.');
-                        return;
-                    }
-
-                    const options = {
-                        key: 'rzp_test_KOCURsj88Mu4Sj', // Replace with your Razorpay key
-                        amount: data.amount, // Ensure this is the correct amount in paise
-                        currency: 'INR',
-                        name: 'QuartzMen',
-                        description: 'Add Money to Wallet',
-                        image: 'https://example.com/your_logo',
-                        order_id: data.id,
-                        handler: function (response) {
-                            // On successful payment
-                            console.log('Payment successful! Payment ID:', response.razorpay_payment_id);
-                            fetch('/wallet-transaction-success', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({
-                                    razorpayPaymentId: response.razorpay_payment_id,
-                                    orderId: data.id,
-                                    amount: data.amount,
-                                }),
-                            })
-                                .then(() => {
-                                    alert('Money successfully added to your wallet!');
-                                    location.reload(); // Refresh page or update wallet amount dynamically
-                                });
+            const options = {
+                key: 'rzp_test_KOCURsj88Mu4Sj',
+                amount: data.amount,
+                currency: 'INR',
+                name: 'QuartzMen',
+                description: 'Add Money to Wallet',
+                image: 'https://example.com/your_logo',
+                order_id: data.id,
+                handler: function (response) {
+                    fetch('/wallet-transaction-success', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
                         },
-                        prefill: {
-                            name: 'Aaron',
-                            email: 'akhil@example.com',
-                            contact: '9000090000',
-                        },
-                        theme: {
-                            color: '#3399cc',
-                        },
-                    };
-
-                    console.log(options.amount, "this is the amount sent to Razorpay");
-
-                    const rzp = new Razorpay(options);
-                    rzp.open(); // Open the Razorpay modal for payment
-                })
-                .catch(error => {
-                    console.error('Error during Razorpay order creation:', error);
-                });
+                        body: JSON.stringify({
+                            razorpayPaymentId: response.razorpay_payment_id,
+                            orderId: data.id,
+                            amount: data.amount,
+                        }),
+                    })
+                        .then(() => {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: 'Money successfully added to your wallet!',
+                            }).then(() => {
+                                location.reload();  // Reload the page after the user clicks OK
+                            });
+                        });
+                },
+                prefill: {
+                    name: 'Aaron',
+                    email: 'akhil@example.com',
+                    contact: '9000090000',
+                },
+                theme: {
+                    color: '#3399cc',
+                },
+            };
+            const rzp = new Razorpay(options);
+            rzp.open(); 
+        })
+        .catch(error => {
+            console.error('Error during Razorpay order creation:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'An error occurred while creating the Razorpay order. Please try again.',
+            });
         });
+});
 
     </script>
+    
 </body>
 
 

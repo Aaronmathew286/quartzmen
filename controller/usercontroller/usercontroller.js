@@ -1,12 +1,14 @@
-const nodemailer = require("nodemailer")
-const { authenticator } = require("otplib");
 const User = require('../../models/user')
 const Product = require("../../models/product");
 const Category = require("../../models/category");
 const Otp = require("../../models/otp");
+const nodemailer = require("nodemailer")
+const { authenticator } = require("otplib");
+const Wishlist = require('../../models/wishlist');
 require("dotenv").config();
 const secret = authenticator.generateSecret();
 const token = authenticator.generate(secret)
+const bcrypt = require('bcryptjs')
 
 
 const getSignup = (req, res) => {
@@ -24,15 +26,23 @@ const signupPost = async (req, res) => {
             password: req.body.password
         };
 
+        // Check if user already exists
         const existingUser = await User.findOne({ email: data.email });
         if (existingUser) {
             return res.render("user/signup", { status: true, errMessage: "User already exists" });
         }
 
+        // Hash the password using bcryptjs
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(data.password, saltRounds);
+        data.password = hashedPassword; // Store the hashed password
+
         req.session.userData = data; 
+
+        // Configure Nodemailer for OTP
         const transporter = nodemailer.createTransport({
             service: 'gmail',
-            host: "smtp.gmail.email",
+            host: "smtp.gmail.com",
             port: 587,
             secure: false,
             auth: {
@@ -41,7 +51,8 @@ const signupPost = async (req, res) => {
             }
         });
 
-        const token = Math.floor(100000 + Math.random() * 900000); 
+        // Generate and send OTP
+        const token = Math.floor(100000 + Math.random() * 900000);
         const mailOptions = {
             from: {
                 name: 'Quartzmen',
@@ -54,15 +65,15 @@ const signupPost = async (req, res) => {
         };
 
         await transporter.sendMail(mailOptions);
-        const otpmail = {
-            email: req.body.email,
-            otp: token
-        };
+
+        // Save the OTP in the database
+        const otpmail = { email: req.body.email, otp: token };
         await Otp.insertMany(otpmail);
 
-        req.session.otpTimestamp = Date.now(); 
+        req.session.otpTimestamp = Date.now();
         req.session.otpExpiryTime = 60 * 1000; 
 
+        // Redirect to OTP verification page
         res.redirect("/otp");
 
     } catch (error) {
@@ -72,11 +83,19 @@ const signupPost = async (req, res) => {
 };
 
 const getOtp = (req, res) => {
-    const timePassed = Date.now() - req.session.otpTimestamp;
-    const timeLeft = Math.max(60 - Math.floor(timePassed / 1000), 0); 
-    
+    if (!req.session.otpTimestamp) {
+        return res.redirect("/signup"); 
+    }
+
+    const timePassed = Date.now() - req.session.otpTimestamp; 
+    const timeLeft = Math.max(60 - Math.floor(timePassed / 1000), 0);
+
     if (timeLeft <= 0) {
-        return res.render("user/otp", { context: 'signup', errMessage: "OTP expired. Please request a new one.", timeLeft: 0 });
+        return res.render("user/otp", {
+            context: 'signup',
+            errMessage: "OTP expired. Please request a new one.",
+            timeLeft: 0
+        });
     }
 
     res.render("user/otp", { context: 'signup', timeLeft: timeLeft });
@@ -85,11 +104,24 @@ const getOtp = (req, res) => {
 const otpPost = async (req, res) => {
     try {
         const enteredOtp = req.body['otp[]'] ? req.body['otp[]'].join('') : null;
-        const timeLeft = req.session.timeLeft || 60;
         if (!enteredOtp) {
             throw new Error("OTP not entered");
         }
-        const otpdata = await Otp.findOne({ email: req.session.userData.email })
+
+        // Calculate remaining time dynamically
+        const timePassed = Date.now() - req.session.otpTimestamp;
+        const timeLeft = Math.max(60 - Math.floor(timePassed / 1000), 0);
+
+        if (timeLeft <= 0) {
+            return res.render("user/otp", {
+                errMessage: "OTP expired. Please request a new one.",
+                context: "signup",
+                timeLeft: 0
+            });
+        }
+
+        const otpdata = await Otp.findOne({ email: req.session.userData.email });
+
         if (enteredOtp === otpdata.otp) {
             const userData = req.session.userData;
             if (!userData || !userData.password || !userData.email || !userData.name) {
@@ -100,7 +132,11 @@ const otpPost = async (req, res) => {
             await User.insertMany(userData);
             return res.redirect("/login");
         } else {
-            res.render("user/otp", { errMessage: "otp is incorrect", context: "signup", timeLeft });
+            return res.render("user/otp", {
+                errMessage: "OTP is incorrect",
+                context: "signup",
+                timeLeft: timeLeft // Maintain the current timeLeft without resetting
+            });
         }
     } catch (error) {
         console.error("Error during OTP verification:", error);
@@ -111,43 +147,53 @@ const otpPost = async (req, res) => {
 const resendOtp = async (req, res) => {
     try {
         const userEmail = req.session.userData.email;
-        const timeLeft = req.session.timeLeft || 60;
         if (!userEmail) {
             return res.status(400).json({ error: "No email found in session" });
         }
-        const secret = authenticator.generateSecret();
-        const newToken = authenticator.generate(secret);
 
-        await Otp.updateOne({ email: userEmail }, { otp: newToken });
+        const newToken = authenticator.generate(authenticator.generateSecret());  // Generate new OTP
+
+        // Remove any existing OTP entry for this email
+        await Otp.deleteOne({ email: userEmail });
+
+        // Create a new OTP document in the database
+        const newOtp = new Otp({
+            email: userEmail,
+            otp: newToken,
+            createdAt: new Date()  // Optional: You can use this to track OTP creation time
+        });
+
+        await newOtp.save();  // Save the new OTP document
+
+        // Set up the nodemailer transport and mail options
         const transporter = nodemailer.createTransport({
             service: 'gmail',
-            host: "smtp.gmail.email",
+            host: "smtp.gmail.com",
             port: 587,
             secure: false,
             auth: {
                 user: process.env.ADMINMAIL,
                 pass: process.env.ADMINPASS
-            },
+            }
         });
 
         const mailOptions = {
-            from: {
-                name: 'Quartzmen',
-                address: process.env.ADMINMAIL
-            },
+            from: { name: 'Quartzmen', address: process.env.ADMINMAIL },
             to: userEmail,
             subject: "Resend OTP Verification",
-            text: "Hello, here is your OTP code for verification",
-            html: `Please verify your email with this OTP: ${newToken}`,
+            html: `Please verify your email with this OTP: ${newToken}`
         };
 
-        await transporter.sendMail(mailOptions);
-        res.render("user/otp", { timeLeft: timeLeft })
+        await transporter.sendMail(mailOptions);  // Send OTP via email
+
+        // Reset the session timestamp to start a new countdown timer
+        req.session.otpTimestamp = Date.now();
+        res.status(200).json({ success: true, timeLeft: 60 });
     } catch (error) {
         console.error("Error during OTP resend:", error);
         res.status(500).json({ error: "Internal server error" });
     }
-}
+};
 
 const forgetPassword = (req, res) => {
     res.render("user/forgetpassword")
@@ -232,19 +278,21 @@ const newPassword = (req, res) => {
 
 const newPasswordPost = async (req, res) => {
     try {
-        const { password } = req.body;
-        const email = req.session.userData.email;
-        const user = await User.findOne({ email: email });
+        const { password } = req.body; 
+        const email = req.session.userData.email; 
+        const user = await User.findOne({ email: email }); 
 
         if (!user) {
             return res.render("user/newpassword", { status: true, errMessage: "User not found" });
         }
-        user.password = password;
 
-        await user.save();
-        await Otp.deleteOne({ email: email });
+        const hashedPassword = await bcrypt.hash(password, 10); 
+        user.password = hashedPassword; 
 
-        res.redirect("/login");
+        await user.save(); 
+        await Otp.deleteOne({ email: email }); 
+
+        res.redirect("/login"); 
     } catch (error) {
         console.error("Error during password reset:", error);
         return res.status(500).json({ error: "Internal server error" });
@@ -257,28 +305,33 @@ const login = (req, res) => {
 
 const loginPost = async (req, res) => {
     const userData = {
-        email: req.body.email.toLowerCase(),
-        password: req.body.password
-    }
+      email: req.body.email.toLowerCase(), 
+      password: req.body.password 
+    };
+  
     try {
-        const checkUser = await User.findOne({ email: userData.email });
-        if (checkUser) {
-            if (checkUser.isBlocked === true) {
-                res.render("user/login", { status: true, errMessage: "You are blocked" });
-
-            } else if (checkUser.password === userData.password) {
-                req.session.user = checkUser._id;
-                res.redirect("/");
-            } else {
-                res.render("user/login", { status: true, errMessage: "Wrong information, please try again" });
-            }
-        } else {
-            res.render("user/login", { status: true, errMessage: "User not found" });
+      const checkUser = await User.findOne({ email: userData.email });
+  
+      if (checkUser) {
+        if (checkUser.isBlocked === true) {
+          return res.render("user/login", { status: true, errMessage: "You are blocked" });
         }
+
+        const isMatch = await bcrypt.compare(userData.password, checkUser.password);
+  
+        if (isMatch) {
+          req.session.user = checkUser._id;
+          res.redirect("/");
+        } else {
+          res.render("user/login", { status: true, errMessage: "Wrong information, please try again" });
+        }
+      } else {
+        res.render("user/login", { status: true, errMessage: "User not found" });
+      }
     } catch (err) {
-        res.status(500).send(err);
+      res.status(500).send(err);
     }
-}
+};
 
 const homePage = async (req, res) => {
     try {
@@ -295,11 +348,21 @@ const homePage = async (req, res) => {
             return visibleCategory.some(category => category.categoryName === product.category);
         });
         const strapMaterials = visibleProducts.filter(strap => strap.strapMaterial)
+        let wishlistProducts = [];
 
-
-
-
-        res.render('user/homepage', { products: visibleProducts, loggedIn: logIn, categories: visibleCategory, strapMaterials: strapMaterials });
+        if (userData) {
+            const userWishlist = await Wishlist.findOne({ user: logIn }).select('products');
+            if (userWishlist) {
+                wishlistProducts = userWishlist.products.map(product => product.toString());
+            }
+        }
+        const productsWithWishlist = visibleProducts.map(product => {
+            return {
+                ...product.toObject(),
+                wishlist: wishlistProducts.includes(product._id.toString())
+            };
+        });
+        res.render('user/homepage', { products: productsWithWishlist, loggedIn: logIn, categories: visibleCategory, strapMaterials: strapMaterials});
     } catch (err) {
         console.error(err);
         res.status(500).send('Internal error occured in the home page')
@@ -308,26 +371,40 @@ const homePage = async (req, res) => {
 
 const categoryWatches = async (req, res) => {
     try {
-        const user = req.session.user
+        const user = req.session.user;
         const { category } = req.params;
+        const categories = await Category.findOne({ categoryName: category, isBlocked: false });
+        if (!categories) {
+            return res.status(404).send('Category not found or blocked.');
+        }
+        const products = await Product.find({ category: categories.categoryName, isBlocked: false });
+        let wishlistProducts = [];
 
-        const categories = await Category.findOne({ categoryName: category, isBlocked: false })
-        const products = await Product.find({ category: categories.categoryName, isBlocked: false })
+        if (user) {
+            const userWishlist = await Wishlist.findOne({ user }).select('products');
+            if (userWishlist) {
+                wishlistProducts = userWishlist.products.map(product => product.toString());
+            }
+        }
+        const productsWithWishlist = products.map(product => ({
+            ...product.toObject(),
+            wishlist: wishlistProducts.includes(product._id.toString())
+        }));
 
-        res.render('user/watches', { products, categories, loggedIn: user });
+        res.render('user/watches', { products: productsWithWishlist, categories, loggedIn: user });
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');
     }
-}
+};
 
 const shopWatches = async (req, res) => {
     const { category, gender, strapMaterial, priceRange, sortBy, page = 1 } = req.query;
-    let filter = { isBlocked: false }; 
-
+    let filter = { isBlocked: false };
     try {
         const unblockedCategories = await Category.find({ isBlocked: false }).select('categoryName').lean();
         const unblockedCategoryNames = unblockedCategories.map(cat => cat.categoryName.toLowerCase());
+
         if (category && category !== '-' && unblockedCategoryNames.includes(category.trim().toLowerCase())) {
             filter.category = category.trim().toLowerCase();
         }
@@ -351,7 +428,7 @@ const shopWatches = async (req, res) => {
         const skip = (page - 1) * limit;
         const products = await Product.find({
             ...filter,
-            category: { $in: unblockedCategoryNames } 
+            isBlocked: false
         })
         .sort(sort)
         .skip(skip)
@@ -359,19 +436,32 @@ const shopWatches = async (req, res) => {
 
         const totalProducts = await Product.countDocuments({
             ...filter,
-            category: { $in: unblockedCategoryNames } 
+            isBlocked: false
         });
-
         const totalPages = Math.ceil(totalProducts / limit);
         const categoryName = await Category.find({ isBlocked: false });
         const user = req.session.user;
 
+        let wishlistProducts = [];
+        if (user) {
+            const userWishlist = await Wishlist.findOne({ user }).select('products');
+            if (userWishlist) {
+                wishlistProducts = userWishlist.products.map(product => product.toString());
+            }
+        }
+        const productsWithWishlist = products.map(product => ({
+            ...product.toObject(),
+            wishlist: wishlistProducts.includes(product._id.toString())
+        }));
+        const noProductsMessage = products.length === 0 ? "There are no such products." : "";
+
         res.render('user/shopwatches', {
-            products,
+            products: productsWithWishlist, 
             categories: categoryName,
             currentPage: parseInt(page),
             totalPages,
-            loggedIn: user
+            loggedIn: user,
+            noProductsMessage
         });
     } catch (err) {
         console.error('Error fetching products or categories:', err);
@@ -456,7 +546,6 @@ const logout = (req, res) => {
     req.session.user = false;
     res.redirect("/login")
 }
-
 
 module.exports = {
 

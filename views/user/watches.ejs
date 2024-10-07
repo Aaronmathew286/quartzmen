@@ -331,11 +331,12 @@
                         style="text-decoration: none; color: inherit;">
                         <div class="card">
                             <div class="card-img-top position-relative">
-                                <!-- Toggle heart icon based on wishlist status -->
-                                <i class="<%= product.wishlist ? 'fas fa-heart liked' : 'far fa-heart' %>"
-                                    data-product-id="<%= product._id %>" style="cursor: pointer;"
-                                    onclick="toggleWishlist(this, event)">
-                                </i>
+                        <!-- Wishlist Heart Icon -->
+                        <i class="<%= product.wishlist ? 'fas fa-heart liked' : 'far fa-heart' %>"
+                            data-product-id="<%= product._id %>"
+                            style="cursor: pointer;"
+                            onclick="toggleWishlist(this, event)">
+                         </i>
                                 <img src="/uploads/<%= product.image[0] %>" alt="Product Image" class="card-img-top">
                             </div>
                             <div class="card-body">
@@ -364,26 +365,32 @@ document.getElementById('priceRange').addEventListener('input', function () {
         });
 
 
-        // /wishlist script
         function toggleWishlist(icon, event) {
-            event.preventDefault(); // Prevents the default action, such as navigating to another page
+    event.preventDefault(); 
 
-            const productId = icon.getAttribute('data-product-id');
-            const isLiked = icon.classList.contains('liked');
-            const url = isLiked ? `/wishlist/remove/${productId}` : `/wishlist/add/${productId}`;
-            const method = 'POST';
+    const productId = icon.getAttribute('data-product-id');
+    const isLiked = icon.classList.contains('liked');
+    const url = isLiked ? `/wishlist/remove/${productId}` : `/wishlist/add/${productId}`;
+    const method = 'POST';
 
-            fetch(url, { method })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        icon.classList.toggle('liked');
-                    } else {
-                        console.error('Failed to update wishlist');
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
+    fetch(url, { method })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                icon.classList.toggle('liked');
+                if (icon.classList.contains('liked')) {
+                    icon.classList.add('fas');
+                    icon.classList.remove('far');
+                } else {
+                    icon.classList.add('far');
+                    icon.classList.remove('fas');
+                }
+            } else {
+                console.error('Failed to update wishlist');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
     </script>
 </body>
 

@@ -11,14 +11,12 @@ const couponsPage = async (req, res) => {
         
         const totalCoupons = await Coupon.countDocuments();
         const totalPages = Math.ceil(totalCoupons / limit);
-
         const currentDate = new Date();
-        for (let coupon of couponList) {
-            if (new Date(coupon.expirationDate) < currentDate && coupon.isActive) {
-                coupon.isActive = false;
-                await coupon.save();
+        await Promise.all(couponList.map(async (coupon) => {
+            if (new Date(coupon.expirationDate) < currentDate) {
+                await Coupon.deleteOne({ _id: coupon._id });
             }
-        }
+        }));
 
         res.render("admin/couponmanagement", {
             coupons: couponList,

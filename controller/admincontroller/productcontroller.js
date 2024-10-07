@@ -184,7 +184,7 @@ const editProductPost = async (req, res) => {
         if (originalPrice < 0) {
             return res.render('admin/editproduct', { product, existingCategories: existingCategory, updateProducts: updateProduct, errMessage: 'Give price more than 0' });
         }
-        if (offerPercentage <= 0 || offerPercentage > 90) {
+        if (offerPercentage < 0 || offerPercentage > 90) {
             return res.render('admin/editproduct', { product, existingCategories: existingCategory, updateProducts: updateProduct, errMessage: 'Give between 0 to 90' });
         }
         if (deletedImages && Array.isArray(deletedImages)) {

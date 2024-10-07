@@ -63,12 +63,14 @@ const updateOrderStatus = async (req, res) => {
             if (product.productStatus === 'Accepted') {
                 const user = await User.findById(userData);
 
-                user.wallet = user.wallet || 0;
 
-                user.wallet += product.price; 
+                const originalPrice = product.totalPrice - order.coupon.discount
+
+                user.wallet = user.wallet || 0;
+                user.wallet += originalPrice; 
                 user.wallethistory.push({
-                    process: `Refund for product`,
-                    amount: product.price,
+                    process: `Refund for product ${productId}`,
+                    amount: originalPrice,
                     status: 'Credited',
                 });
                 

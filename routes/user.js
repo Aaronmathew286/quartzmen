@@ -31,6 +31,7 @@ router.post("/newpassword",usercontroller.newPasswordPost)
 // User Profile:
 router.get("/profile",isAuth,userdetails.profile)
 router.post("/editprofile",isAuth,userdetails.editProfile)
+router.post("/resetpassword",isAuth,userdetails.resetPassword)
 router.get("/address",isAuth,userdetails.address)
 router.post("/addaddress",isAuth,userdetails.addAddress)
 router.post("/editaddress/:_id",isAuth,userdetails.editAddress)
