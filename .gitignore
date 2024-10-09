@@ -1,5 +1,5 @@
 PORT = 3030
-MONGODB_URI = mongodb://localhost:27017/dbQuartzMen
+MONGODB_URI = mongodb+srv://aaronmathew286:uGXMGUU8AbFW2td4@quartz.v4t4y.mongodb.net/?retryWrites=true&w=majority&appName=Quartz
 
 ADMINMAIL = quartzmen286@gmail.com
 ADMINPASSWORD = aaron2024
