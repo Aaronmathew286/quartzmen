@@ -335,39 +335,56 @@ const loginPost = async (req, res) => {
 
 const homePage = async (req, res) => {
     try {
+        const logIn = req.session.user;
         const userProducts = await Product.find();
         const userCategories = await Category.find();
-        const logIn = req.session.user;
-        const userData = User.findById(logIn)
-        if (!userData) {
-            res.render("user/login", { errMessage: "The user does not exist." })
-        }
-
         const visibleCategory = userCategories.filter(category => !category.isBlocked);
         const visibleProducts = userProducts.filter(product => {
             return visibleCategory.some(category => category.categoryName === product.category);
         });
-        const strapMaterials = visibleProducts.filter(strap => strap.strapMaterial)
+        const strapMaterials = visibleProducts.filter(strap => strap.strapMaterial);
         let wishlistProducts = [];
 
-        if (userData) {
-            const userWishlist = await Wishlist.findOne({ user: logIn }).select('products');
-            if (userWishlist) {
-                wishlistProducts = userWishlist.products.map(product => product.toString());
+        if (logIn) {
+            const userData = await User.findById(logIn);
+
+            if (userData && !userData.isBlocked) {
+                const userWishlist = await Wishlist.findOne({ user: logIn }).select('products');
+                if (userWishlist) {
+                    wishlistProducts = userWishlist.products.map(product => product.toString());
+                }
+            } else if (userData && userData.isBlocked) {
+
+                req.session.destroy();
+                return res.render("user/homepage", {
+                    products: visibleProducts,
+                    loggedIn: null,
+                    categories: visibleCategory,
+                    strapMaterials: strapMaterials,
+                    errMessage: "Your account has been blocked."
+                });
             }
         }
+
         const productsWithWishlist = visibleProducts.map(product => {
             return {
                 ...product.toObject(),
                 wishlist: wishlistProducts.includes(product._id.toString())
             };
         });
-        res.render('user/homepage', { products: productsWithWishlist, loggedIn: logIn, categories: visibleCategory, strapMaterials: strapMaterials});
+
+        res.render('user/homepage', {
+            products: productsWithWishlist,
+            loggedIn: logIn,
+            categories: visibleCategory,
+            strapMaterials: strapMaterials
+        });
+
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Internal error occured in the home page')
+        console.error('Error in homePage controller:', err);
+        res.status(500).send('Internal error occurred on the home page');
     }
-}
+};
 
 const categoryWatches = async (req, res) => {
     try {

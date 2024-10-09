@@ -355,12 +355,11 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
-
-
     document.addEventListener('DOMContentLoaded', function () {
-
-      const finalTotal = parseFloat(document.getElementById('orderTotal').getAttribute('data-finalTotal')); 
+      const finalTotal = parseFloat(document.getElementById('orderTotal').getAttribute('data-finalTotal'));
       const walletBalance = parseFloat(document.getElementById('walletBalance').getAttribute('data-wallet'));
       const paymentValidationMessage = document.getElementById('paymentError');
       const cashOnDelivery = document.getElementById('cashOnDelivery');
@@ -368,7 +367,7 @@
       const couponDiscountElement = document.getElementById('orderDiscount');
       let couponDiscount = parseFloat(couponDiscountElement ? couponDiscountElement.textContent : 0);
       let discountedTotal = finalTotal - couponDiscount;
-
+  
       if (discountedTotal > 10000) {
         cashOnDelivery.disabled = true;
         const codWarning = document.createElement('div');
@@ -376,7 +375,7 @@
         codWarning.textContent = 'Cash on Delivery is not possible for amounts above ₹10,000.';
         paymentValidationMessage.appendChild(codWarning);
       }
-
+  
       if (walletBalance < discountedTotal) {
         walletOption.disabled = true;
         const walletWarning = document.createElement('div');
@@ -384,13 +383,12 @@
         walletWarning.textContent = `Insufficient wallet balance. Wallet payment is only available for amounts up to ₹${walletBalance}.`;
         document.getElementById('walletBalance').appendChild(walletWarning);
       }
-
     });
-
+  
     document.addEventListener('DOMContentLoaded', function () {
       const addressData = document.getElementById('addressData').dataset.address;
       const addresses = JSON.parse(addressData);
-
+  
       function populateAddress(select) {
         const index = select.value;
         if (index !== '') {
@@ -402,17 +400,17 @@
           document.getElementById('city').value = address.city;
         }
       }
-
+  
       document.getElementById('savedAddress').addEventListener('change', function () {
         populateAddress(this);
       });
     });
-
+  
     document.addEventListener('DOMContentLoaded', function () {
       let finalTotal = parseFloat(document.getElementById('cartTotal').textContent.replace('₹', '').replace(',', '')) || 0;
       document.getElementById('applyCoupon').addEventListener('click', function () {
         const couponCode = document.getElementById('couponCode').value;
-
+  
         fetch('/apply-coupon', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -425,21 +423,25 @@
               const discountPercentage = data.discount;
               const discountAmount = (subtotal * discountPercentage) / 100;
               finalTotal = subtotal - discountAmount;
-
+  
               document.getElementById('orderDiscount').textContent = `₹${discountAmount.toFixed(2)}`;
               document.getElementById('orderTotal').textContent = `₹${finalTotal.toFixed(2)}`;
               document.getElementById('appliedCouponCode').textContent = couponCode;
               document.getElementById('couponDiscount').textContent = `${discountPercentage}%`;
-
+  
               document.getElementById('couponDetails').style.display = 'block';
               document.getElementById('removeCoupon').style.display = 'block';
               document.getElementById('applyCoupon').style.display = 'none';
             } else {
-              alert(data.message);
+              Swal.fire({
+                icon: 'error',
+                title: 'Coupon Error',
+                text: data.message,
+              });
             }
           });
       });
-
+  
       document.getElementById('removeCoupon').addEventListener('click', function () {
         fetch('/remove-coupon', {
           method: 'POST',
@@ -451,148 +453,149 @@
               document.getElementById('orderDiscount').textContent = '₹0';
               document.getElementById('orderTotal').textContent = `₹${data.finalTotal}`;
               document.getElementById('appliedCouponCode').textContent = 'No coupon applied';
-              finalTotal = parseFloat(data.finalTotal); // Ensure this is valid
-
+              finalTotal = parseFloat(data.finalTotal);
+  
               document.getElementById('couponDetails').style.display = 'none';
               document.getElementById('removeCoupon').style.display = 'none';
               document.getElementById('applyCoupon').style.display = 'block';
-
+  
               document.getElementById('couponCode').value = '';
             } else {
-              alert(data.message);
+              Swal.fire({
+                icon: 'error',
+                title: 'Coupon Removal Error',
+                text: data.message,
+              });
             }
           });
       });
-
+  
       document.getElementById('checkoutForm').addEventListener('submit', function (event) {
-    event.preventDefault();
+        event.preventDefault();
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+  
+        if (paymentMethod === 'cash_on_delivery') {
+          document.getElementById('paymentStatus').value = 'Confirmed';
+          document.getElementById('checkoutForm').submit();
+        } else if (paymentMethod === 'razorpay') {
+          handleOnlinePayment();
+        } else if (paymentMethod === 'wallet') {
+          handleWalletPayment();
+        }
+      });
+  
+      function handleOnlinePayment() {
+        const amountToPay = Math.round(finalTotal * 100);
+        if (isNaN(amountToPay) || amountToPay <= 0) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Invalid Payment',
+            text: 'Invalid amount for payment.',
+          });
+          return;
+        }
+  
+        fetch('/create-order', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ amount: amountToPay, currency: 'INR' }),
+})
+  .then(response => response.json())
+  .then(data => {
+    const options = {
+      key: 'rzp_test_KOCURsj88Mu4Sj',
+      amount: amountToPay,
+      currency: 'INR',
+      name: 'QuartzMen',
+      description: 'Test Transaction',
+      image: 'https://example.com/your_logo',
+      order_id: data.orderId,
+      handler: function (response) {
+        document.getElementById('paymentStatus').value = 'Confirmed';
+        document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+        window.location.href = '/orderSuccess'; 
+      },
+      modal: {
+        ondismiss: function () {
+          Swal.fire({
+            icon: 'info',
+            title: 'Payment Incomplete',
+            text: 'Payment was not completed. Order can still be proceeded.',
+          }).then(() => {
+            document.getElementById('paymentStatus').value = 'Failed';
+            document.getElementById('checkoutForm').submit();
+          });
+        },
+      },
+    };
 
-    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-
-    if (paymentMethod === 'cash_on_delivery') {
-      // Set payment status to confirmed before submitting the form
-      document.getElementById('paymentStatus').value = 'Confirmed';
-      document.getElementById('checkoutForm').submit();
-    } else if (paymentMethod === 'razorpay') {
-      handleOnlinePayment();
-    } else if (paymentMethod === 'wallet') {
-      handleWalletPayment();
-    }
+    const rzp = new Razorpay(options);
+    rzp.open();
+  })
+  .catch(error => {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Error creating order. Please try again.',
+    });
   });
 
-  function handleOnlinePayment() {
-    const amountToPay = Math.round(finalTotal * 100); 
-    if (isNaN(amountToPay) || amountToPay <= 0) {
-      alert('Invalid amount for payment');
-      return;
-    }
-
-    fetch('/create-order', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ amount: amountToPay, currency: 'INR' }),
-    })
-      .then(response => response.json())
-      .then(data => {
-        const options = {
-          key: 'rzp_test_KOCURsj88Mu4Sj',
-          amount: amountToPay,
-          currency: 'INR',
-          name: 'QuartzMen',
-          description: 'Test Transaction',
-          image: 'https://example.com/your_logo',
-          order_id: data.orderId,
-          handler: function (response) {
-            document.getElementById('paymentStatus').value = 'Confirmed';
-            document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
-            document.getElementById('checkoutForm').submit();
-          },
-          modal: {
-            ondismiss: function () {
-              alert('Payment was not completed. Order can still be proceeded.');
-              document.getElementById('paymentStatus').value = 'Failed';
-              document.getElementById('checkoutForm').submit();
-            }
-          },
-          prefill: {
-            name: 'Aaron',
-            email: 'aaron@example.com',
-            contact: '9000090000',
-          },
-          notes: {
-            address: 'Razorpay Corporate Office',
-          },
-          theme: {
-            color: '#3399cc',
-          },
-        };
-
-        const rzp = new Razorpay(options);
-        rzp.open();
-      })
-      .catch(error => {
-        console.error('Error creating Razorpay order:', error);
-        alert('Error processing payment. Please try again.');
-      });
-  }
-
-  function handleWalletPayment() {
-  const totalAmount = parseFloat(document.getElementById('orderTotal').getAttribute('data-finalTotal'));
-  const walletBalance = parseFloat(document.getElementById('walletBalance').dataset.wallet);
-
-  if (walletBalance >= totalAmount) {
-    fetch('/process-wallet-payment', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ amount: totalAmount }),
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          Swal.fire({
-            icon: 'success',
-            title: 'Payment Successful',
-            text: 'Amount has been deducted from your wallet.',
-          }).then(() => {
-            document.getElementById('paymentStatus').value = 'Confirmed';
-            document.getElementById('checkoutForm').submit();
-          });
+      }
+  
+      function handleWalletPayment() {
+        const totalAmount = parseFloat(document.getElementById('orderTotal').getAttribute('data-finalTotal'));
+        const walletBalance = parseFloat(document.getElementById('walletBalance').dataset.wallet);
+  
+        if (walletBalance >= totalAmount) {
+          fetch('/process-wallet-payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: totalAmount }),
+          })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Payment Successful',
+                  text: 'Amount has been deducted from your wallet.',
+                }).then(() => {
+                  document.getElementById('paymentStatus').value = 'Confirmed';
+                  document.getElementById('checkoutForm').submit();
+                });
+              } else {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Wallet Payment Failed',
+                  text: data.message,
+                });
+              }
+            })
+            .catch(error => {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Payment failed, please try again.',
+              });
+            });
         } else {
           Swal.fire({
             icon: 'error',
-            title: 'Wallet Payment Failed',
-            text: data.message,
+            title: 'Insufficient Balance',
+            text: 'Insufficient wallet balance.',
           });
         }
-      })
-      .catch(error => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Payment failed, please try again.',
+      }
+  
+      document.querySelectorAll('input[name="paymentMethod"]').forEach((element) => {
+        element.addEventListener('change', () => {
+          const paymentErrorDiv = document.getElementById('paymentError');
+          paymentErrorDiv.textContent = '';
         });
       });
-  } else {
-    Swal.fire({
-      icon: 'error',
-      title: 'Insufficient Balance',
-      text: 'Insufficient wallet balance.',
     });
-  }
-}
-
-  document.querySelectorAll('input[name="paymentMethod"]').forEach((element) => {
-    element.addEventListener('change', () => {
-      const paymentErrorDiv = document.getElementById('paymentError');
-      paymentErrorDiv.textContent = '';
-    });
-  });
-});
   </script>
+  
 
   <div id="addressData" data-address='<%= JSON.stringify(user.profile.address) %>' style="display: none;"></div>
 </body>

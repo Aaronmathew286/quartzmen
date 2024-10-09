@@ -57,6 +57,7 @@ const updateOrderStatus = async (req, res) => {
         }
         const product = order.products.find(item => item.product.toString() === productId);
         if (product) {
+            
             product.productStatus = status; 
             await order.save(); 
 
@@ -69,7 +70,7 @@ const updateOrderStatus = async (req, res) => {
                 user.wallet = user.wallet || 0;
                 user.wallet += originalPrice; 
                 user.wallethistory.push({
-                    process: `Refund for product ${productId}`,
+                    process: `Refund of the product`,
                     amount: originalPrice,
                     status: 'Credited',
                 });

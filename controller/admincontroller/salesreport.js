@@ -30,7 +30,7 @@ const salesReport = async (req, res) => {
         const totalDiscount = orders.reduce((sum, order) => sum + (order.coupon ? order.coupon.discount : 0), 0);
         const totalPages = Math.ceil(totalOrders / limit);
 
-        res.render('admin/salesReport', {
+        res.render('admin/salesreport', {
             type,
             startDate,
             endDate,
