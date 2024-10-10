@@ -496,50 +496,55 @@
         }
   
         fetch('/create-order', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ amount: amountToPay, currency: 'INR' }),
-})
-  .then(response => response.json())
-  .then(data => {
-    const options = {
-      key: 'rzp_test_KOCURsj88Mu4Sj',
-      amount: amountToPay,
-      currency: 'INR',
-      name: 'QuartzMen',
-      description: 'Test Transaction',
-      image: 'https://example.com/your_logo',
-      order_id: data.orderId,
-      handler: function (response) {
-        document.getElementById('paymentStatus').value = 'Confirmed';
-        document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
-        window.location.href = '/orderSuccess'; 
-      },
-      modal: {
-        ondismiss: function () {
-          Swal.fire({
-            icon: 'info',
-            title: 'Payment Incomplete',
-            text: 'Payment was not completed. Order can still be proceeded.',
-          }).then(() => {
-            document.getElementById('paymentStatus').value = 'Failed';
-            document.getElementById('checkoutForm').submit();
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: amountToPay, currency: 'INR' }),
+        })
+          .then(response => response.json())
+          .then(data => {
+            const options = {
+              key: 'rzp_test_KOCURsj88Mu4Sj',
+              amount: amountToPay,
+              currency: 'INR',
+              name: 'QuartzMen',
+              description: 'Test Transaction',
+              image: 'https://example.com/your_logo',
+              order_id: data.orderId,
+              handler: function (response) {
+                document.getElementById('paymentStatus').value = 'Confirmed';
+                document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+                document.getElementById('checkoutForm').submit();
+              },
+              modal: {
+                ondismiss: function () {
+                  Swal.fire({
+                    icon: 'info',
+                    title: 'Payment Incomplete',
+                    text: 'Payment was not completed. Order can still be proceeded.',
+                  });
+                  document.getElementById('paymentStatus').value = 'Failed';
+                  document.getElementById('checkoutForm').submit();
+                },
+              },
+              prefill: {
+                name: 'Aaron',
+                email: 'aaron@example.com',
+                contact: '9000090000',
+              },
+              notes: { address: 'Razorpay Corporate Office' },
+              theme: { color: '#3399cc' },
+            };
+  
+            const rzp = new Razorpay(options);
+            rzp.open();
+          })
+          .catch(error => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Payment Error',
+              text: 'Error processing payment. Please try again.',
+            });
           });
-        },
-      },
-    };
-
-    const rzp = new Razorpay(options);
-    rzp.open();
-  })
-  .catch(error => {
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'Error creating order. Please try again.',
-    });
-  });
-
       }
   
       function handleWalletPayment() {

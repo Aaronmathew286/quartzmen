@@ -9,6 +9,7 @@ require("dotenv").config();
 const secret = authenticator.generateSecret();
 const token = authenticator.generate(secret)
 const bcrypt = require('bcryptjs')
+const passport = require('passport');
 
 
 const getSignup = (req, res) => {
@@ -25,21 +26,15 @@ const signupPost = async (req, res) => {
             email: req.body.email,
             password: req.body.password
         };
-
-        // Check if user already exists
         const existingUser = await User.findOne({ email: data.email });
         if (existingUser) {
             return res.render("user/signup", { status: true, errMessage: "User already exists" });
         }
-
-        // Hash the password using bcryptjs
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(data.password, saltRounds);
-        data.password = hashedPassword; // Store the hashed password
-
+        data.password = hashedPassword;
         req.session.userData = data; 
 
-        // Configure Nodemailer for OTP
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             host: "smtp.gmail.com",
@@ -51,7 +46,6 @@ const signupPost = async (req, res) => {
             }
         });
 
-        // Generate and send OTP
         const token = Math.floor(100000 + Math.random() * 900000);
         const mailOptions = {
             from: {
@@ -66,14 +60,11 @@ const signupPost = async (req, res) => {
 
         await transporter.sendMail(mailOptions);
 
-        // Save the OTP in the database
         const otpmail = { email: req.body.email, otp: token };
         await Otp.insertMany(otpmail);
 
         req.session.otpTimestamp = Date.now();
         req.session.otpExpiryTime = 60 * 1000; 
-
-        // Redirect to OTP verification page
         res.redirect("/otp");
 
     } catch (error) {
@@ -299,6 +290,38 @@ const newPasswordPost = async (req, res) => {
     }
 };
 
+const googleAuth = (req, res, next) => {
+    passport.authenticate('google', {
+      scope: ['profile', 'email']
+    })(req, res, next);
+  };
+
+  const googleAuthCallback = (req, res) => {
+    passport.authenticate('google', { failureRedirect: '/login' })(req, res, () => {
+      if (req.user.isBlocked) {
+        // Set session user to false and explicitly save session
+        req.session.user = false;
+        req.session.save((err) => {
+          if (err) {
+            console.error("Session save error:", err);
+            return res.redirect('/login');
+          }
+          return res.render('user/login', { errMessage: 'Your account is blocked' });
+        });
+      } else {
+        // If not blocked, save user ID in session
+        req.session.user = req.user._id;
+        req.session.save((err) => {
+          if (err) {
+            console.error("Session save error:", err);
+            return res.redirect('/login');
+          }
+          res.redirect('/');
+        });
+      }
+    });
+  };
+
 const login = (req, res) => {
     res.render("user/login")
 }
@@ -340,7 +363,10 @@ const homePage = async (req, res) => {
         const userCategories = await Category.find();
         const visibleCategory = userCategories.filter(category => !category.isBlocked);
         const visibleProducts = userProducts.filter(product => {
-            return visibleCategory.some(category => category.categoryName === product.category);
+            return (
+                !product.isBlocked &&
+                visibleCategory.some(category => category.categoryName === product.category)
+            );
         });
         const strapMaterials = visibleProducts.filter(strap => strap.strapMaterial);
         let wishlistProducts = [];
@@ -355,7 +381,6 @@ const homePage = async (req, res) => {
                 }
             } else if (userData && userData.isBlocked) {
 
-                req.session.destroy();
                 return res.render("user/homepage", {
                     products: visibleProducts,
                     loggedIn: null,
@@ -569,6 +594,8 @@ module.exports = {
     homePage,
     login,
     getSignup,
+    googleAuth,
+    googleAuthCallback,
     forgetPassword,
     newPassword,
     getOtp,

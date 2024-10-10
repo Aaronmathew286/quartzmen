@@ -42,7 +42,7 @@ const userCart = async (req, res) => {
 
 const addToCart = async (req, res) => {
   try {
-    const user = req.session.user;
+    const user = req.session.user
     const userData = await User.findById(user);
     if (!userData) {
       throw new Error("User not found");
@@ -172,6 +172,7 @@ const removeItemFromCart = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
+
 
 
 

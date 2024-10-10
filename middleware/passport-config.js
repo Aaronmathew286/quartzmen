@@ -7,7 +7,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL
+      callbackURL: "/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -18,12 +18,12 @@ passport.use(
           return done(null, existingUser);
         }
 
+        // Create a new user if not found
         const newUser = new User({
           name: profile.displayName,
           email: profile.emails[0].value,
-          password: "", 
+          password: "", // Leave password blank for Google Auth users
         });
-        console.log(`this is the new user ${newUser.name} and email is ${newUser.email}`)
 
         await newUser.save();
         done(null, newUser);
@@ -34,10 +34,12 @@ passport.use(
   )
 );
 
+// Serialize user into the sessions
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
 
+// Deserialize user from the session
 passport.deserializeUser(async (id, done) => {
   try {
     const user = await User.findById(id);

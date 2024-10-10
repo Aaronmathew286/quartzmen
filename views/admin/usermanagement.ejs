@@ -99,13 +99,13 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/admin/couponmanagement">Coupon Management</a>
-                          </li>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/admin/ordermanagement">Order Management</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/admin/salesreport">Sales Report</a>
-                          </li>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/admin/logout">Logout</a>
                         </li>
@@ -137,7 +137,7 @@
                                     <% users.forEach((user, index) => { %>
                                     <!-- User Row -->
                                     <tr>
-                                        <td><%= index + 1 %></td>
+                                        <td><%= index + 1 + ((currentPage - 1) * 10) %></td>
                                         <td><%= user.name %></td>
                                         <td><%= user.email %></td>
                                         <td>
@@ -156,6 +156,17 @@
                                     <% }) %>
                                 </tbody>
                             </table>
+
+                            <!-- Pagination Controls -->
+                            <nav aria-label="User Pagination" style="padding-left: 500px;">
+                                <ul class="pagination">
+                                    <% for (let i = 1; i <= totalPages; i++) { %>
+                                        <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                            <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                        </li>
+                                    <% } %>
+                                </ul>
+                            </nav>
                         </div>
                     </div>
                 </div>
@@ -188,3 +199,4 @@
     </script>
 </body>
 </html>
+

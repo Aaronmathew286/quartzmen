@@ -12,11 +12,13 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
   },
   gender: {
     type: String,
     enum: ['Male', 'Female'],
+  },
+  googleId: { 
+    type: String 
   },
   profile: {
     address: [
@@ -52,7 +54,6 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-
   createdAt: {
     type: Date,
     default: Date.now,

@@ -9,6 +9,8 @@ const userWishlist = require("../controller/usercontroller/userWishlist")
 const isAuth = require('../middleware/userBlock').isUser
 
 
+router.get('/auth/google',usercontroller.googleAuth);
+router.get('/auth/google/callback',usercontroller.googleAuthCallback);
 router.get("/",usercontroller.homePage)
 router.get("/signup",usercontroller.getSignup)
 router.post("/signup",usercontroller.signupPost)
@@ -42,7 +44,7 @@ router.post('/wishlist/remove/:productId',isAuth,userWishlist.removeFromWishlist
 // Cart:
 router.get("/cart",isAuth,userCart.userCart)
 router.post('/cart/:_id',isAuth,userCart.addToCart)
-router.post("/cartUpdate",isAuth,userCart.updateCartQuantity)
+router.post('/cart/update',isAuth,userCart.updateCartQuantity)
 router.post("/cartRemove/:_id",isAuth,userCart.removeItemFromCart)
 // Checkout:
 router.post("/create-order",isAuth,userCheckout.razorPaymentPost)

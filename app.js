@@ -14,7 +14,7 @@ require('dotenv').config()
 const userRouter = require("./routes/user");
 const adminRouter = require("./routes/admin");
 const authRouter = require('./routes/user')
-
+const passport = require('./config/passport-setup');
 
 app.use('/images', express.static(path.join(__dirname, 'public/images')));
 
@@ -61,6 +61,9 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static('./public'));
 app.use("/",userRouter);
 app.use("/admin",adminRouter);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get('*', (req, res) => {
     res.status(404).render('user/404');
