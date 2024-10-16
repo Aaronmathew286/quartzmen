@@ -5,8 +5,10 @@ const userdetails = require("../controller/usercontroller/userdetails")
 const userCart = require("../controller/usercontroller/userCart")
 const userCheckout = require("../controller/usercontroller/userCheckout")
 const userOrder = require("../controller/usercontroller/userOrder")
-const userWishlist = require("../controller/usercontroller/userWishlist")
+const userWishlist = require("../controller/usercontroller/userWishlist");
+const { redirectIfLogin } = require("../middleware/userBlock");
 const isAuth = require('../middleware/userBlock').isUser
+const userAuth = require('../middleware/userBlock').redirectIfLogin
 
 
 router.get('/auth/google',usercontroller.googleAuth);
@@ -16,7 +18,7 @@ router.get("/signup",usercontroller.getSignup)
 router.post("/signup",usercontroller.signupPost)
 router.get("/otp",usercontroller.getOtp)
 router.post("/otp",usercontroller.otpPost)
-router.get("/login",usercontroller.login)
+router.get("/login",userAuth,usercontroller.login)
 router.post("/login",usercontroller.loginPost)
 router.get("/watches/:category",usercontroller.categoryWatches)
 router.get('/shopwatches', usercontroller.shopWatches);
@@ -44,7 +46,7 @@ router.post('/wishlist/remove/:productId',isAuth,userWishlist.removeFromWishlist
 // Cart:
 router.get("/cart",isAuth,userCart.userCart)
 router.post('/cart/:_id',isAuth,userCart.addToCart)
-router.post('/cart/update',isAuth,userCart.updateCartQuantity)
+router.post('/cartUpdate/:itemId',isAuth,userCart.updateCartQuantity)
 router.post("/cartRemove/:_id",isAuth,userCart.removeItemFromCart)
 // Checkout:
 router.post("/create-order",isAuth,userCheckout.razorPaymentPost)

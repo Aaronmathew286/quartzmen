@@ -80,6 +80,8 @@ const userSchema = new mongoose.Schema({
       }
     },
   ],
+  referralCode: { type: String, unique: true },
+  referredBy: { type: String },
 });
 
 const User = mongoose.model('User', userSchema);

@@ -94,7 +94,6 @@ const resetPassword = async(req,res) => {
     }
 }
 
-
 const address = async (req, res) => {
     try {
         if (req.session.user) {
@@ -280,7 +279,6 @@ const search = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
-
 
 
 module.exports = {

@@ -14,3 +14,9 @@ exports.isUser = async (req, res, next) => {
     }
   };
   
+exports.redirectIfLogin  = async(req,res,next) => {
+  if(req.session.user && req.session) {
+    return res.redirect('/')
+  }
+  next()
+}

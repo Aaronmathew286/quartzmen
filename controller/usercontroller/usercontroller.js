@@ -10,7 +10,13 @@ const secret = authenticator.generateSecret();
 const token = authenticator.generate(secret)
 const bcrypt = require('bcryptjs')
 const passport = require('passport');
+const mongoose = require('mongoose');
 
+
+const generateReferralCode = (name) => {
+    const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+    return `${name.slice(0, 3).toUpperCase()}${randomSuffix}`;
+};
 
 const getSignup = (req, res) => {
     res.render("user/signup",)
@@ -24,16 +30,36 @@ const signupPost = async (req, res) => {
         const data = {
             name: req.body.username,
             email: req.body.email,
-            password: req.body.password
+            password: req.body.password,
+            referralCode: req.body.referralCode || null
         };
+
         const existingUser = await User.findOne({ email: data.email });
         if (existingUser) {
             return res.render("user/signup", { status: true, errMessage: "User already exists" });
         }
+
+        let referringUser = null;
+        if (data.referralCode) {
+            referringUser = await User.findOne({ referralCode: data.referralCode });
+            if (!referringUser) {
+                return res.render("user/signup", { status: true, errMessage: "Invalid referral code" });
+            }
+            data.referredBy = referringUser.referralCode; 
+        }
+
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(data.password, saltRounds);
         data.password = hashedPassword;
-        req.session.userData = data; 
+
+        const newReferralCode = generateReferralCode(data.name);
+        data.referralCode = newReferralCode;
+
+        req.session.userData = { ...data, referralCode: newReferralCode }; 
+        req.session.referringUser = referringUser; 
+        if (referringUser) {
+            req.session.referredBy = referringUser.email; 
+        }
 
         const transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -46,7 +72,7 @@ const signupPost = async (req, res) => {
             }
         });
 
-        const token = Math.floor(100000 + Math.random() * 900000);
+        const token = Math.floor(100000 + Math.random() * 900000); 
         const mailOptions = {
             from: {
                 name: 'Quartzmen',
@@ -59,14 +85,12 @@ const signupPost = async (req, res) => {
         };
 
         await transporter.sendMail(mailOptions);
-
         const otpmail = { email: req.body.email, otp: token };
         await Otp.insertMany(otpmail);
 
         req.session.otpTimestamp = Date.now();
-        req.session.otpExpiryTime = 60 * 1000; 
+        req.session.otpExpiryTime = 60 * 1000;
         res.redirect("/otp");
-
     } catch (error) {
         console.error("Error during signup:", error);
         return res.status(500).json({ error: "Internal server error" });
@@ -88,7 +112,6 @@ const getOtp = (req, res) => {
             timeLeft: 0
         });
     }
-
     res.render("user/otp", { context: 'signup', timeLeft: timeLeft });
 };
 
@@ -99,7 +122,6 @@ const otpPost = async (req, res) => {
             throw new Error("OTP not entered");
         }
 
-        // Calculate remaining time dynamically
         const timePassed = Date.now() - req.session.otpTimestamp;
         const timeLeft = Math.max(60 - Math.floor(timePassed / 1000), 0);
 
@@ -115,18 +137,48 @@ const otpPost = async (req, res) => {
 
         if (enteredOtp === otpdata.otp) {
             const userData = req.session.userData;
+
             if (!userData || !userData.password || !userData.email || !userData.name) {
                 console.error("Missing required fields in user data");
                 return res.status(400).json({ error: "Missing required fields in user data" });
             }
 
-            await User.insertMany(userData);
+            const newUser = await User.create({
+                name: userData.name,
+                email: userData.email,
+                password: userData.password,
+                referralCode: userData.referralCode,
+                referredBy: userData.referredBy
+            });
+
+            if (userData.referralCode) {
+                const referringUser = await User.findOne({ referralCode: userData.referredBy });
+
+                if (referringUser) {
+                    referringUser.wallet = (referringUser.wallet || 0) + 100; 
+                    referringUser.wallethistory.push({
+                        process: "Referral Bonus",
+                        amount: 100,
+                        date: new Date(),
+                        status: "Credited"
+                    });
+                    await referringUser.save();
+                    newUser.wallet = (newUser.wallet || 0) + 50; 
+                    newUser.wallethistory.push({
+                        process: "Referral Bonus",
+                        amount: 50,
+                        date: new Date(),
+                        status: "Credited"
+                    });
+                    await newUser.save();
+                }
+            }
             return res.redirect("/login");
         } else {
             return res.render("user/otp", {
                 errMessage: "OTP is incorrect",
                 context: "signup",
-                timeLeft: timeLeft // Maintain the current timeLeft without resetting
+                timeLeft: timeLeft
             });
         }
     } catch (error) {
@@ -294,12 +346,11 @@ const googleAuth = (req, res, next) => {
     passport.authenticate('google', {
       scope: ['profile', 'email']
     })(req, res, next);
-  };
+};
 
-  const googleAuthCallback = (req, res) => {
+const googleAuthCallback = (req, res) => {
     passport.authenticate('google', { failureRedirect: '/login' })(req, res, () => {
       if (req.user.isBlocked) {
-        // Set session user to false and explicitly save session
         req.session.user = false;
         req.session.save((err) => {
           if (err) {
@@ -309,7 +360,7 @@ const googleAuth = (req, res, next) => {
           return res.render('user/login', { errMessage: 'Your account is blocked' });
         });
       } else {
-        // If not blocked, save user ID in session
+
         req.session.user = req.user._id;
         req.session.save((err) => {
           if (err) {
@@ -320,7 +371,7 @@ const googleAuth = (req, res, next) => {
         });
       }
     });
-  };
+};
 
 const login = (req, res) => {
     res.render("user/login")
@@ -512,16 +563,20 @@ const shopWatches = async (req, res) => {
 };
 
 const productDetail = async (req, res) => {
+
     try {
         const id = req.params._id;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(404).render('user/404', { message: 'Product not found' });
+          }
         const categories = await Category.find();
         const loggedIn = req.session.user; 
         const products = await Product.findById(id);
         if (!products) {
-            throw new Error('Product not found');
-        }
+            return res.status(404).render('404', { message: 'Product not found' });
+          }
 
-        res.render("user/productdetail", { products: products, categories: categories, loggedIn: loggedIn, item: products });
+        res.render("user/productdetail", { products: products, categories: categories, loggedIn: loggedIn, item: products,errMessage: null  });
     } catch (error) {
         console.error(error);
         res.status(400).send({ error: error.message });

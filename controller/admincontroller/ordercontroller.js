@@ -76,6 +76,11 @@ const updateOrderStatus = async (req, res) => {
                 });
                 
                 await user.save(); 
+                const productDetails = await Product.findById(productId);
+                if (productDetails) {
+                    productDetails.stock += product.quantity;
+                    await productDetails.save(); 
+                }
             }
             return res.json({ success: true }); 
         } else {

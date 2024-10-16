@@ -207,6 +207,14 @@
                 <div class="modal-body">
                     <h6>User: <%= order?.user?.name %></h6>
                     <h6>Email: <%= order?.user?.email %></h6>
+                    <h6>Total Amount: <%= order?.totalAmount %></h6> 
+                    <h6>Address:</h6>
+                    <p>
+                        House: <%= order?.address?.house %> <br>
+                        City: <%= order?.address?.city %> <br>
+                        Phone: <%= order?.address?.phone %> <br>
+                        Postal Code: <%= order?.address?.postalcode %>
+                    </p>
                     <hr>
                     <% order.products.forEach(product => { %>
                         <div class="product-item mb-3">
@@ -217,13 +225,14 @@
                                 <div class="col-md-5">
                                     <h6>Product: <%= product?.product?.name %></h6>
                                     <p>Quantity: <%= product?.quantity %></p>
-                                    <p>Price: Rs: <%= product.price %></p>
+                                    <p>Price: Rs: <%= product?.price %></p>
+                                    <p>Payment Method: <%= order?.paymentInfo %></p>
                                 </div>
                                 <div class="col-md-3">
                                     <% if (product.productStatus === 'Failed' || order.paymentStatus === 'Failed') { %>
-                                        <p>Status: Failed</p> <!-- Show "Failed" if product or payment status is Failed -->
+                                        <p>Status: Failed</p>
                                     <% } else if (['Cancel', 'Rejected', 'Accepted'].includes(product.productStatus)) { %>
-                                        <p>Status: <%= product.productStatus %></p> <!-- Show current status if it's Cancel, Rejected, or Accepted -->
+                                        <p>Status: <%= product.productStatus %></p>
                                     <% } else if (product.productStatus !== 'Canceled') { %>
                                         <form class="status-form" data-order-id="<%= order._id %>" data-product-id="<%= product.product._id %>">
                                             <label for="status<%= product.product._id %>">Status:</label>
@@ -234,10 +243,10 @@
                                             </select>
                                         </form>
                                     <% } else { %>
-                                        <p>Status: Canceled</p> 
+                                        <p>Status: Canceled</p>
                                     <% } %>
                                     <% if (product.productStatus === 'Cancel') { %>
-                                        <p><strong>Reason: </strong><br> <%= product.reason %></p> 
+                                        <p><strong>Reason: </strong><br> <%= product.reason %></p>
                                     <% } %>
                                 </div>
                             </div>
@@ -246,9 +255,7 @@
                     <% }); %>
                 </div>
                 <div class="modal-footer">
-
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="window.location.href='/admin/ordermanagement'">Close</button>
-
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="window.location.href='/admin/ordermanagement'">Close</button>
                 </div>
             </div>
         </div>

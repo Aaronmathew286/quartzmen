@@ -19,6 +19,49 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
 
     <style>
+                    .navbar {
+      background-color: #6c757d;
+      /* Grey color */
+      color: #fff;
+    }
+
+    .sidebar {
+      background-color: #094077;
+      color: #fff;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 250px;
+      padding-top: 56px;
+    }
+
+
+
+    .nav-link {
+      color: white;
+      transition: background-color 0.3s ease;
+      /* Adding transition for smooth effect */
+    }
+
+    .active {
+      background-color: yellow;
+      color: black;
+    }
+
+    .nav-link:hover {
+      background-color: yellow;
+    }
+
+    .action-buttons {
+      display: flex;
+      /* Align items horizontally */
+      justify-content: flex-end;
+      /* Align items to the right */
+      gap: 5px;
+      /* Adds space between buttons */
+    }
+
         .heading {
             text-align: center;
         }
@@ -107,18 +150,52 @@
 </head>
 
 <body>
-    <div class="container mt-5">
-        <div class="form-group">
-            <a href="/admin/productmanagement"><i class="fa-solid fa-circle-arrow-left"></i></a>
-        </div>
-        <h2 class="heading">Edit Product</h2>
-        <% if (typeof errMessage !=='undefined' ) { %>
-            <div class="text-danger mt-1" style="text-align: center;">
-                <h5><%= errMessage %></h5>
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 d-none d-md-block sidebar">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/usermanagement">User Management</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/admin/productmanagement">Product Management</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/categorymanagement">Category Management</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/couponmanagement">Coupon Management</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/ordermanagement">Order Management</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/salesreport">Sales Report</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/logout">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
 
-            </div>
-            <% } %>
+            <!-- Main Content -->
+            <main class="col-md-10 ms-sm-auto col-lg-10 px-md-4">
+                <div class="container mt-5">
+                    <div class="form-group">
+                        <a href="/admin/productmanagement"><i class="fa-solid fa-circle-arrow-left"></i></a>
+                    </div>
+                    <h2 class="heading">Edit Product</h2>
 
+                    <% if (typeof errMessage !=='undefined' ) { %>
+                        <div class="text-danger mt-1" style="text-align: center;">
+                            <h5><%= errMessage %></h5>
+                        </div>
+                    <% } %>
         <form action="/admin/editproduct/<%= product._id %>" method="POST" enctype="multipart/form-data"
             id="productForm">
             <div class="form-group">
@@ -290,6 +367,9 @@
 
             <button type="submit" class="btn btn-primary">Update Product</button>
         </form>
+    </div>
+            </main>
+        </div>
     </div>
 
     <!-- jQuery and Bootstrap Bundle (includes Popper) -->

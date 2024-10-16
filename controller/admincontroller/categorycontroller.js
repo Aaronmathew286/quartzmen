@@ -54,6 +54,7 @@ const editCategory = async (req, res) => {
     try {
         const id = req.params._id;
         const categoryEdit = await Category.findById(id);
+        
 
         if(!categoryEdit){
             res.render("admin/categorymanagement",{errMessage: "The category is not found"})
@@ -74,14 +75,24 @@ const editCategoryPost = async (req, res) => {
         if (!categoryToEdit) {
             return res.status(404).send("Category not found");
         }
+        const existingCategory = await Category.findOne({
+            categoryName: lowercaseCategory,
+            _id: { $ne: id } 
+        });
 
-        categoryToEdit.categoryName = lowercaseCategory 
-        categoryToEdit.description = description 
+        if (existingCategory) {
+            return res.render("admin/editcategory", {
+                categoryEdit: categoryToEdit,
+                errMessage: "Category name already exists, please choose a different name."
+            });
+        }
+        categoryToEdit.categoryName = lowercaseCategory;
+        categoryToEdit.description = description;
         await categoryToEdit.save();
 
         res.redirect("/admin/categorymanagement");
     } catch (error) {
-        console.error("An error occured:", error);
+        console.error("An error occurred:", error);
         res.status(500).send("Internal Server Error");
     }
 };

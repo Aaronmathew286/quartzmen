@@ -54,7 +54,7 @@ const dashboard = async (req, res) => {
                 in: {
                   $cond: [
                     { $in: ["$$product.productStatus", ["Cancel", "Accepted"]] },
-                    { $multiply: ["$$product.totalPrice", -1] }, 
+                    0, 
                     "$$product.totalPrice" 
                   ]
                 }

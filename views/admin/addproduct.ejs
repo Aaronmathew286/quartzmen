@@ -19,6 +19,49 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
 
     <style>
+            .navbar {
+      background-color: #6c757d;
+      /* Grey color */
+      color: #fff;
+    }
+
+    .sidebar {
+      background-color: #094077;
+      color: #fff;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 250px;
+      padding-top: 56px;
+    }
+
+
+
+    .nav-link {
+      color: white;
+      transition: background-color 0.3s ease;
+      /* Adding transition for smooth effect */
+    }
+
+    .active {
+      background-color: yellow;
+      color: black;
+    }
+
+    .nav-link:hover {
+      background-color: yellow;
+    }
+
+    .action-buttons {
+      display: flex;
+      /* Align items horizontally */
+      justify-content: flex-end;
+      /* Align items to the right */
+      gap: 5px;
+      /* Adds space between buttons */
+    }
+
         .heading {
             text-align: center;
         }
@@ -99,164 +142,198 @@
 </head>
 
 <body>
-    <div class="container mt-5">
-        <div class="form-group">
-            <a href="/admin/productmanagement"><i class="fa-solid fa-circle-arrow-left"></i></a>
+  <!-- Sidebar -->
+  <div class="container-fluid">
+    <div class="row">
+      <nav class="col-md-2 d-none d-md-block sidebar">
+        <div class="sidebar-sticky">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/dashboard">Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/usermanagement">User Management</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="/admin/productmanagement">Product Management</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/categorymanagement">Category Management</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/couponmanagement">Coupon Management</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/ordermanagement">Order Management</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/salesreport">Sales Report</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/logout">Logout</a>
+            </li>
+          </ul>
         </div>
-        <h2 class="heading">Add Product</h2>
-        <% if (typeof errMessage !=='undefined' ) { %>
-            <div class="text-danger mt-1" >
-                <%= errMessage %>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="col-md-10 ms-sm-auto col-lg-10 px-md-4">
+        <div class="container mt-5">
+          <div class="form-group">
+            <a href="/admin/productmanagement"><i class="fa-solid fa-circle-arrow-left"></i></a>
+          </div>
+          <h2 class="heading">Add Product</h2>
+          <% if (typeof errMessage !== 'undefined') { %>
+          <div class="text-danger mt-1">
+            <%= errMessage %>
+          </div>
+          <% } %>
+          <form action="/admin/addproduct" method="POST" enctype="multipart/form-data" id="productForm">
+            <div class="form-group">
+              <label for="productName">Name</label>
+              <input type="text" class="form-control" id="productName" name="name" required>
+              <div class="error-message" id="productNameError"></div>
             </div>
-            <% } %>
-                <form action="/admin/addproduct" method="POST" enctype="multipart/form-data" id="productForm">
-                    <div class="form-group">
-                        <label for="productName">Name</label>
-                        <input type="text" class="form-control" id="productName" name="name" required>
-                        <div class="error-message" id="productNameError"></div>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="productBrand">Brand</label>
-                        <div class="select-wrapper">
-                            <select class="form-control" id="productBrand" name="brand">
-                                <option value="-">-</option>
-                                <option value="Titan">Titan</option>
-                                <option value="Fastrack">Fastrack</option>
-                                <option value="Casio">Casio</option>
-                                <option value="Timex">Timex</option>
-                                <option value="Citizen">Citizen</option>
-                                <option value="Fossil">Fossil</option>
-                                <option value="Seiko">Seiko</option>
-                                <option value="Michael Kors">Michael Kors</option>
-                                <option value="Tommy Hilfiger">Tommy Hilfiger</option>
-                                <option value="Emporio Armani">Emporio Armani</option>
-                                <option value="Daniel Wellington">Daniel Wellington</option>
-                                <option value="Guess">Guess</option>
-                            </select>
-                            <span class="select-arrow"><i class="fas fa-angle-down"></i></span>
-                        </div>
-                        <div class="error-message" id="productBrandError"></div>
-                    </div>
+            <div class="form-group">
+              <label for="productBrand">Brand</label>
+              <div class="select-wrapper">
+                <select class="form-control" id="productBrand" name="brand">
+                  <option value="-">-</option>
+                  <option value="Titan">Titan</option>
+                  <option value="Fastrack">Fastrack</option>
+                  <option value="Casio">Casio</option>
+                  <option value="Timex">Timex</option>
+                  <option value="Citizen">Citizen</option>
+                  <option value="Fossil">Fossil</option>
+                  <option value="Seiko">Seiko</option>
+                  <option value="Michael Kors">Michael Kors</option>
+                  <option value="Tommy Hilfiger">Tommy Hilfiger</option>
+                  <option value="Emporio Armani">Emporio Armani</option>
+                  <option value="Daniel Wellington">Daniel Wellington</option>
+                  <option value="Guess">Guess</option>
+                </select>
+                <span class="select-arrow"><i class="fas fa-angle-down"></i></span>
+              </div>
+              <div class="error-message" id="productBrandError"></div>
+            </div>
 
+            <div class="form-group">
+              <label for="strapMaterial">Strap Material</label>
+              <div class="select-wrapper">
+                <select class="form-control" id="strapMaterial" name="strapMaterial">
+                  <option value="">-</option>
+                  <option value="Leather Strap">Leather Strap</option>
+                  <option value="Stainless Steel">Stainless Steel</option>
+                  <option value="Nylon Strap">Nylon Strap</option>
+                  <option value="Silicon Rubber">Silicon Rubber</option>
+                  <option value="Ceramic Band">Ceramic Band</option>
+                  <option value="Mesh Band">Mesh Band</option>
+                  <option value="Titanium Band">Titanium Band</option>
+                </select>
+                <span class="select-arrow"><i class="fas fa-angle-down"></i></span>
+              </div>
+              <div class="error-message" id="strapMaterialError"></div>
+            </div>
 
-                    <div class="form-group">
-                        <label for="strapMaterial">Strap Material</label>
-                        <div class="select-wrapper">
-                            <select class="form-control" id="strapMaterial" name="strapMaterial">
-                                <option value="">-</option>
-                                <option value="Leather Strap">Leather Strap</option>
-                                <option value="Stainless Steel">Stainless Steel</option>
-                                <option value="Nylon Strap">Nylon Strap</option>
-                                <option value="Silicon Rubber">Silicon Rubber</option>
-                                <option value="Ceramic Band">Ceramic Band</option>
-                                <option value="Mesh Band">Mesh Band</option>
-                                <option value="Titanium Band">Titanium Band</option>
-                            </select>
-                            <span class="select-arrow"><i class="fas fa-angle-down"></i></span>
-                        </div>
-                        <div class="error-message" id="strapMaterialError"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="gender">Gender</label>
-                        <div class="select-wrapper">
-                            <select class="form-control" id="gender" name="gender">
-                                <option value="">-</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                            </select>
-                            <span class="select-arrow"><i class="fas fa-angle-down"></i></span>
-                        </div>
-                        <div class="error-message" id="genderError"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="category">Category</label>
-                        <div class="select-wrapper">
-                            <select class="form-control" id="category" name="categories">
-                                <option value="">-</option>
-                                <% if (existingCategories && existingCategories.length> 0) { %>
-                                    <% existingCategories.forEach(category=> { %>
-                                        <option value="<%= category.categoryName %>">
-                                            <%= category.categoryName %>
-                                        </option>
-                                        <% }) %>
-                                            <% } %>
-                            </select>
-                            <span class="select-arrow"><i class="fas fa-angle-down"></i></span>
+            <div class="form-group">
+              <label for="gender">Gender</label>
+              <div class="select-wrapper">
+                <select class="form-control" id="gender" name="gender">
+                  <option value="">-</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+                <span class="select-arrow"><i class="fas fa-angle-down"></i></span>
+              </div>
+              <div class="error-message" id="genderError"></div>
+            </div>
 
-                        </div>
-                        <div class="error-message" id="categoryError"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="description">Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
-                        <div class="error-message" id="descriptionError"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="stock">Stock</label>
-                        <input type="number" class="form-control" id="stock" name="stock">
-                        <div class="error-message" id="stockError"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="originalPrice">Original Price</label>
-                        <input type="number" class="form-control" id="originalPrice" name="originalPrice"
-                            oninput="calculatePrice()">
-                        <div class="error-message" id="originalPriceError"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="offerPercentage">Offer Percentage</label>
-                        <input type="number" class="form-control" id="offerPercentage" name="offerPercentage"
-                            oninput="calculatePrice()">
-                        <div class="error-message" id="offerPercentageError"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="price">Price</label>
-                        <input type="number" class="form-control" id="price" readonly>
-                        <div class="error-message" id="priceError"></div>
-                    </div>
+            <div class="form-group">
+              <label for="category">Category</label>
+              <div class="select-wrapper">
+                <select class="form-control" id="category" name="categories">
+                  <option value="">-</option>
+                  <% if (existingCategories && existingCategories.length > 0) { %>
+                  <% existingCategories.forEach(category => { %>
+                  <option value="<%= category.categoryName %>">
+                    <%= category.categoryName %>
+                  </option>
+                  <% }) %>
+                  <% } %>
+                </select>
+                <span class="select-arrow"><i class="fas fa-angle-down"></i></span>
+              </div>
+              <div class="error-message" id="categoryError"></div>
+            </div>
 
-                    <div class="container mt-5">
-                        <!-- Existing content... -->
-                        <div class="form-group">
-                            <label for="fileUploader">Product Images:</label>
-                            <input type="file" id="fileUploader" name="image" accept=".jpg,.png,.jpeg" multiple>
-                            <div id="imagePreview" class="image-preview-container">
-                                
-                            </div>
-                            <div class="error-message" id="imageError"></div>
-                        </div>
+            <div class="form-group">
+              <label for="description">Description</label>
+              <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+              <div class="error-message" id="descriptionError"></div>
+            </div>
 
-                        <!-- Crop Modal -->
-                        <div class="modal fade" id="cropModal" tabindex="-1" aria-labelledby="cropModalLabel"
-                            aria-hidden="true">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="cropModalLabel">Crop Image</h5>
-                                        <button type="button" class="btn-close" id="closeModal"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="img-container">
-                                            <img id="cropImage" src="" alt="Image for cropping">
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" id="closeModal">Close</button>
+            <div class="form-group">
+              <label for="stock">Stock</label>
+              <input type="number" class="form-control" id="stock" name="stock">
+              <div class="error-message" id="stockError"></div>
+            </div>
 
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary" id="cropButton">Crop</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <div class="form-group">
+              <label for="originalPrice">Original Price</label>
+              <input type="number" class="form-control" id="originalPrice" name="originalPrice"
+                oninput="calculatePrice()">
+              <div class="error-message" id="originalPriceError"></div>
+            </div>
 
-                        <button type="submit" class="btn btn-primary">Add Product</button>
-                </form>
+            <div class="form-group">
+              <label for="offerPercentage">Offer Percentage</label>
+              <input type="number" class="form-control" id="offerPercentage" name="offerPercentage"
+                oninput="calculatePrice()">
+              <div class="error-message" id="offerPercentageError"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="price">Price</label>
+              <input type="number" class="form-control" id="price" readonly>
+              <div class="error-message" id="priceError"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="fileUploader">Product Images:</label>
+              <input type="file" id="fileUploader" name="image" accept=".jpg,.png,.jpeg" multiple>
+              <div id="imagePreview" class="image-preview-container"></div>
+              <div class="error-message" id="imageError"></div>
+            </div>
+
+            <!-- Crop Modal -->
+            <div class="modal fade" id="cropModal" tabindex="-1" aria-labelledby="cropModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="cropModalLabel">Crop Image</h5>
+                    <button type="button" class="btn-close" id="closeModal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="img-container">
+                      <img id="cropImage" src="" alt="Image for cropping">
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="closeModal">Close</button>
+                    <button type="button" class="btn btn-primary" id="cropButton">Crop</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Product</button>
+          </form>
+        </div>
+      </main>
     </div>
+  </div>
 
-    <!-- jQuery and Bootstrap Bundle (includes Popper) -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
@@ -275,17 +352,15 @@
     const imagePreview = document.getElementById('imagePreview');
     let currentImage = null;
     let cropper;
-    let imageFiles = []; // New images array
-    let existingImages = []; // Existing images array (to be populated dynamically)
+    let imageFiles = [];
+    let existingImages = [];
 
-    // Function to update file input with the new file list
     function updateFileInput() {
         const dataTransfer = new DataTransfer();
         imageFiles.forEach(file => dataTransfer.items.add(file));
         fileUploader.files = dataTransfer.files;
     }
 
-    // Function to handle image preview and buttons
     function handleImagePreview(file, isNew = true) {
         const reader = new FileReader();
         reader.onload = function(e) {
@@ -294,7 +369,6 @@
             img.className = 'preview-image';
             img.dataset.filename = file.name;
 
-            // Create and configure delete button
             const deleteBtn = document.createElement('button');
             deleteBtn.textContent = 'Delete';
             deleteBtn.className = 'delete-button';
@@ -304,14 +378,12 @@
                     updateFileInput();
                 } else {
                     existingImages = existingImages.filter(f => f !== file);
-                    // Add logic to handle deletion from backend if necessary
                 }
                 img.remove();
                 deleteBtn.remove();
                 cropBtn.remove();
             });
 
-            // Create and configure crop button
             const cropBtn = document.createElement('button');
             cropBtn.textContent = 'Crop';
             cropBtn.className = 'crop-button';
@@ -329,7 +401,6 @@
                     aspectRatio: 1,
                 });
 
-                // Configure crop button in the modal
                 document.getElementById('cropButton').onclick = () => {
                     const canvas = cropper.getCroppedCanvas();
                     canvas.toBlob(blob => {
@@ -343,7 +414,6 @@
                             const index = existingImages.indexOf(file);
                             if (index !== -1) {
                                 existingImages[index] = new File([blob], file.name, { type: file.type });
-                                // Optionally update any display for existing images
                             }
                         }
                     });
@@ -354,7 +424,6 @@
                 $('#cropModal').modal('show');
             });
 
-            // Create container for image and buttons
             const previewContainer = document.createElement('div');
             previewContainer.className = 'image-preview-item';
             previewContainer.appendChild(img);
@@ -365,7 +434,6 @@
         reader.readAsDataURL(file);
     }
 
-    // Handle new image uploads
     fileUploader.addEventListener('change', function(event) {
         const files = event.target.files;
         const newFiles = Array.from(files);
@@ -375,10 +443,9 @@
         updateFileInput();
     });
 
-    // Example function to load existing images (call this function to populate existingImages)
     function loadExistingImages(existingImageList) {
-        existingImages = existingImageList; // Assume this is an array of existing files
-        existingImages.forEach(file => handleImagePreview(file, false)); // Pass false for existing images
+        existingImages = existingImageList; 
+        existingImages.forEach(file => handleImagePreview(file, false)); 
     }
             // Prevent form submission if validation fails
             document.getElementById('productForm').addEventListener('submit', function (event) {
@@ -391,7 +458,7 @@
             });
 
             if (!isFormValid) {
-                event.preventDefault();  // Prevent form submission if form is invalid
+                event.preventDefault();  
             }
         });
 
@@ -483,7 +550,7 @@
             return isValid;  
         }
 
-        // Add individual blur event listeners for each input field
+
         document.getElementById('productName').addEventListener('blur', function () {
             validateInput(this);
         });

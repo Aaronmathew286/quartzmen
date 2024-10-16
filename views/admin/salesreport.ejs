@@ -152,21 +152,21 @@
           <table class="table table-bordered">
             <thead>
               <tr>
-                <th>Order ID</th>
                 <th>Order Date</th>
+                <th>Order ID</th>
                 <th>Total Amount</th>
                 <th>Discount</th>
-                <th>Coupon</th>
+                <th>Payment Method</th>
               </tr>
             </thead>
             <tbody>
               <% orders.forEach(order => { %>
                 <tr>
-                  <td><%= order._id %></td>
                   <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
+                  <td><%= order._id %></td>
                   <td>Rs: <%= order.totalAmount.toFixed(2) %></td>
                   <td>Rs: <%= order.coupon && order.coupon.discount ? order.coupon.discount.toFixed(2) : '0.00' %></td>
-                  <td><%= order.coupon ? order.coupon.couponCode : 'N/A' %></td>
+                  <td><%= order.paymentInfo %></td>
                 </tr>
               <% }) %>
             </tbody>

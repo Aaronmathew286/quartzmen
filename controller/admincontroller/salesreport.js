@@ -22,6 +22,7 @@ const salesReport = async (req, res) => {
         } else if (type === 'custom' && startDate && endDate) {
             query.createdAt = { $gte: new Date(startDate), $lte: new Date(endDate) };
         }
+        query['products.productStatus'] = { $in: ['Delivered', 'Pending', 'Shipped', 'Rejected'] };
 
         const orders = await Order.find(query).skip(skip).limit(Number(limit));
         const totalOrders = await Order.countDocuments(query);

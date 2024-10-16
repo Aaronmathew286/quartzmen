@@ -6,14 +6,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Shopping Cart</title>
   <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
+<!-- Bootstrap 5.1.3 CDN -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
+
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
   <!-- Google Fonts -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
   <link href="https://fonts.googleapis.com/css2?family=Almendra+SC&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
-      crossorigin="anonymous" referrerpolicy="no-referrer" />
+    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
 
   <style>
     body {
@@ -22,7 +28,7 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      
+
     }
 
     #content {
@@ -173,57 +179,55 @@
 <body>
   <nav class="navbar navbar-expand-lg">
     <a href="/" class="logo" style="text-decoration: none;">
-        <div class="navbar-brand-container d-flex align-items-center">
-            <div class="navbar-brand">Quartz
-                <span class="material-symbols-outlined ms-2">watch_wake</span>
-                Men
-            </div>
+      <div class="navbar-brand-container d-flex align-items-center">
+        <div class="navbar-brand">Quartz
+          <span class="material-symbols-outlined ms-2">watch_wake</span>
+          Men
         </div>
+      </div>
     </a>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
-        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+      aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        <form class="form-inline mx-auto" action="/search" method="GET">
-            <div class="input-group">
-                <input type="text" name="q" class="form-control border-0 rounded-pill bg-white text-black"
-                    placeholder="Search" aria-label="Search">
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary rounded-pill" type="submit">
-                        <i class="fas fa-search text-white"></i>
-                    </button>
-                </div>
-            </div>
-        </form>
-        <ul class="navbar-nav ml-auto">
+      <form class="form-inline mx-auto" action="/search" method="GET">
+        <div class="input-group">
+          <input type="text" name="q" class="form-control border-0 rounded-pill bg-white text-black"
+            placeholder="Search" aria-label="Search">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary rounded-pill" type="submit">
+              <i class="fas fa-search text-white"></i>
+            </button>
+          </div>
+        </div>
+      </form>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/wishlist" role="button" aria-haspopup="true" aria-expanded="false">
+            <i class="fa-solid fa-heart"></i>
+          </a>
+        </li>
+        <% if (loggedIn) { %>
+          <li class="nav-item dropdown">
+            <a class="nav-link" href="/profile" role="button" aria-haspopup="true" aria-expanded="false">
+              <i class="fa-solid fa-user"></i>
+            </a>
+          </li>
+          <% } else { %>
             <li class="nav-item">
-                <a class="nav-link" href="/wishlist" role="button" aria-haspopup="true" aria-expanded="false">
-                    <i class="fa-solid fa-heart"></i>
-                </a>
+              <a class="nav-link" href="/signup"><i class="fa-solid fa-user"></i>Sign Up</a>
             </li>
-            <% if (loggedIn) { %>
-                <li class="nav-item dropdown">
-                    <a class="nav-link" href="/profile" role="button" aria-haspopup="true"
-                    aria-expanded="false">
-                        <i class="fa-solid fa-user"></i>
-                    </a>
-                </li>
-                <% } else { %>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/signup"><i class="fa-solid fa-user"></i>Sign Up</a>
-                    </li>
-                    <% } %>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/cart" role="button" aria-haspopup="true"
-                                aria-expanded="false">
-                                <i class="fa-solid fa-cart-shopping"></i>
-                            </a>
-                        </li>
-        </ul>
+            <% } %>
+              <li class="nav-item">
+                <a class="nav-link" href="/cart" role="button" aria-haspopup="true" aria-expanded="false">
+                  <i class="fa-solid fa-cart-shopping"></i>
+                </a>
+              </li>
+      </ul>
     </div>
-</nav>
+  </nav>
 
   <section class="h-100 gradient-custom">
     <div class="container py-5">
@@ -231,65 +235,65 @@
         <div class="col-md-8">
           <div class="card mb-4">
             <div class="card-header py-3">
-              <h5 class="mb-0">
-                Cart - <%= items.length %> items
-              </h5>
+              <h5 class="mb-0">Cart - <%= items.length %> items</h5>
             </div>
 
-            <% if (items.length === 0 || grandTotal === 0) { %>
+            <% if (items.length===0 || grandTotal===0) { %>
               <div class="card-body text-center">
                 <h3>The Cart Is Empty</h3>
               </div>
-            <% } else { %>
-              <div class="card-body">
-                <% let grandTotal = 0; %>
-                <% items.forEach(item => { %>
-                  <div class="row mb-4">
-                    <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
-                      <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
-                        <% if (item.product.image && item.product.image.length > 0) { %>
-                          <img src="/uploads/<%= item.product.image[0] %>" class="w-100" alt="<%= item.product.name %>" />
-                        <% } else { %>
-                          <img src="/path/to/default-image.jpg" class="w-100" alt="Default Image" />
-                        <% } %>
-                        <a href="#!">
-                          <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
-                        </a>
-                      </div>
-                    </div>
-                    <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
-                      <p><strong><%= item.product.name %></strong></p>
-                      <p>Brand: <%= item.product.brand %></p>
-                      <p>Material: <%= item.product.strapMaterial %></p>
-                      <p>Product Price: <%= item.product.price %></p>
-                      <a href="#" class="btn btn-primary btn-sm me-1 mb-2 btn-remove-item" data-itemid="<%= item._id %>" title="Remove item">
-                        <i class="fas fa-trash"></i>
-                      </a>
-                    </div>
-                    <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
-                      <div class="d-flex mb-4" style="max-width: 300px">
-                        <div class="form-outline">
-                          <div class="quantity-input">
-
-                            <h5>Quantity: <%= item.quantity %></h5>
-
-                          </div>
+              <% } else { %>
+                <div class="card-body">
+                  <% items.forEach(item=> { %>
+                    <div class="row mb-4" id="cart-item-<%= item._id %>">
+                      <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
+                        <div class="bg-image hover-overlay hover-zoom ripple rounded">
+                          <% if (item.product.image && item.product.image.length> 0) { %>
+                            <img src="/uploads/<%= item.product.image[0] %>" class="w-100"
+                              alt="<%= item.product.name %>" />
+                            <% } else { %>
+                              <img src="/path/to/default-image.jpg" class="w-100" alt="Default Image" />
+                              <% } %>
                         </div>
                       </div>
-                      <p class="text-start text-md-center" id="price_<%= item._id %>">
-                        <strong>₹<%= (item.product.price * item.quantity).toFixed(2) %></strong>
-                      </p>
+                      <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+                        <p><strong>
+                            <%= item.product.name %>
+                          </strong></p>
+                        <p>Brand: <%= item.product.brand %>
+                        </p>
+                        <p>Material: <%= item.product.strapMaterial %>
+                        </p>
+                        <p>Product Price: ₹<%= item.product.price %>
+                        </p>
+                        <a class="btn btn-primary btn-sm me-1 mb-2 btn-remove-item" data-itemid="<%= item._id %>"
+                          title="Remove item">
+                          <i class="fas fa-trash"></i>
+                        </a>
+                      </div>
+                      <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                        <div class="d-flex mb-4" style="max-width: 300px">
+                          <div class="quantity-control">
+                            <button class="btn btn-primary btn-quantity-decrement" data-itemid="<%= item.product._id %>">-</button>
+                            <span id="quantity_<%= item.product._id %>">
+                              <%= item.quantity %>
+                            </span>
+                            <button class="btn btn-primary btn-quantity-increment" data-itemid="<%= item.product._id %>">+</button>
+                          </div>
+                        </div>
+                        <p class="text-start text-md-center" id="price_<%= item._id %>">
+                          <strong>₹<%= (item.product.price * item.quantity).toFixed(2) %></strong>
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <% grandTotal += item.product.price * item.quantity; %>
-                  <hr class="my-4" />
-                <% }); %>
-              </div>
-            <% } %>
+                    <hr class="my-4" />
+                    <% }); %>
+                </div>
+                <% } %>
           </div>
         </div>
-  
-        <% if (items.length !== 0 && grandTotal > 0) { %>
+
+        <% if (items.length !==0 && grandTotal> 0) { %>
           <div class="col-md-4">
             <div class="card mb-4">
               <div class="card-header py-3">
@@ -299,7 +303,9 @@
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
                     Products
-                    <span>₹<%= grandTotal.toFixed(2) %></span>
+                    <span>₹<span id="total-products">
+                        <%= grandTotal.toFixed(2) %>
+                      </span></span>
                   </li>
                   <li class="list-group-item d-flex justify-content-between align-items-center px-0">
                     Shipping
@@ -312,174 +318,233 @@
                         <p class="mb-0">(including VAT)</p>
                       </strong>
                     </div>
-                    <span id="grand-total"><strong>₹<%= grandTotal.toFixed(2) %></strong></span>
+                    <p id="grand-total"><strong>₹<%= grandTotal.toFixed(2) %></strong></p>
                   </li>
                 </ul>
                 <a href="/checkout" class="btn btn-primary btn-lg btn-block">Proceed to Checkout</a>
               </div>
             </div>
           </div>
-          
-        <% } %>
+          <% } %>
       </div>
     </div>
   </section>
 
-          <!-- Footer -->
-          <footer class="footer text-center text-lg-start mt-auto">
-            <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom" style="border-color: rgba(255, 255, 255, 0.15);">
-              <div class="me-5 d-none d-lg-block">
-                <span>Get connected with us on social networks:</span>
-              </div>
-        
-              <div>
-                <a href="" class="me-4 text-reset text-white">
-                  <i class="fab fa-facebook-f"></i>
-                </a>
-                <a href="" class="me-4 text-reset text-white">
-                  <i class="fab fa-twitter"></i>
-                </a>
-                <a href="" class="me-4 text-reset text-white">
-                  <i class="fab fa-google"></i>
-                </a>
-                <a href="" class="me-4 text-reset text-white">
-                  <i class="fab fa-instagram"></i>
-                </a>
-                <a href="" class="me-4 text-reset text-white">
-                  <i class="fab fa-linkedin"></i>
-                </a>
-                <a href="" class="me-4 text-reset text-white">
-                  <i class="fab fa-github"></i>
-                </a>
-              </div>
-            </section>
-        
-            <section class="container text-center text-md-start mt-5">
-              <div class="row mt-3">
-                <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
-                  <h6 class="text-uppercase fw-bold mb-4">
-                    QuartzMen
-                  </h6>
-                  <p>
-                    Here you can use rows and columns to organize your footer content. Lorem ipsum dolor sit amet,
-                    consectetur adipisicing elit.
-                  </p>
-                </div>
-        
-                <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
-        
-                  <h6 class="text-uppercase fw-bold mb-4">
-                    Categories
-                  </h6>
-                  <p>
-                    <a href="#!" class="text-reset text-white">Automatic</a>
-                  </p>
-                  <p>
-                    <a href="#!" class="text-reset text-white">Digital</a>
-                  </p>
-                  <p>
-                    <a href="#!" class="text-reset text-white">Quartz</a>
-                  </p>
-                  <p>
-                    <a href="#!" class="text-reset text-white">Analog</a>
-                  </p>
-                </div>
-        
-                <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
-        
-                  <h6 class="text-uppercase fw-bold mb-4">
-                    Useful links
-                  </h6>
-                  <p>
-                    <a href="#!" class="text-reset text-white">Pricing</a>
-                  </p>
-                  <p>
-                    <a href="#!" class="text-reset text-white">Settings</a>
-                  </p>
-                  <p>
-                    <a href="#!" class="text-reset text-white">Orders</a>
-                  </p>
-                  <p>
-                    <a href="#!" class="text-reset text-white">Help</a>
-                  </p>
-                </div>
-        
-                <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
-                  <h6 class="text-uppercase fw-bold mb-4">Contact</h6>
-                  <p><i class="fas fa-home me-3"></i> Dot Space, NY 10012, Trivandrum</p>
-                  <p>
-                    <i class="fas fa-envelope me-3"></i>
-                    info@example.com
-                  </p>
-                  <p><i class="fas fa-phone me-3"></i> + 01 234 567 88</p>
-                  <p><i class="fas fa-print me-3"></i> + 01 234 567 89</p>
-                </div>
-        
-              </div>
-            </section>
-        
-            <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.2);">
-              © 2021 Copyright:
-              <a class="text-reset fw-bold" href="https://mdbootstrap.com/" style="color: #ffffff;">MDBootstrap.com</a>
-            </div>
-        
-          </footer>
-  
+  <!-- Footer -->
+  <footer class="footer text-center text-lg-start mt-auto">
+    <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom"
+      style="border-color: rgba(255, 255, 255, 0.15);">
+      <div class="me-5 d-none d-lg-block">
+        <span>Get connected with us on social networks:</span>
+      </div>
+
+      <div>
+        <a href="" class="me-4 text-reset text-white">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="" class="me-4 text-reset text-white">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a href="" class="me-4 text-reset text-white">
+          <i class="fab fa-google"></i>
+        </a>
+        <a href="" class="me-4 text-reset text-white">
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a href="" class="me-4 text-reset text-white">
+          <i class="fab fa-linkedin"></i>
+        </a>
+        <a href="" class="me-4 text-reset text-white">
+          <i class="fab fa-github"></i>
+        </a>
+      </div>
+    </section>
+
+    <section class="container text-center text-md-start mt-5">
+      <div class="row mt-3">
+        <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+          <h6 class="text-uppercase fw-bold mb-4">
+            QuartzMen
+          </h6>
+          <p>
+            Here you can use rows and columns to organize your footer content. Lorem ipsum dolor sit amet,
+            consectetur adipisicing elit.
+          </p>
+        </div>
+
+        <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+
+          <h6 class="text-uppercase fw-bold mb-4">
+            Categories
+          </h6>
+          <p>
+            <a href="#!" class="text-reset text-white">Automatic</a>
+          </p>
+          <p>
+            <a href="#!" class="text-reset text-white">Digital</a>
+          </p>
+          <p>
+            <a href="#!" class="text-reset text-white">Quartz</a>
+          </p>
+          <p>
+            <a href="#!" class="text-reset text-white">Analog</a>
+          </p>
+        </div>
+
+        <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+
+          <h6 class="text-uppercase fw-bold mb-4">
+            Useful links
+          </h6>
+          <p>
+            <a href="#!" class="text-reset text-white">Pricing</a>
+          </p>
+          <p>
+            <a href="#!" class="text-reset text-white">Settings</a>
+          </p>
+          <p>
+            <a href="#!" class="text-reset text-white">Orders</a>
+          </p>
+          <p>
+            <a href="#!" class="text-reset text-white">Help</a>
+          </p>
+        </div>
+
+        <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+          <h6 class="text-uppercase fw-bold mb-4">Contact</h6>
+          <p><i class="fas fa-home me-3"></i> Dot Space, NY 10012, Trivandrum</p>
+          <p>
+            <i class="fas fa-envelope me-3"></i>
+            info@example.com
+          </p>
+          <p><i class="fas fa-phone me-3"></i> + 01 234 567 88</p>
+          <p><i class="fas fa-print me-3"></i> + 01 234 567 89</p>
+        </div>
+
+      </div>
+    </section>
+
+    <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.2);">
+      © 2021 Copyright:
+      <a class="text-reset fw-bold" href="https://mdbootstrap.com/" style="color: #ffffff;">MDBootstrap.com</a>
+    </div>
+
+  </footer>
+
 
   <!-- Your existing footer -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
+      const updateGrandTotal = () => {
+        let grandTotal = 0;
+        // Iterate through all items to calculate grand total
+        document.querySelectorAll('[id^="price_"]').forEach(priceElement => {
+          grandTotal += parseFloat(priceElement.innerText.replace('₹', ''));
+        });
+        // Update total products and grand total
+        document.getElementById('grand-total').innerHTML = `<strong>₹${grandTotal.toFixed(2)}</strong>`;
+        document.getElementById('total-products').innerText = grandTotal.toFixed(2);
+      };
 
       document.querySelectorAll('.btn-remove-item').forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
           const itemId = this.dataset.itemid;
 
           fetch(`/cartRemove/${itemId}`, {
             method: 'POST'
           })
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              location.reload(); // Reload the page to update the cart
-            } else {
-              alert('Error removing item from cart');
-            }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-          });
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+            document.getElementById(`cart-item-${itemId}`).remove(); // Remove item from cart
+            updateGrandTotal(); // Update grand total
+
+            swal({
+          title: "Success!",
+          text: "Item removed from cart!",
+          icon: "success",
+          buttons: false,  // Remove the buttons
+          timer: 800       // Alert will auto-close after 800 milliseconds
+        })
+        .then(() => {
+          // Reload the page after SweetAlert closes
+          window.location.href = '/cart';
+        });
+          } else {
+            swal("Error!", data.message || 'Error removing item from cart', "error");
+          }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              swal("Error!", "There was a problem with the request.", "error"); // Show fetch error message
+            });
+
+        });
+
+      });
+      
+
+      // Increment quantity
+      document.querySelectorAll('.btn-quantity-increment').forEach(button => {
+        button.addEventListener('click', function () {
+          const itemId = this.dataset.itemid;
+          const quantityElement = document.getElementById(`quantity_${itemId}`);
+          const priceElement = document.getElementById(`price_${itemId}`);
+          let currentQuantity = parseInt(quantityElement.textContent);
+          let newQuantity = currentQuantity + 1; // Increase quantity
+
+          // Update the cart on the backend
+          updateCartQuantity(itemId, newQuantity, priceElement, quantityElement);
         });
       });
+
+      // Decrement quantity
+      document.querySelectorAll('.btn-quantity-decrement').forEach(button => {
+        button.addEventListener('click', function () {
+          const itemId = this.dataset.itemid;
+          const quantityElement = document.getElementById(`quantity_${itemId}`);
+          const priceElement = document.getElementById(`price_${itemId}`);
+          let currentQuantity = parseInt(quantityElement.textContent);
+          let newQuantity = currentQuantity - 1; 
+
+          if (newQuantity < 1) {
+            document.querySelector(`.btn-remove-item[data-itemid="${itemId}"]`).click();
+          } else {
+            updateCartQuantity(itemId, newQuantity, priceElement, quantityElement);
+          }
+        });
+      });
+
+      function updateCartQuantity(itemId, newQuantity, priceElement, quantityElement) {
+  fetch(`/cartUpdate/${itemId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ quantity: newQuantity }),
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        window.location.href='/cart'
+        quantityElement.textContent = newQuantity;
+        const productPrice = parseFloat(priceElement.dataset.price);
+        priceElement.innerHTML = `<strong>₹${(productPrice * newQuantity).toFixed(2)}</strong>`;
+        updateGrandTotal(); 
+      } else {
+        swal("Sorry!", data.message || 'Error updating quantity', "error");
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
     });
-
-
-    async function updateQuantity(itemId, price) {
-  const quantity = document.getElementById(`quantity_${itemId}`).value;
-
-  try {
-    const response = await fetch('/cartUpdate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ productId: itemId, quantity: quantity }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      const newPrice = price * quantity;
-      document.getElementById(`price_${itemId}`).innerText = `₹${newPrice.toFixed(2)}`; // Ensure currency symbol
-      document.getElementById("grand-total").innerText = `₹${data.grandTotal.toFixed(2)}`; // Update grand total
-    } else {
-      alert(data.error);
-    }
-  } catch (error) {
-    console.error('Error updating quantity:', error);
-  }
 }
 
+    });
   </script>
 </body>
+
 </html>

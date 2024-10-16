@@ -81,16 +81,19 @@ const cancelOrder = async (req, res) => {
             res.status(400).send("Product cannot be canceled at the stage");
         }
 
+        const productData = await Product.findById(product.product);
+
+        productData.stock += product.quantity
         product.productStatus = 'Cancel';
         product.reason = reasonText;
         product.orderCancelRequest = true;
-
+        await productData.save()
         if (order.paymentInfo === 'razorpay') {
             const user = await User.findById(req.session.user);
-            user.wallet += product.price;
+            user.wallet += product.price * product.quantity;
             user.wallethistory.push({
                 process: 'Order Cancelled Refund',
-                amount: product.price,
+                amount: product.price * product.quantity,
                 status: 'Credited',
                 date: new Date()
             })
@@ -101,10 +104,10 @@ const cancelOrder = async (req, res) => {
             await order.save()
         } else if (order.paymentInfo === 'wallet') {
             const user = await User.findById(req.session.user);
-            user.wallet += product.price;
+            user.wallet += product.price * product.quantity;
             user.wallethistory.push({
                 process: 'Order Cancelled Refund',
-                amount: product.price,
+                amount: product.price * product.quantity,
                 status: 'Credited',
                 date: new Date()
             })
@@ -132,6 +135,8 @@ const returnRequestOrder = async (req, res) => {
         if (product.productStatus !== 'Delivered') {
             return res.status(400).send({ success: false, message: "Product cannot be returned at this stage. Only done for Delivered products." });
         }
+        const productData = await Product.findById(product.product);
+        productData.stock += product.quantity;
         product.reason = returnReason;
         product.productStatus = 'Requested';
         product.orderReturnRequest = true
