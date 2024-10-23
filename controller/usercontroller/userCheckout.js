@@ -46,7 +46,7 @@ const userCheckout = async (req, res) => {
             model: Product
         });
         if (!cart) {
-            return res.status(404).send('Cart not found');
+            return res.redirect('/cart')
         }
         const availableCoupons = await Coupon.find({ isActive: true });
         const cartItems = cart.items;
@@ -185,8 +185,14 @@ const applyCoupon = async (req, res) => {
 
         const coupon = await Coupon.findOne({ code: couponCode, isActive: true });
 
-        if (!coupon || cart.grandTotal < coupon.minAmount) {
+        if (!coupon) {
             return res.status(400).json({ message: 'Invalid or expired coupon' });
+        }
+        if (cart.grandTotal < coupon.minAmount ) {
+            return res.status(400).json({ message: 'The given amount is less to apply this coupon code.' });
+        }
+        if (cart.grandTotal > coupon.maxAmount ) {
+            return res.status(400).json({ message: 'The given amount exceeds the discount for this coupon code.' });
         }
 
         const discount = coupon.discount > coupon.maxAmount ? coupon.maxAmount : coupon.discount;

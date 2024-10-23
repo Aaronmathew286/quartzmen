@@ -67,37 +67,77 @@ const generatePDF = async (req, res) => {
                 query.createdAt = { $gte: new Date(startOfMonth.setHours(0, 0, 0, 0)) };
             }
         }
-
         const orders = await Order.find(query);
-        const doc = new PDFDocument();
+        const doc = new PDFDocument({ size: 'A4', margin: 30, layout: 'landscape' });
 
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', 'attachment; filename="sales_report.pdf"');
 
         doc.pipe(res);
+        doc.fontSize(18).fillColor('#333').text('Sales Report', { align: 'center', underline: true });
+        doc.moveDown(1);
+        doc.fontSize(12).fillColor('#333')
+            .text(`Total Sales Count: ${orders.length}`, { align: 'left' })
+            .text(`Total Order Amount: Rs ${orders.reduce((sum, order) => sum + order.totalAmount, 0).toFixed(2)}`, { align: 'left' })
+            .text(`Total Discount: Rs ${orders.reduce((sum, order) => sum + (order.coupon ? order.coupon.discount : 0), 0).toFixed(2)}`, { align: 'left' });
+        doc.moveDown(1);
 
-        doc.fontSize(18).text('Sales Report', { align: 'center' });
-        doc.moveDown();
-        doc.fontSize(14).text(`Total Sales Count: ${orders.length}`);
-        doc.text(`Total Order Amount: Rs ${orders.reduce((sum, order) => sum + order.totalAmount, 0).toFixed(2)}`);
-        doc.text(`Total Discount: Rs ${orders.reduce((sum, order) => sum + (order.coupon ? order.coupon.discount : 0), 0).toFixed(2)}`);
-        doc.moveDown();
-        doc.fontSize(16).text('Order Details');
-        doc.moveDown();
 
-        doc.fontSize(12).text('Order ID  |  Order Date  |  Total Amount  |  Discount  |  Coupon');
-        doc.moveDown();
+        const tableHeaders = ['Order ID', 'Order Date', 'Total Amount', 'Discount', 'Coupon'];
+        const columnWidths = [100, 100, 100, 100, 100]; 
+        const tableWidth = columnWidths.reduce((sum, width) => sum + width, 0); 
+        const startX = (doc.page.width - tableWidth) / 2; 
+        let y = doc.y + 20;
 
-        orders.forEach(order => {
-            doc.text(`${order._id}  |  ${new Date(order.createdAt).toLocaleDateString()}  |  Rs ${order.totalAmount.toFixed(2)}  |  Rs ${order.coupon && order.coupon.discount ? order.coupon.discount.toFixed(2) : '0.00'}  |  ${order.coupon ? order.coupon.couponCode : 'N/A'}`);
+        doc.fontSize(10).fillColor('white').rect(startX, y - 10, tableWidth, 20).fill('#3f51b5'); 
+        tableHeaders.forEach((header, i) => {
+            doc.fillColor('white').text(header, startX + i * columnWidths[i], y, {
+                width: columnWidths[i],
+                align: 'center'
+            });
         });
 
+        doc.moveTo(startX, y + 10).lineTo(startX + tableWidth, y + 10).stroke();
+        doc.fillColor('black');
+        y += 20;
+        const maxRowsPerPage = 15; 
+        orders.forEach((order, index) => {
+            if (index > 0 && index % maxRowsPerPage === 0) {
+                doc.addPage(); 
+                y = 50; 
+            }
+
+            const rowY = y + (index % maxRowsPerPage) * 20;
+            const rowData = [
+                order._id.toString().slice(-6),
+                new Date(order.createdAt).toLocaleDateString(),
+                `Rs ${order.totalAmount.toFixed(2)}`,
+                `Rs ${order.coupon && order.coupon.discount ? order.coupon.discount.toFixed(2) : '0.00'}`,
+                order.coupon ? order.coupon.couponCode : 'N/A'
+            ];
+
+            rowData.forEach((value, i) => {
+                doc.text(value, startX + i * columnWidths[i], rowY, {
+                    width: columnWidths[i],
+                    align: 'center'
+                });
+                doc.moveTo(startX + i * columnWidths[i], rowY - 10)
+                    .lineTo(startX + i * columnWidths[i], rowY + 10)
+                    .stroke();
+            });
+            doc.moveTo(startX, rowY + 10).lineTo(startX + tableWidth, rowY + 10).stroke();
+            doc.moveTo(startX + tableWidth, rowY - 10)
+                .lineTo(startX + tableWidth, rowY + 10)
+                .stroke();
+        });
         doc.end();
     } catch (err) {
         console.error(err);
         res.status(500).send('Error generating PDF');
     }
 };
+
+
 
 const generateExcel = async (req, res) => {
     try {

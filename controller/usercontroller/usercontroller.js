@@ -40,7 +40,7 @@ const signupPost = async (req, res) => {
         }
 
         let referringUser = null;
-        if (data.referralCode) {
+        if (data.referralCode) { 
             referringUser = await User.findOne({ referralCode: data.referralCode });
             if (!referringUser) {
                 return res.render("user/signup", { status: true, errMessage: "Invalid referral code" });
@@ -151,10 +151,11 @@ const otpPost = async (req, res) => {
                 referredBy: userData.referredBy
             });
 
-            if (userData.referralCode) {
+            if (userData.referralCode && userData.referredBy) {
                 const referringUser = await User.findOne({ referralCode: userData.referredBy });
 
                 if (referringUser) {
+                    // Update referring user's wallet and wallet history
                     referringUser.wallet = (referringUser.wallet || 0) + 100; 
                     referringUser.wallethistory.push({
                         process: "Referral Bonus",
@@ -163,6 +164,8 @@ const otpPost = async (req, res) => {
                         status: "Credited"
                     });
                     await referringUser.save();
+
+                    // Update new user's wallet and wallet history
                     newUser.wallet = (newUser.wallet || 0) + 50; 
                     newUser.wallethistory.push({
                         process: "Referral Bonus",
@@ -172,7 +175,12 @@ const otpPost = async (req, res) => {
                     });
                     await newUser.save();
                 }
+            } else {
+                // Ensure new user's wallet starts with 0 if no referral
+                newUser.wallet = 0;
+                await newUser.save();
             }
+
             return res.redirect("/login");
         } else {
             return res.render("user/otp", {
@@ -186,6 +194,7 @@ const otpPost = async (req, res) => {
         return res.status(500).json({ error: "Internal server error" });
     }
 };
+
 
 const resendOtp = async (req, res) => {
     try {
